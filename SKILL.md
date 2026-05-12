@@ -1,7 +1,7 @@
 ---
 name: miuix
 description: Miuix (HyperOS) Compose UI component library expert. Use this skill when the user asks to build UI with Miuix components, mentions Xiaomi/HyperOS design style, or references specific Miuix component names (NavigationBar, SwitchPreference, Scaffold, OverlayDialog, ArrowPreference, etc.). In the miuix-main project, Miuix is the default UI toolkit — use this skill for UI work here UNLESS the user explicitly asks for Material 3, MD3, or another design system. Never force Miuix when the user wants standard Compose Material components.
-version: "0.9.0-372c794" 
+version: "0.9.0-fc7e414f"
 ---
 
 # Miuix Skill
@@ -46,7 +46,7 @@ A component is likely **unreleased** (main-only) if:
 
 In the component tables below, unreleased components are marked with ⚠️ **main-only**. When the user is targeting the public v0.9.0 release, these components are not available. When they need the latest APIs, they must use a **local dependency** (`implementation(project(":miuix-ui"))`) or build a **local Maven artifact** — plain `implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.0")` won't include them.
 
-> **Version pinning**: This skill's file paths and component mappings reflect the source tree at commit `372c7943` (2026-05-05). If the user's local checkout is from a much older or newer commit, some component files may have moved, been renamed, or been added/removed. In that case, fall back to reading `{MIUIX_SOURCE_PATH}/docs/components/index.md` and the directory listing to rediscover the current layout, then update the component tables accordingly.
+> **Version pinning**: This skill's file paths and component mappings reflect the source tree at commit `fc7e414f` (2026-05-11). If the user's local checkout is from a much older or newer commit, some component files may have moved, been renamed, or been added/removed. In that case, fall back to reading `{MIUIX_SOURCE_PATH}/docs/components/index.md` and the directory listing to rediscover the current layout, then update the component tables accordingly.
 
 ## Source Configuration
 
@@ -67,8 +67,8 @@ The structure of `config.json` is as follows:
 | Source | Usage |
 |--------|-------|
 | Local clone | Read files directly from `{source_path}/<relative-path>` |
-| GitHub — read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/372c7943/<file-path>` e.g. `.../372c7943/docs/index.md` |
-| GitHub — browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/372c7943/<dir-path>` |
+| GitHub — read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/fc7e414f/<file-path>` e.g. `.../fc7e414f/docs/index.md` |
+| GitHub — browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/fc7e414f/<dir-path>` |
 | Rendered docs site | `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`, `index.md` → `/`)
 
 ## Initialization Flow
@@ -90,7 +90,7 @@ If the configuration is empty, tell the user:
 ### Step 2: Clone the source & Update Configuration (full mode only)
 1. **"Have you already cloned the Miuix source code to your local machine?"**
    - **If YES**: Ask the user for the absolute path. Validate that `docs/index.md` exists at that path.
-   - **If NO**: Ask "May I clone it from `https://github.com/compose-miuix-ui/miuix.git`?" If they agree, run `git clone https://github.com/compose-miuix-ui/miuix.git <target_path>`, then change directory into it and run `git checkout 372c7943` to guarantee API compatibility with this skill.
+   - **If NO**: Ask "May I clone it from `https://github.com/compose-miuix-ui/miuix.git`?" If they agree, run `git clone https://github.com/compose-miuix-ui/miuix.git <target_path>`, then change directory into it and run `git checkout fc7e414f` to guarantee API compatibility with this skill.
 
 To ensure the user doesn't have to answer these setup questions again in future conversations, use a tool to save the `mode` and `source_path` to `config.json` once they are determined.
 
@@ -110,7 +110,7 @@ Tell the user: "Miuix skill is ready. Tell me which component you want to use (e
 All file paths in the tables below are relative. Resolve them against the appropriate base depending on mode:
 
 - **Full mode**: prepend `{source_path}/`
-- **Lightweight mode**: for each source file, fetch `https://raw.githubusercontent.com/compose-miuix-ui/miuix/372c7943/<file-path>` individually (raw URL serves single files only — it cannot list directories). For rendered docs, use `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`; `index.md` → `/`). Need to explore a directory? Use `https://github.com/compose-miuix-ui/miuix/tree/372c7943/<dir-path>`.
+- **Lightweight mode**: for each source file, fetch `https://raw.githubusercontent.com/compose-miuix-ui/miuix/fc7e414f/<file-path>` individually (raw URL serves single files only — it cannot list directories). For rendered docs, use `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`; `index.md` → `/`). Need to explore a directory? Use `https://github.com/compose-miuix-ui/miuix/tree/fc7e414f/<dir-path>`.
 
 | Abbreviation | Relative path |
 |---|---|
@@ -123,6 +123,7 @@ All file paths in the tables below are relative. Resolve them against the approp
 | `miuix-ui/.../icon/basic/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/basic/` |
 | `miuix-preference/.../preference/` | `miuix-preference/src/commonMain/kotlin/top/yukonga/miuix/kmp/preference/` |
 | `miuix-preference/.../menu/` | `miuix-preference/src/commonMain/kotlin/top/yukonga/miuix/kmp/menu/` |
+| `miuix-preference/.../popup/` | `miuix-preference/src/commonMain/kotlin/top/yukonga/miuix/kmp/popup/` |
 | `miuix-core/.../icon/` | `miuix-core/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/` |
 | `miuix-icons/.../extended/` | `miuix-icons/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/extended/` |
 | `docs/components/` | `docs/components/` |
@@ -198,6 +199,7 @@ When the user asks about a component, first match it case-insensitively against 
 | OverlayDialog | `docs/components/overlaydialog.md` | `docs/demo/OverlayDialogDemo.kt` | `miuix-ui/.../overlay/OverlayDialog.kt` |
 | OverlayBottomSheet | `docs/components/overlaybottomsheet.md` | `docs/demo/OverlayBottomSheetDemo.kt` | `miuix-ui/.../overlay/OverlayBottomSheet.kt` |
 | OverlayListPopup | `docs/components/overlaylistpopup.md` | `docs/demo/OverlayListPopupDemo.kt` | `miuix-ui/.../overlay/OverlayListPopup.kt` |
+| OverlayCascadingListPopup ⚠️ | `docs/components/overlaycascadinglistpopup.md` | `docs/demo/OverlayCascadingListPopupDemo.kt` | `miuix-ui/.../overlay/OverlayCascadingListPopup.kt` |
 
 ### Window Components (standalone popups, no Scaffold needed)
 
@@ -206,6 +208,7 @@ When the user asks about a component, first match it case-insensitively against 
 | WindowDialog | `docs/components/windowdialog.md` | `docs/demo/WindowDialogDemo.kt` | `miuix-ui/.../window/WindowDialog.kt` |
 | WindowBottomSheet | `docs/components/windowbottomsheet.md` | `docs/demo/WindowBottomSheetDemo.kt` | `miuix-ui/.../window/WindowBottomSheet.kt` |
 | WindowListPopup | `docs/components/windowlistpopup.md` | `docs/demo/WindowListPopupDemo.kt` | `miuix-ui/.../window/WindowListPopup.kt` |
+| WindowCascadingListPopup ⚠️ | `docs/components/windowcascadinglistpopup.md` | `docs/demo/WindowCascadingListPopupDemo.kt` | `miuix-ui/.../window/WindowCascadingListPopup.kt` |
 
 ### Preference Components (miuix-preference)
 
@@ -226,8 +229,10 @@ When the user asks about a component, first match it case-insensitively against 
 |-----------|-----|------|--------|
 | OverlayDropdownMenu | `docs/components/overlaydropdownmenu.md` | `docs/demo/OverlayDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayDropdownMenu.kt` |
 | OverlayIconDropdownMenu | `docs/components/overlayicondropdownmenu.md` | `docs/demo/OverlayIconDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayIconDropdownMenu.kt` |
+| OverlayIconCascadingDropdownMenu ⚠️ | `docs/components/overlayiconcascadingdropdownmenu.md` | `docs/demo/OverlayIconCascadingDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayIconCascadingDropdownMenu.kt` |
 | WindowDropdownMenu | `docs/components/windowdropdownmenu.md` | `docs/demo/WindowDropdownMenuDemo.kt` | `miuix-preference/.../menu/WindowDropdownMenu.kt` |
 | WindowIconDropdownMenu | `docs/components/windowicondropdownmenu.md` | `docs/demo/WindowIconDropdownMenuDemo.kt` | `miuix-preference/.../menu/WindowIconDropdownMenu.kt` |
+| WindowIconCascadingDropdownMenu ⚠️ | `docs/components/windowiconcascadingdropdownmenu.md` | `docs/demo/WindowIconCascadingDropdownMenuDemo.kt` | `miuix-preference/.../menu/WindowIconCascadingDropdownMenu.kt` |
 
 ---
 
@@ -257,6 +262,10 @@ These files underpin multiple components. They're read-on-demand, not listed per
 | `miuix-ui/.../layout/DialogContentLayout.kt` | Shared dialog content layout |
 | `miuix-ui/.../layout/BottomSheetContentLayout.kt` | Shared bottom sheet content layout |
 | `miuix-ui/.../layout/ListPopupLayout.kt` | Shared list popup content layout |
+| `miuix-ui/.../layout/CascadingListPopupLayout.kt` | Shared cascading list popup layout |
+| `miuix-ui/.../layout/CascadingMorphContent.kt` | Shared cascading morph content |
+| `miuix-ui/.../layout/MorphHeaderRow.kt` | Shared morph header row |
+| `miuix-preference/.../popup/DropdownEntriesContent.kt` | Internal dropdown entries content |
 | `miuix-ui/.../basic/Dropdown.kt` | `DropdownImpl` and `SpinnerItemImpl` — internal dropdown/spinner building blocks used by preference selectors |
 | `miuix-ui/.../basic/ListPopup.kt` | `ListPopupContent`, `ListPopupColumn`, `rememberListPopupLayoutInfo` — internal list popup building blocks |
 
