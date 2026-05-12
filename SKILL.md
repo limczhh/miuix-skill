@@ -46,66 +46,62 @@ A component is likely **unreleased** (main-only) if:
 
 In the component tables below, unreleased components are marked with ⚠️ **main-only**. When the user is targeting the public v0.9.0 release, these components are not available. When they need the latest APIs, they must use a **local dependency** (`implementation(project(":miuix-ui"))`) or build a **local Maven artifact** — plain `implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.0")` won't include them.
 
-**When NOT to use this skill**: If the user explicitly asks for Material Design 3 (MD3), Google Material, or another named design system, step aside and let them use those components. Miuix is the default for this project, but it is not the only option.
-
 > **Version pinning**: This skill's file paths and component mappings reflect the source tree at commit `372c7943` (2026-05-05). If the user's local checkout is from a much older or newer commit, some component files may have moved, been renamed, or been added/removed. In that case, fall back to reading `{MIUIX_SOURCE_PATH}/docs/components/index.md` and the directory listing to rediscover the current layout, then update the component tables accordingly.
 
 ## Source Configuration
 
-`MIUIX_SOURCE_PATH` holds the absolute path to a local `miuix` repository clone. When not set, the skill falls back to reading files directly from GitHub.
+This skill relies on a local configuration file `config.json` located in the same directory as this `SKILL.md` file. It records the user's preference and local source path.
+
+The structure of `config.json` is as follows:
+
+```json
+{
+  "mode": "",
+  "source_path": ""
+}
+```
+
+- `mode`: Can be `"full"` (reads files directly from local clone) or `"lightweight"` (reads files online).
+- `source_path`: The absolute path to a local `miuix` repository clone (used when `mode` is `"full"`).
 
 | Source | Usage |
 |--------|-------|
-| Local clone | Read files directly from `{MIUIX_SOURCE_PATH}/<relative-path>` |
-| GitHub — read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/main/<file-path>` e.g. `.../main/docs/index.md` |
-| GitHub — browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/main/<dir-path>` |
+| Local clone | Read files directly from `{source_path}/<relative-path>` |
+| GitHub — read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/372c7943/<file-path>` e.g. `.../372c7943/docs/index.md` |
+| GitHub — browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/372c7943/<dir-path>` |
 | Rendered docs site | `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`, `index.md` → `/`)
 
-```yaml
-MIUIX_SOURCE_PATH: ""  # e.g., "D:/AndroidProjects/miuix-main"
-```
+## Initialization Flow
 
-## First-Time Setup
+To provide a seamless experience, follow this initialization flow to load or set up user preferences before answering their request.
 
-When this skill triggers and `MIUIX_SOURCE_PATH` is empty, walk through these steps **in order** — do not skip ahead to component lookup until setup completes.
+### Step 0: Read Configuration
+Read the `config.json` file in the same directory as this skill.
+- If `mode` is already set to a valid value (`full` or `lightweight`), and `source_path` is configured (if `full`), **load these settings, skip the setup questions, and proceed directly to Step 3**.
+- If `mode` is empty or `source_path` is missing when it shouldn't be, proceed to Step 1.
 
-### Step 0: Check the working directory first
-
-Before asking the user anything, check whether `docs/index.md` exists relative to the current working directory. If it does, the working directory is already a Miuix checkout — set `MIUIX_SOURCE_PATH` to the working directory and skip directly to Step 3.
-
-### Step 1: Offer source setup (lightweight vs. full)
-
-If Step 0 didn't find the source, tell the user:
-
+### Step 1: Offer source setup
+If the configuration is empty, tell the user:
 > "I can work in two modes: **lightweight** (no source clone, quick answers from docs and my own knowledge) or **full** (local source clone for precise API verification). Which do you prefer?"
 
-- **Lightweight**: Skip cloning. The AI reads docs from `https://compose-miuix-ui.github.io/miuix/` and source files individually via `https://raw.githubusercontent.com/compose-miuix-ui/miuix/main/<path>`. This is nearly as capable as local mode — the AI can still verify API signatures, just slower (one WebFetch per file).
-- **Full**: Proceed to Step 2 to clone the source. Best for production work where API precision matters.
+- **Lightweight**: Skip cloning. You will read docs from `https://compose-miuix-ui.github.io/miuix/` and source files via `raw.githubusercontent.com`.
+- **Full**: Best for production work where API precision matters. Proceed to Step 2.
 
-### Step 2: Clone the source (full mode only)
-
+### Step 2: Clone the source & Update Configuration (full mode only)
 1. **"Have you already cloned the Miuix source code to your local machine?"**
-   - **If YES**: Ask the user for the absolute path. Validate that `docs/index.md` exists at that path. Set `MIUIX_SOURCE_PATH`.
-   - **If NO**: Ask "May I clone it from `https://github.com/compose-miuix-ui/miuix.git`?" If they agree, ask where: (1) sibling directory of the current project, (2) a custom path. Run `git clone https://github.com/compose-miuix-ui/miuix.git <target_path>`. Set `MIUIX_SOURCE_PATH`.
+   - **If YES**: Ask the user for the absolute path. Validate that `docs/index.md` exists at that path.
+   - **If NO**: Ask "May I clone it from `https://github.com/compose-miuix-ui/miuix.git`?" If they agree, run `git clone https://github.com/compose-miuix-ui/miuix.git <target_path>`, then change directory into it and run `git checkout 372c7943` to guarantee API compatibility with this skill.
+
+To ensure the user doesn't have to answer these setup questions again in future conversations, use a tool to save the `mode` and `source_path` to `config.json` once they are determined.
 
 ### Step 3: Bootstrap knowledge (full mode) / start helping (lightweight)
+If full mode, briefly read:
+- `{source_path}/docs/index.md` — what Miuix is
+- `{source_path}/docs/guide/getting-started.md` — dependency setup
 
-If full mode with `MIUIX_SOURCE_PATH` set, immediately read:
-- `{MIUIX_SOURCE_PATH}/docs/index.md` — what Miuix is
-- `{MIUIX_SOURCE_PATH}/docs/guide/getting-started.md` — dependency setup
+If lightweight mode, skip reading and proceed. 
 
-If lightweight mode (no source), skip reading and proceed.
-
-### Step 4: Determine target version
-
-Ask the user: **"Which Miuix version do you want to target — the stable v0.9.0 release from Maven, or the latest main branch?"**
-
-- **v0.9.0**: The user gets components available via `implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.0")`. Components marked ⚠️ **main-only** in the tables below are off-limits. In full mode, verify API signatures against the `v0.9.0` git tag if the local checkout is on main. In lightweight mode, prefer the online v0.9.0 docs.
-- **main branch**: The user builds against the latest source (requires local dependency or local Maven publish). All components in the tables are available, but APIs may differ from v0.9.0.
-
-### Step 5: Confirm
-
-Tell the user: "Miuix skill is ready. Tell me which component you want to use (e.g., 'NavigationBar', 'SwitchPreference', 'OverlayDialog') and I'll read the relevant files to give you accurate code."
+Tell the user: "Miuix skill is ready. Tell me which component you want to use (e.g., 'NavigationBar', 'SwitchPreference', 'OverlayDialog') and I'll give you accurate code."
 
 ---
 
@@ -113,8 +109,8 @@ Tell the user: "Miuix skill is ready. Tell me which component you want to use (e
 
 All file paths in the tables below are relative. Resolve them against the appropriate base depending on mode:
 
-- **Full mode**: prepend `{MIUIX_SOURCE_PATH}/`
-- **Lightweight mode**: for each source file, fetch `https://raw.githubusercontent.com/compose-miuix-ui/miuix/main/<file-path>` individually (raw URL serves single files only — it cannot list directories). For rendered docs, use `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`; `index.md` → `/`). Need to explore a directory? Use `https://github.com/compose-miuix-ui/miuix/tree/main/<dir-path>`.
+- **Full mode**: prepend `{source_path}/`
+- **Lightweight mode**: for each source file, fetch `https://raw.githubusercontent.com/compose-miuix-ui/miuix/372c7943/<file-path>` individually (raw URL serves single files only — it cannot list directories). For rendered docs, use `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`; `index.md` → `/`). Need to explore a directory? Use `https://github.com/compose-miuix-ui/miuix/tree/372c7943/<dir-path>`.
 
 | Abbreviation | Relative path |
 |---|---|
@@ -268,7 +264,7 @@ These files underpin multiple components. They're read-on-demand, not listed per
 
 ## Example App
 
-`{MIUIX_SOURCE_PATH}/example/` is a full Compose Multiplatform app built with Miuix. It's the best place to see how components, icons, colors, and themes work together in a real application context.
+`{source_path}/example/` is a full Compose Multiplatform app built with Miuix. It's the best place to see how components, icons, colors, and themes work together in a real application context.
 
 | Directory | What's inside |
 |-----------|--------------|
