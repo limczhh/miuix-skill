@@ -1,7 +1,7 @@
 ---
 name: miuix
 description: Miuix (HyperOS) Compose UI component library expert. Use this skill when the user asks to build UI with Miuix components, mentions Xiaomi/HyperOS design style, or references specific Miuix component names (NavigationBar, SwitchPreference, Scaffold, OverlayDialog, ArrowPreference, etc.). In the miuix-main project, Miuix is the default UI toolkit — use this skill for UI work here UNLESS the user explicitly asks for Material 3, MD3, or another design system. Never force Miuix when the user wants standard Compose Material components.
-version: "0.9.0-fc7e414f"
+version: "0.9.1"
 ---
 
 # Miuix Skill
@@ -38,15 +38,13 @@ fun App() = MiuixTheme(colorScheme = lightColorScheme()) {
 
 ### Public Release vs. Main Branch
 
-The latest **public Maven release is v0.9.0** (installable via `implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.0")`). The `main` branch may contain **unreleased components and API changes** not yet available in v0.9.0.
+This skill targets **Miuix v0.9.1** (the latest stable release). Install via:
 
-A component is likely **unreleased** (main-only) if:
-- No corresponding doc page exists under `docs/components/`
-- No corresponding demo file exists under `docs/demo/`
+```kotlin
+implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.1")
+```
 
-In the component tables below, unreleased components are marked with ⚠️ **main-only**. When the user is targeting the public v0.9.0 release, these components are not available. When they need the latest APIs, they must use a **local dependency** (`implementation(project(":miuix-ui"))`) or build a **local Maven artifact** — plain `implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.0")` won't include them.
-
-> **Version pinning**: This skill's file paths and component mappings reflect the source tree at commit `fc7e414f` (2026-05-11). If the user's local checkout is from a much older or newer commit, some component files may have moved, been renamed, or been added/removed. In that case, fall back to reading `{MIUIX_SOURCE_PATH}/docs/components/index.md` and the directory listing to rediscover the current layout, then update the component tables accordingly.
+> **Version pinning**: File paths and component mappings reflect source tree at tag `v0.9.1`.
 
 ## Source Configuration
 
@@ -67,8 +65,8 @@ The structure of `config.json` is as follows:
 | Source | Usage |
 |--------|-------|
 | Local clone | Read files directly from `{source_path}/<relative-path>` |
-| GitHub — read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/fc7e414f/<file-path>` e.g. `.../fc7e414f/docs/index.md` |
-| GitHub — browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/fc7e414f/<dir-path>` |
+| GitHub — read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/v0.9.1/<file-path>` e.g. `.../v0.9.1/docs/index.md` |
+| GitHub — browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/v0.9.1/<dir-path>` |
 | Rendered docs site | `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`, `index.md` → `/`)
 
 ## Initialization Flow
@@ -90,7 +88,7 @@ If the configuration is empty, tell the user:
 ### Step 2: Clone the source & Update Configuration (full mode only)
 1. **"Have you already cloned the Miuix source code to your local machine?"**
    - **If YES**: Ask the user for the absolute path. Validate that `docs/index.md` exists at that path.
-   - **If NO**: Ask "May I clone it from `https://github.com/compose-miuix-ui/miuix.git`?" If they agree, run `git clone https://github.com/compose-miuix-ui/miuix.git <target_path>`, then change directory into it and run `git checkout fc7e414f` to guarantee API compatibility with this skill.
+   - **If NO**: Ask "May I clone it from `https://github.com/compose-miuix-ui/miuix.git`?" If they agree, run `git clone https://github.com/compose-miuix-ui/miuix.git <target_path>`, then change directory into it and run `git checkout v0.9.1` to guarantee API compatibility with this skill.
 
 To ensure the user doesn't have to answer these setup questions again in future conversations, use a tool to save the `mode` and `source_path` to `config.json` once they are determined.
 
@@ -110,7 +108,7 @@ Tell the user: "Miuix skill is ready. Tell me which component you want to use (e
 All file paths in the tables below are relative. Resolve them against the appropriate base depending on mode:
 
 - **Full mode**: prepend `{source_path}/`
-- **Lightweight mode**: for each source file, fetch `https://raw.githubusercontent.com/compose-miuix-ui/miuix/fc7e414f/<file-path>` individually (raw URL serves single files only — it cannot list directories). For rendered docs, use `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`; `index.md` → `/`). Need to explore a directory? Use `https://github.com/compose-miuix-ui/miuix/tree/fc7e414f/<dir-path>`.
+- **Lightweight mode**: for each source file, fetch `https://raw.githubusercontent.com/compose-miuix-ui/miuix/v0.9.1/<file-path>` individually (raw URL serves single files only — it cannot list directories). For rendered docs, use `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`; `index.md` → `/`). Need to explore a directory? Use `https://github.com/compose-miuix-ui/miuix/tree/v0.9.1/<dir-path>`.
 
 | Abbreviation | Relative path |
 |---|---|
@@ -188,10 +186,9 @@ When the user asks about a component, first match it case-insensitively against 
 | SearchBar | `docs/components/searchbar.md` | `docs/demo/SearchBarDemo.kt` | `miuix-ui/.../basic/SearchBar.kt` |
 | ColorPalette | `docs/components/colorpalette.md` | `docs/demo/ColorPaletteDemo.kt` | `miuix-ui/.../basic/ColorPalette.kt` |
 | ColorPicker | `docs/components/colorpicker.md` | `docs/demo/ColorPickerDemo.kt` | `miuix-ui/.../basic/ColorPicker.kt` |
-| ScrollBar ⚠️ | — (no dedicated doc) | — (no dedicated demo) | `miuix-ui/.../basic/ScrollBar.kt` |
+| ScrollBar | — (no dedicated doc) | — (no dedicated demo) | `miuix-ui/.../basic/ScrollBar.kt` |
 
-> ⚠️ **main-only** — not available in the v0.9.0 public release.
-
+> 
 ### Overlay Components (require Scaffold wrapper)
 
 | Component | Doc | Demo | Source |
@@ -199,7 +196,7 @@ When the user asks about a component, first match it case-insensitively against 
 | OverlayDialog | `docs/components/overlaydialog.md` | `docs/demo/OverlayDialogDemo.kt` | `miuix-ui/.../overlay/OverlayDialog.kt` |
 | OverlayBottomSheet | `docs/components/overlaybottomsheet.md` | `docs/demo/OverlayBottomSheetDemo.kt` | `miuix-ui/.../overlay/OverlayBottomSheet.kt` |
 | OverlayListPopup | `docs/components/overlaylistpopup.md` | `docs/demo/OverlayListPopupDemo.kt` | `miuix-ui/.../overlay/OverlayListPopup.kt` |
-| OverlayCascadingListPopup ⚠️ | `docs/components/overlaycascadinglistpopup.md` | `docs/demo/OverlayCascadingListPopupDemo.kt` | `miuix-ui/.../overlay/OverlayCascadingListPopup.kt` |
+| OverlayCascadingListPopup | `docs/components/overlaycascadinglistpopup.md` | `docs/demo/OverlayCascadingListPopupDemo.kt` | `miuix-ui/.../overlay/OverlayCascadingListPopup.kt` |
 
 ### Window Components (standalone popups, no Scaffold needed)
 
@@ -208,7 +205,7 @@ When the user asks about a component, first match it case-insensitively against 
 | WindowDialog | `docs/components/windowdialog.md` | `docs/demo/WindowDialogDemo.kt` | `miuix-ui/.../window/WindowDialog.kt` |
 | WindowBottomSheet | `docs/components/windowbottomsheet.md` | `docs/demo/WindowBottomSheetDemo.kt` | `miuix-ui/.../window/WindowBottomSheet.kt` |
 | WindowListPopup | `docs/components/windowlistpopup.md` | `docs/demo/WindowListPopupDemo.kt` | `miuix-ui/.../window/WindowListPopup.kt` |
-| WindowCascadingListPopup ⚠️ | `docs/components/windowcascadinglistpopup.md` | `docs/demo/WindowCascadingListPopupDemo.kt` | `miuix-ui/.../window/WindowCascadingListPopup.kt` |
+| WindowCascadingListPopup | `docs/components/windowcascadinglistpopup.md` | `docs/demo/WindowCascadingListPopupDemo.kt` | `miuix-ui/.../window/WindowCascadingListPopup.kt` |
 
 ### Preference Components (miuix-preference)
 
@@ -229,10 +226,10 @@ When the user asks about a component, first match it case-insensitively against 
 |-----------|-----|------|--------|
 | OverlayDropdownMenu | `docs/components/overlaydropdownmenu.md` | `docs/demo/OverlayDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayDropdownMenu.kt` |
 | OverlayIconDropdownMenu | `docs/components/overlayicondropdownmenu.md` | `docs/demo/OverlayIconDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayIconDropdownMenu.kt` |
-| OverlayIconCascadingDropdownMenu ⚠️ | `docs/components/overlayiconcascadingdropdownmenu.md` | `docs/demo/OverlayIconCascadingDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayIconCascadingDropdownMenu.kt` |
+| OverlayIconCascadingDropdownMenu | `docs/components/overlayiconcascadingdropdownmenu.md` | `docs/demo/OverlayIconCascadingDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayIconCascadingDropdownMenu.kt` |
 | WindowDropdownMenu | `docs/components/windowdropdownmenu.md` | `docs/demo/WindowDropdownMenuDemo.kt` | `miuix-preference/.../menu/WindowDropdownMenu.kt` |
 | WindowIconDropdownMenu | `docs/components/windowicondropdownmenu.md` | `docs/demo/WindowIconDropdownMenuDemo.kt` | `miuix-preference/.../menu/WindowIconDropdownMenu.kt` |
-| WindowIconCascadingDropdownMenu ⚠️ | `docs/components/windowiconcascadingdropdownmenu.md` | `docs/demo/WindowIconCascadingDropdownMenuDemo.kt` | `miuix-preference/.../menu/WindowIconCascadingDropdownMenu.kt` |
+| WindowIconCascadingDropdownMenu | `docs/components/windowiconcascadingdropdownmenu.md` | `docs/demo/WindowIconCascadingDropdownMenuDemo.kt` | `miuix-preference/.../menu/WindowIconCascadingDropdownMenu.kt` |
 
 ---
 
@@ -292,12 +289,14 @@ These rules prevent the most common failure mode: fabricating APIs that don't ex
 
 Miuix is an independent library — its API surface is different from Material Design, Material 3, or any other Compose library you may know. Guessing parameter names, icon names, or color tokens from memory of those other libraries will produce wrong code that doesn't compile. Always verify against the actual source files.
 
-### Never fabricate
+### 为什么不能从其他库的惯性猜测
 
-- **Icon names**: There are exactly 5 basic icons (ArrowRight, ArrowUpDown, Check, Search, SearchCleanup — Regular weight only) and 100+ extended icons (all 5 weights: Light, Normal, Regular, Medium, Demibold). `MiuixIcons.SomeName` accesses the Regular variant by default; use `MiuixIcons.Light.SomeName` etc. for other weights. Source of truth: `docs/guide/icons.md` for the list, `miuix-icons/.../extended/<Name>.kt` for verification.
-- **Parameter names & API signatures**: The doc gives an overview, the demo shows working usage, and the source file is authoritative. For simple usage, doc + demo is enough. When the user needs parameters beyond what the demo shows, or you're unsure about a signature, read the source file.
-- **Color token names**: Use only `MiuixTheme.colorScheme.*` properties defined in `miuix-ui/.../theme/Colors.kt`.
-- **TextStyle names**: Use only `MiuixTheme.textStyles.*` properties defined in `miuix-ui/.../theme/TextStyles.kt`.
+Miuix 的 API 命名与 Material Design、Material 3 等库完全不同。图标名、参数名、颜色 token 如果凭其他库的使用习惯猜测，编译必然失败。始终从源文件或文档验证。具体而言：
+
+- **Icon names**: 基础图标 5 个（ArrowRight, ArrowUpDown, Check, Search, SearchCleanup，仅 Regular 粗细）+ 扩展图标 100+（含 5 种粗细：Light, Normal, Regular, Medium, Demibold）。`MiuixIcons.SomeName` 默认访问 Regular；其他粗细用 `MiuixIcons.Light.SomeName` 等。权威来源：`docs/guide/icons.md`（列表）、`miuix-icons/.../extended/<Name>.kt`（验证）。
+- **Parameter names & API signatures**: 文档给概览，demo 给可运行的用法，源文件是权威。简单用法看文档+demo 即可；需要 demo 未覆盖的参数或不确定签名时，读源文件。
+- **Color token names**: 只用 `MiuixTheme.colorScheme.*` 中定义的属性，在 `miuix-ui/.../theme/Colors.kt`。
+- **TextStyle names**: 只用 `MiuixTheme.textStyles.*` 中定义的属性，在 `miuix-ui/.../theme/TextStyles.kt`。
 
 ### Always do
 
