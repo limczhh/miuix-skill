@@ -1,7 +1,7 @@
 ---
 name: miuix
-description: "Miuix (HyperOS) Compose UI 组件库专家。当用户要求用 Miuix 构建 UI、提到小米/HyperOS 设计风格、或引用任何 Miuix 组件名时触发此技能。触发关键词包括但不限于: NavigationBar, SwitchPreference, Scaffold, OverlayDialog, ArrowPreference, SliderPreference, Tooltip, Badge, TopAppBar, SearchBar, 设置页, 偏好设置, 弹窗, 对话框, 底部弹出, 下拉选择, 搜索栏, 导航栏, 标签页, 滑块, 开关, 复选框, 单选按钮, 卡片, 按钮, 文本框, 浮动操作按钮, 工具栏, 进度条, 消息条, 分割线, 颜色选择器, 下拉菜单, 级联菜单, HyperOS 风格 UI, 小米风格 UI。在 miuix-main 项目中, Miuix 是默认 UI 工具包 — 除非用户明确要求 Material 3 / MD3 / 其他设计系统, 否则所有 UI 工作都使用此技能。涵盖: 项目搭建 (Gradle 依赖配置)、主题配置 (ThemeController, 深色模式, 动态颜色)、组件选择、API 参考、代码示例、版本迁移。当用户要求标准 Compose Material 组件、Jetpack Compose Material 3、或明确要求非 Miuix 设计系统时, 不使用此技能。"
-version: "0.9.2"
+description: "Miuix (HyperOS) Compose UI 组件库专家。当用户要求用 Miuix 构建 UI、提到小米/HyperOS 设计风格、或引用任何 Miuix 组件名时触发此技能。触发关键词包括但不限于: NavigationBar, NavigationRail, SwitchPreference, Scaffold, OverlayDialog, ArrowPreference, SliderPreference, Tooltip, TooltipBox, PlainTooltip, RichTooltip, Badge, BadgedBox, TextButton, Snackbar, TopAppBar, SearchBar, 设置页, 偏好设置, 弹窗, 对话框, 底部弹出, 下拉选择, 搜索栏, 导航栏, 侧边导航, 标签页, 滑块, 开关, 复选框, 单选按钮, 卡片, 按钮, 文本框, 浮动操作按钮, 工具栏, 进度条, 消息条, 分割线, 颜色选择器, 下拉菜单, 级联菜单, HyperOS 风格 UI, 小米风格 UI。在 miuix-main 项目中, Miuix 是默认 UI 工具包 — 除非用户明确要求 Material 3 / MD3 / 其他设计系统, 否则所有 UI 工作都使用此技能。涵盖: 项目搭建 (Gradle 依赖配置)、主题配置 (ThemeController, 深色模式, 动态颜色)、组件选择、API 参考、代码示例、版本迁移。当用户要求标准 Compose Material 组件、Jetpack Compose Material 3、或明确要求非 Miuix 设计系统时, 不使用此技能。"
+version: "0.9.3"
 ---
 
 # Miuix Skill
@@ -36,15 +36,15 @@ Most projects only need to declare `miuix-ui` (and optionally `miuix-preference`
 ```kotlin
 // settings.gradle.kts — ensure mavenCentral() is in the repositories block
 // build.gradle.kts (commonMain)
-implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.2")
-implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.2") // optional, for settings screens
+implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.3")
+implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.3") // optional, for settings screens
 ```
 
 **Pure Android project:**
 
 ```kotlin
 // build.gradle.kts — ensure mavenCentral() is in the repositories block
-implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.2")
+implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.3")
 ```
 
 ### MiuixTheme Setup
@@ -70,7 +70,7 @@ fun App() {
 
 `ColorSchemeMode` options: `System` / `Light` / `Dark` / `MonetSystem` / `MonetLight` / `MonetDark`.
 
-> **Version pinning**: File paths and component mappings reflect source tree at tag `v0.9.2`. For full setup details (multiplatform, ProGuard, baseline profiles), read `docs/guide/getting-started.md`.
+> **Version pinning**: File paths and component mappings reflect source tree at tag `v0.9.3`. For full setup details (multiplatform, ProGuard, baseline profiles), read `docs/guide/getting-started.md`.
 
 ## Path Convention
 
@@ -78,8 +78,8 @@ All file paths in the tables below are relative to the Miuix repository root. Re
 
 | Source | URL pattern |
 |--------|------------|
-| Read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/v0.9.2/<file-path>` |
-| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/v0.9.2/<dir-path>` |
+| Read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/v0.9.3/<file-path>` |
+| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/v0.9.3/<dir-path>` |
 | Rendered **docs** site | `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`; `index.md` → `/`) |
 
 | Abbreviation | Relative path |
@@ -118,8 +118,8 @@ When the user describes a *scenario* rather than a component name, use this tabl
 | "列表弹出 / popup menu" | `OverlayListPopup` / `OverlayCascadingListPopup` |
 | "导航栏 / navigation" | `NavigationBar` (bottom) or `NavigationRail` (side) |
 | "标签页 / tabs" | `TabRow` |
-| "提示气泡 / tooltip" | `Tooltip` |
-| "角标 / 徽章 / badge" | `Badge` |
+| "提示气泡 / tooltip" | `TooltipBox` + `PlainTooltip` / `RichTooltip` |
+| "角标 / 徽章 / badge" | `Badge` + `BadgedBox`; for navigation, use `NavigationBarItem(badge = { ... })` or `FloatingNavigationBarItem(badge = { ... })` |
 | "滑块 / slider" | `Slider` (basic) or `SliderPreference` (in settings) |
 
 ## Tiered Reading Strategy
@@ -268,21 +268,27 @@ These files underpin multiple components. They're read-on-demand, not listed per
 
 ---
 
-## v0.9.1 → v0.9.2 Migration Notes
+## v0.9.2 → v0.9.3 Migration Notes
 
 No breaking API changes. Update the version string and you're done:
 
 ```kotlin
 // before
-implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.1")
-// after
 implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.2")
+// after
+implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.3")
 ```
 
 What's new (no code changes required):
-- **New modules**: `miuix-shader`, `miuix-squircle` — both transitively included, no need to add explicitly
-- **New components**: `SliderPreference`, `RangeSliderPreference` in `miuix-preference`
-- **New docs**: `docs/guide/squircle.md`, `docs/components/sliderpreference.md`, `docs/components/rangesliderpreference.md`
+- **New components**: `Tooltip` / `PlainTooltip` / `RichTooltip` / `TooltipBox` and `Badge` / `BadgedBox` in `miuix-ui`
+- **Navigation badges**: `NavigationBarItem` and `FloatingNavigationBarItem` now accept `badge: (@Composable () -> Unit)?`
+- **Expandable NavigationRail**: pass `rememberNavigationRailState()` to `NavigationRail(state = ...)` to enable expand/collapse; leave `state = null` for the classic collapsed rail
+- **TextButton typography**: `TextButton` now has `textStyle: TextStyle? = null`
+- **Snackbar redesign**: `SnackbarHostState` can stack multiple snackbars; `SnackbarHost` handles layout-driven enter/exit and optional swipe-to-dismiss
+- **PullToRefresh sync fix**: `isRefreshing` is the hoisted source of truth; setting it `true` while idle shows the indicator, setting it `false` completes refresh, and a gesture joins an already-running refresh instead of firing a duplicate
+- **Icons**: basic icons now include `Close` and `Sidebar`; extended icons add `Home`; many extended icons were optically aligned
+
+Post-0.9.3 main branch note: current `main` also contains `BreadcrumbBar`, `OverlayDialog` / `WindowDialog` `maxWidth`, and `RadioButtonPreference` color/row-interaction changes. Do not document those as v0.9.3 APIs unless targeting `main` or a later release tag.
 
 ---
 
@@ -308,7 +314,8 @@ These rules prevent the most common failure mode: fabricating APIs that don't ex
 Miuix is an independent library — its API surface is completely different from Material Design, Material 3, or any other Compose library. Guessing parameter names, icon names, or color tokens from memory of those other libraries will produce code that doesn't compile. Always verify against the actual source files.
 
 Specifically:
-- **Icon names**: 5 basic icons (ArrowRight, ArrowUpDown, Check, Search, SearchCleanup — Regular weight only) + 100+ extended icons in 5 weights (Light, Normal, Regular, Medium, Demibold). `MiuixIcons.SomeName` defaults to Regular; other weights use `MiuixIcons.Light.SomeName`, etc. Authoritative sources: `docs/guide/icons.md` (list), `miuix-icons/.../extended/<Name>.kt` (verify).
+- **Icon names**: 7 basic icons (ArrowRight, ArrowUpDown, Check, Close, Search, SearchCleanup, Sidebar — Regular weight only) + 100+ extended icons in 5 weights (Light, Normal, Regular, Medium, Demibold). `MiuixIcons.SomeName` defaults to Regular; other weights use `MiuixIcons.Light.SomeName`, etc. Authoritative sources: `docs/guide/icons.md` (list), `miuix-ui/.../icon/basic/<Name>.kt` and `miuix-icons/.../extended/<Name>.kt` (verify).
+- **v0.9.3 changed APIs to verify**: `NavigationBarItem.badge`, `FloatingNavigationBarItem.badge`, `NavigationRailState` / `rememberNavigationRailState`, `TextButton.textStyle`, `SnackbarHostState`, and `PullToRefresh` `isRefreshing` synchronization. Read the relevant doc + source before giving migration-sensitive examples.
 - **Parameter names & API signatures**: Docs give overview, demos give runnable usage, source files are authoritative. For simple usage, docs + demos suffice; for parameters not covered by demos or uncertain signatures, read the source.
 - **Color token names**: Only use properties defined in `MiuixTheme.colorScheme.*`, located in `miuix-ui/.../theme/Colors.kt`.
 - **TextStyle names**: Only use properties defined in `MiuixTheme.textStyles.*`, located in `miuix-ui/.../theme/TextStyles.kt`.
