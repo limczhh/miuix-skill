@@ -1,5 +1,7 @@
 # Component Selection
 
+Use this catalog after resolving code context in [SKILL.md](../SKILL.md#resolve-code-context). After choosing a component, read its doc/demo/source at the depth defined by the entry Skill. For multi-component pages, continue with [Example-derived usage patterns](usage-patterns.md); for visual customization, use [Design language and Defaults](design-language.md).
+
 ## Scenario → Component Quick Map
 
 When the user describes a *scenario* rather than a component name, use this table to short-circuit the lookup — no need to fetch `docs/components/index.md` first.
@@ -8,12 +10,14 @@ When the user describes a *scenario* rather than a component name, use this tabl
 |-----------|-------------------|
 | "设置页 / 偏好设置 / settings" | `Scaffold` + `SwitchPreference` + `CheckboxPreference` + `ArrowPreference` + `SliderPreference` |
 | "弹窗 / 对话框 / dialog" | `OverlayDialog` (in-page) or `WindowDialog` (global) |
+| "确认操作 / 二次确认 / confirm" | `OverlayDialog` (page-scoped) or `WindowDialog` (global) + secondary cancel action + primary confirm action |
 | "底部弹出 / bottom sheet" | `OverlayBottomSheet` (in-page) or `WindowBottomSheet` (global) |
 | "下拉选择 / dropdown / spinner" | `OverlayDropdownPreference` / `OverlaySpinnerPreference` (in settings) or `OverlayDropdownMenu` (standalone) |
 | "搜索 / search" | `SearchBar` |
-| "表单 / form / 登录" | `TextField` + `Button` + `Switch` |
+| "表单 / form / 登录" | `TextField` + `Button`; add `Switch` only for an actual binary option |
 | "列表弹出 / popup menu" | `OverlayListPopup` / `OverlayCascadingListPopup` |
-| "导航栏 / navigation" | `NavigationBar` (bottom) or `NavigationRail` (side) |
+| "底部导航 / 侧边导航 / navigation chrome" | `NavigationBar` (bottom) or `NavigationRail` (side) |
+| "页面路由 / 返回栈 / Navigation 3" | Read `docs/guide/navigation3.md` and the Example app shell; do not mistake navigation chrome for routing architecture |
 | "标签页 / tabs" | `TabRow` |
 | "提示气泡 / tooltip" | `TooltipBox` + `PlainTooltip` / `RichTooltip` |
 | "角标 / 徽章 / badge" | `Badge` + `BadgedBox`; for navigation, use `NavigationBarItem(badge = { ... })` or `FloatingNavigationBarItem(badge = { ... })` |
@@ -22,6 +26,10 @@ When the user describes a *scenario* rather than a component name, use this tabl
 ## Component Reference Table
 
 When the user asks about a component, first match it case-insensitively against this table, then read files at the depth appropriate to the user's intent.
+
+### Compose primitives used with Miuix
+
+`LazyColumn`, `LazyRow`, `Row`, `Column`, `Box`, and `AnimatedVisibility` are Compose primitives, not Miuix components, so they do not get Miuix catalog rows or component docs. Use them to arrange and conditionally show Miuix components. Under `MiuixTheme`, standard Compose scrollables receive the theme's Miuix overscroll factory automatically; read `docs/guide/utils.md` when changing overscroll behavior.
 
 ### Scaffold
 
@@ -60,6 +68,18 @@ When the user asks about a component, first match it case-insensitively against 
 | SearchBar | `docs/components/searchbar.md` | `docs/demo/SearchBarDemo.kt` | `miuix-ui/.../basic/SearchBar.kt` |
 | ColorPalette | `docs/components/colorpalette.md` | `docs/demo/ColorPaletteDemo.kt` | `miuix-ui/.../basic/ColorPalette.kt` |
 | ColorPicker | `docs/components/colorpicker.md` | `docs/demo/ColorPickerDemo.kt` | `miuix-ui/.../basic/ColorPicker.kt` |
-| ScrollBar | — (no dedicated doc) | — (no dedicated demo) | `miuix-ui/.../basic/ScrollBar.kt` |
+| VerticalScrollBar / HorizontalScrollBar | — (no dedicated doc/demo) | Integrated use: `example/shared/.../SettingsPage.kt`, `MainPage.kt` | `miuix-ui/.../basic/ScrollBar.kt` |
 | Tooltip | `docs/components/tooltip.md` | `docs/demo/TooltipDemo.kt` | `miuix-ui/.../basic/Tooltip.kt` |
 | Badge | `docs/components/badge.md` | `docs/demo/BadgeDemo.kt` | `miuix-ui/.../basic/Badge.kt` |
+
+### SmallTitle and section labels
+
+At `v0.9.3` there is no public Miuix `SectionHeader`. `SmallTitle` is the library's auxiliary/category label and the Example normally places it immediately before the related `Card`, not inside the Card as another preference row. If a target project has a `SectionHeader`, inspect it as an application-owned wrapper before replacing it.
+
+### Scrollbar integration
+
+`VerticalScrollBar` and `HorizontalScrollBar` are experimental (`ExperimentalScrollBarApi`). Pair the bar with the same `ScrollState`, `LazyListState`, or `LazyGridState` used by the scrollable through `rememberScrollBarAdapter(state)`. The Example overlays a vertical bar as a sibling of `LazyColumn` inside a `Box`, aligns it to the end edge, and forwards the list's `contentPadding` as `trackPadding`; this keeps the bar from becoming list content or covering padded regions. Prefer this pattern for long desktop/tablet-style content, and omit a visible scrollbar when the product does not need one.
+
+### TextField validation
+
+`TextField` has no `isError` or `supportingText` parameter at `v0.9.3`. For field, Preference-row, transient-network, and blocking-page failure patterns, read [Error and Failure States](design-language.md#error-and-failure-states) rather than inferring Material parameters.

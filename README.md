@@ -47,7 +47,7 @@ OverlayDialog 和 WindowDialog 有什么区别？请给出使用建议。
 ## 参考
 
 - [Miuix GitHub](https://github.com/compose-miuix-ui/miuix)
-- [Miuix 文档](https://compose-miuix-ui.github.io/miuix/)
+- [Miuix v0.9.3 文档源文件](https://github.com/compose-miuix-ui/miuix/tree/v0.9.3/docs)
 
 ## 贡献
 

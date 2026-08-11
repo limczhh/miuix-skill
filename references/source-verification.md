@@ -1,14 +1,25 @@
 # Source Verification
 
+Use this reference after another catalog or workflow identifies an evidence path. It defines how every abbreviated path in this Skill maps to the public, release-pinned Miuix repository.
+
+## Evidence Resolution Workflow
+
+1. Start from the component catalog, [usage-pattern evidence levels](usage-patterns.md#evidence-levels), or the exact file named by another reference.
+2. Expand abbreviated paths with the table below.
+3. Read `docs/**/*.md` from the tag for intent, `docs/demo/` for isolated calls, `example/shared/` for integration, and source for the API/behavior contract.
+4. Keep all evidence on tag `v0.9.3`. Do not use the rolling rendered documentation site or its generated Dokka pages for version-specific parameters. If the target project uses another version, state that mismatch and verify that version separately.
+5. Return to the [Code Delivery Contract](../SKILL.md#code-delivery-contract) before presenting implementation or validation claims.
+
 ## Path Convention
 
 All file paths in the tables below are relative to the Miuix repository root. Resolve them using GitHub URLs:
 
 | Source | URL pattern |
 |--------|------------|
-| Read a **single file** | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/v0.9.3/<file-path>` |
+| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/v0.9.3/<file-path>` |
 | Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/v0.9.3/<dir-path>` |
-| Rendered **docs** site | `https://compose-miuix-ui.github.io/miuix/<path>` (strip `.md`; `index.md` → `/`) |
+
+The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the tagged `docs/**/*.md` file during a `v0.9.3` task.
 
 | Abbreviation | Relative path |
 |---|---|
@@ -26,8 +37,13 @@ All file paths in the tables below are relative to the Miuix repository root. Re
 | `miuix-icons/.../extended/` | `miuix-icons/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/extended/` |
 | `miuix-shader/.../shader/` | `miuix-shader/src/commonMain/kotlin/top/yukonga/miuix/kmp/shader/` |
 | `miuix-squircle/.../squircle/` | `miuix-squircle/src/commonMain/kotlin/top/yukonga/miuix/kmp/squircle/` |
+| `miuix-navigation3-ui/.../` | `miuix-navigation3-ui/src/commonMain/kotlin/androidx/navigation3/` |
+| `miuix-navigation3-ui/.../animation/` | `miuix-navigation3-ui/src/commonMain/kotlin/androidx/navigation3/animation/` |
+| `miuix-navigation3-ui/.../scene/` | `miuix-navigation3-ui/src/commonMain/kotlin/androidx/navigation3/scene/` |
+| `miuix-navigation3-ui/.../ui/` | `miuix-navigation3-ui/src/commonMain/kotlin/androidx/navigation3/ui/` |
 | `docs/components/` | `docs/components/` |
 | `docs/demo/` | `docs/demo/src/commonMain/kotlin/` |
+| `example/shared/.../` | `example/shared/src/commonMain/kotlin/` |
 
 ## Supporting Internals
 
@@ -49,11 +65,16 @@ These files underpin multiple components. They're read-on-demand, not listed per
 
 ## Example App
 
-`example/` is a full Compose Multiplatform app built with Miuix. It's the best place to see how components, icons, colors, and themes work together in a real application context.
+`example/` is a full Compose Multiplatform app built with Miuix. Use it to study integrated composition after selecting components; use `docs/demo/` for isolated component calls.
 
-| Directory | What's inside |
-|-----------|--------------|
-| `example/shared/src/commonMain/kotlin/component/` | One demo screen per component — real usage with MiuixTheme, Scaffold, and navigation |
-| `example/shared/src/commonMain/kotlin/` | App entry point, theme setup, main navigation graph |
+| Path | What's inside |
+|------|---------------|
+| `docs/demo/src/commonMain/kotlin/<Component>Demo.kt` | Minimal, isolated usage for one component |
+| `example/shared/.../App.kt`, `AppState.kt`, `ui/Theme.kt` | Application theme, theme inputs, and cross-tree state setup |
+| `example/shared/.../AppContent.kt` | Adaptive app shell, compact/wide navigation, and shared controls |
+| `example/shared/.../MainPage.kt` | Integrated home page with Scaffold, app bar actions, search, scrolling sections, and popup menus |
+| `example/shared/.../SettingsPage.kt` | Integrated settings page with titled Cards, Preference groups, dependent settings, and adaptive padding |
+| `example/shared/.../component/` | `LazyListScope` sections and popup examples composed into `MainPage`; these are sections, not one screen per component |
+| `example/shared/.../utils/PageUtils.kt` | Example-specific adaptive app bar, insets, scroll, haptic, and blur helpers |
 
-When the user asks "what does this look like in a real app" or you want to verify how components compose together, browse the relevant screen under `example/shared/.../component/` via GitHub.
+Read [Example-derived usage patterns](usage-patterns.md) before translating these files into application code. Reuse repeated hierarchy and state patterns, but verify APIs in source and do not treat Example-specific helpers as public Miuix requirements.
