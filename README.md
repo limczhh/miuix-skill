@@ -50,6 +50,8 @@ OverlayDialog 和 WindowDialog 有什么区别？请给出使用建议。
 
 当前目录中的 Reference 不需要从头读完；它们按主题组织，方便在需要时展开，也方便维护者定位证据：
 
+`SKILL.md` 是 Agent 的机器路由与交付规则；本 README 是面向维护者和读者的项目说明。两者出现重复链接时，以 `SKILL.md` 的路由规则为准。
+
 ### 页面与工作流
 
 - [`ui-review-workflow.md`](./references/ui-review-workflow.md)：已有页面的诊断、改进和结果报告。
@@ -58,6 +60,7 @@ OverlayDialog 和 WindowDialog 有什么区别？请给出使用建议。
 ### 设计与组件
 
 - [`design-language.md`](./references/design-language.md)：颜色、文字、层级、间距、Defaults 和错误/加载状态。
+- [`color-lookup.md`](./references/color-lookup.md)：把“蓝色主按钮”“红色/黄色警告”“灰色摘要文字”等视觉描述映射到已验证的 Miuix 颜色 Token，并覆盖常见组件的状态化 Defaults。
 - [`component-selection.md`](./references/component-selection.md)：场景地图和基础组件目录。
 - [`overlays-and-windows.md`](./references/overlays-and-windows.md)：Overlay、Window、弹窗和返回行为。
 - [`preferences-and-menus.md`](./references/preferences-and-menus.md)：Preference、Dropdown 和菜单组件。
@@ -67,6 +70,8 @@ OverlayDialog 和 WindowDialog 有什么区别？请给出使用建议。
 
 - [`setup-and-theme.md`](./references/setup-and-theme.md)：依赖、`ThemeController`、`MiuixTheme`、Preview 和根宿主。
 - [`source-verification.md`](./references/source-verification.md)：文档、Demo、Example 和源码路径。
+- [`miuix-nav.md`](./references/miuix-nav.md)：当前 `miuix-nav` 路由、返回栈、转场、手势和 v1 边界。
+- [`release-v0.9.4-rc01.md`](./references/release-v0.9.4-rc01.md)：从 `v0.9.3` 到当前候选快照的迁移与公开 API 变化。
 - [`release-v0.9.3.md`](./references/release-v0.9.3.md)：版本迁移时需要重新核对的 API。
 
 ## 安装
@@ -101,18 +106,23 @@ git clone https://github.com/limczhh/miuix-skill.git .claude/skills/miuix
 
 其他工具请将仓库放入对应的 Skill 目录，并确保 `SKILL.md` 位于目录根部。
 
+如果已经通过 Git 克隆安装，进入对应的 Skill 目录后执行 `git pull --ff-only` 即可更新；本仓库不要求使用者另行下载 Miuix 源码。
+
 ## 范围与版本
 
 这是一套专注于 Miuix Compose UI 的开发参考。它可以帮助你构建、完善、审查和重构 Miuix 界面；当 Miuix 没有对应组件时，会优先考虑 Compose 基础能力，并明确说明自定义行为，不会为了套用 Miuix 而强行替换项目中已有的其他 UI 体系。
 
-每个版本都会对应一组可复核的 API 证据。当前仓库的证据快照基于 Miuix `v0.9.3`，这不是永久的版本限制；随着 Miuix 上游更新，组件目录、Reference、源码路径和迁移说明也会一起更新。
+每个版本都会对应一组可复核的 API 证据。当前仓库的证据快照基于上游提交 `4a6b750b` / tag `v0.9.4-rc01`：源码版本基线为 `0.9.4`，发布脚本在 `-Prc=01` 下生成 `0.9.4-rc01`。上游目前还没有 `v0.9.4` 稳定 tag，因此本 Skill 会明确标注这是候选版本，并在正式稳定 tag 出现后重新核对。
+
+使用 Skill 时，Agent 按 [Source Verification](references/source-verification.md) 读取固定提交的上游网页源码；本地 `miuix-main` 不是终端用户的运行时依赖，只用于本项目维护和核对证据。
 
 具体的视觉效果和设备行为，仍取决于目标项目、平台以及可用的编译、预览或设备环境。
 
 当前证据入口：
 
 - [Miuix GitHub](https://github.com/compose-miuix-ui/miuix)
-- [Miuix v0.9.3 文档源文件](https://github.com/compose-miuix-ui/miuix/tree/v0.9.3/docs)
+- [Miuix 当前候选快照文档源文件](https://github.com/compose-miuix-ui/miuix/tree/4a6b750b/docs)
+- [Miuix v0.9.3 稳定版文档源文件](https://github.com/compose-miuix-ui/miuix/tree/v0.9.3/docs)
 
 ## 贡献
 

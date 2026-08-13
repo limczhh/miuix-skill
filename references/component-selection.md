@@ -2,6 +2,8 @@
 
 Use this catalog after resolving code context in [SKILL.md](../SKILL.md#resolve-code-context). After choosing a component, read its doc/demo/source at the depth defined by the entry Skill. For multi-component pages, continue with [Example-derived usage patterns](usage-patterns.md); for visual customization, use [Design language and Defaults](design-language.md).
 
+Contents: [scenario map](#scenario-component-quick-map) · [component table](#component-reference-table) · [public API boundaries](#public-api-boundaries) · [validation notes](#textfield-validation)
+
 ## Scenario → Component Quick Map
 
 When the user describes a *scenario* rather than a component name, use this table to short-circuit the lookup — no need to fetch `docs/components/index.md` first.
@@ -16,8 +18,10 @@ When the user describes a *scenario* rather than a component name, use this tabl
 | "搜索 / search" | `SearchBar` |
 | "表单 / form / 登录" | `TextField` + `Button`; add `Switch` only for an actual binary option |
 | "列表弹出 / popup menu" | `OverlayListPopup` / `OverlayCascadingListPopup` |
-| "底部导航 / 侧边导航 / navigation chrome" | `NavigationBar` (bottom) or `NavigationRail` (side) |
-| "页面路由 / 返回栈 / Navigation 3" | Read `docs/guide/navigation3.md` and the Example app shell; do not mistake navigation chrome for routing architecture |
+| "底部导航 / navigation bar / 侧边导航 / navigation chrome" | `NavigationBar` (bottom), `FloatingNavigationBar` (floating bottom), or `NavigationRail` (side) |
+| "浮动导航 / floating navigation bar / floating nav" | `FloatingNavigationBar` + `FloatingNavigationBarItem` |
+| "页面路由 / 返回栈 / route / back stack" | `miuix-nav`'s `NavDisplay` + `rememberNavBackStack`; read [the routing reference](miuix-nav.md). Do not mistake navigation chrome for routing architecture |
+| "路径导航 / 文件路径 / 目录层级" | `BreadcrumbBar` + `BreadcrumbItem`; use `highlightIndex` for the active segment and `joinToPath()` for path reconstruction |
 | "标签页 / tabs" | `TabRow` |
 | "提示气泡 / tooltip" | `TooltipBox` + `PlainTooltip` / `RichTooltip` |
 | "角标 / 徽章 / badge" | `Badge` + `BadgedBox`; for navigation, use `NavigationBarItem(badge = { ... })` or `FloatingNavigationBarItem(badge = { ... })` |
@@ -44,6 +48,7 @@ When the user asks about a component, first match it case-insensitively against 
 | Surface | `docs/components/surface.md` | `docs/demo/SurfaceDemo.kt` | `miuix-ui/.../basic/Surface.kt` |
 | TopAppBar | `docs/components/topappbar.md` | `docs/demo/TopAppBarDemo.kt` | `miuix-ui/.../basic/TopAppBar.kt` |
 | NavigationBar | `docs/components/navigationbar.md` | `docs/demo/NavigationBarDemo.kt` | `miuix-ui/.../basic/NavigationBar.kt` |
+| FloatingNavigationBar | `docs/components/navigationbar.md` | `docs/demo/NavigationBarDemo.kt` | `miuix-ui/.../basic/NavigationBar.kt` |
 | NavigationRail | `docs/components/navigationrail.md` | `docs/demo/NavigationRailDemo.kt` | `miuix-ui/.../basic/NavigationRail.kt` |
 | TabRow | `docs/components/tabrow.md` | `docs/demo/TabRowDemo.kt` | `miuix-ui/.../basic/TabRow.kt` |
 | Card | `docs/components/card.md` | `docs/demo/CardDemo.kt` | `miuix-ui/.../basic/Card.kt` |
@@ -63,6 +68,7 @@ When the user asks about a component, first match it case-insensitively against 
 | Icon | `docs/components/icon.md` | `docs/demo/IconDemo.kt` | `miuix-ui/.../basic/Icon.kt` |
 | FloatingActionButton | `docs/components/floatingactionbutton.md` | `docs/demo/FloatingActionButtonDemo.kt` | `miuix-ui/.../basic/FloatingActionButton.kt` |
 | FloatingToolbar | `docs/components/floatingtoolbar.md` | `docs/demo/FloatingToolbarDemo.kt` | `miuix-ui/.../basic/FloatingToolbar.kt` |
+| BreadcrumbBar | `docs/components/breadcrumbbar.md` | `docs/demo/BreadcrumbBarDemo.kt` | `miuix-ui/.../basic/BreadcrumbBar.kt` |
 | Divider | `docs/components/divider.md` | `docs/demo/DividerDemo.kt` | `miuix-ui/.../basic/Divider.kt` |
 | PullToRefresh | `docs/components/pulltorefresh.md` | `docs/demo/PullToRefreshDemo.kt` | `miuix-ui/.../basic/PullToRefresh.kt` |
 | SearchBar | `docs/components/searchbar.md` | `docs/demo/SearchBarDemo.kt` | `miuix-ui/.../basic/SearchBar.kt` |
@@ -72,9 +78,18 @@ When the user asks about a component, first match it case-insensitively against 
 | Tooltip | `docs/components/tooltip.md` | `docs/demo/TooltipDemo.kt` | `miuix-ui/.../basic/Tooltip.kt` |
 | Badge | `docs/components/badge.md` | `docs/demo/BadgeDemo.kt` | `miuix-ui/.../basic/Badge.kt` |
 
+### Public API boundaries
+
+The table above is a catalog of public entry points. Supporting source paths are evidence for behavior, not automatically importable APIs. In particular:
+
+- `TextButton` is a public button API documented and implemented with the Button family; verify its exact source signature before treating it as a separate module or inventing a wrapper.
+- `InputField` is the editable-field API nested in the SearchBar documentation/source. `SearchBar` itself does not expose every parameter accepted by `InputField`, including its color parameter.
+- `ProgressiveBlur` is a public effect descriptor used by modifier APIs in `miuix-blur`, not a general-purpose `miuix-ui` component; verify the target platform and the exact modifier overload in the blur source.
+- Names under [Supporting Internals](source-verification.md#supporting-internals), such as `ListPopupContent` or `DropdownImpl`, are implementation evidence unless the pinned source exports them publicly.
+
 ### SmallTitle and section labels
 
-At `v0.9.3` there is no public Miuix `SectionHeader`. `SmallTitle` is the library's auxiliary/category label and the Example normally places it immediately before the related `Card`, not inside the Card as another preference row. If a target project has a `SectionHeader`, inspect it as an application-owned wrapper before replacing it.
+At the current `0.9.4-rc01` candidate snapshot there is no public Miuix `SectionHeader`. `SmallTitle` is the library's auxiliary/category label and the Example normally places it immediately before the related `Card`, not inside the Card as another preference row. If a target project has a `SectionHeader`, inspect it as an application-owned wrapper before replacing it.
 
 ### Scrollbar integration
 
@@ -82,4 +97,10 @@ At `v0.9.3` there is no public Miuix `SectionHeader`. `SmallTitle` is the librar
 
 ### TextField validation
 
-`TextField` has no `isError` or `supportingText` parameter at `v0.9.3`. For field, Preference-row, transient-network, and blocking-page failure patterns, read [Error and Failure States](design-language.md#error-and-failure-states) rather than inferring Material parameters.
+`TextField` has no `isError` or `supportingText` parameter at the current candidate snapshot. For field, Preference-row, transient-network, and blocking-page failure patterns, read [Error and Failure States](design-language.md#error-and-failure-states) rather than inferring Material parameters.
+
+### Current candidate additions and behavior notes
+
+- `Scaffold` already hosted `floatingToolbar` and `floatingToolbarPosition` before this candidate; use the scaffold slot instead of manually overlaying a toolbar, and rely on the candidate's snackbar spacing fix for a bottom toolbar.
+- `InputField` accepts `color`; the `SearchBar` wrapper does not. Pass `Color.Transparent` only when another surface, such as a backdrop blur, intentionally owns the capsule background.
+- `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; read the migration reference before deriving a second refresh state.

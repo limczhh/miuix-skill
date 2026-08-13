@@ -17,23 +17,45 @@ When theme inputs such as color mode, key color, palette style, or color specifi
 **Compose Multiplatform project** (most common — Android, iOS, Desktop, Web):
 
 ```kotlin
-// settings.gradle.kts — ensure mavenCentral() is in the repositories block
-// build.gradle.kts (commonMain)
-implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.3")
-implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.3") // optional, for settings screens
+// settings.gradle.kts — ensure mavenCentral() is in dependencyResolutionManagement.repositories
+// module build.gradle.kts
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.4-rc01")
+            implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.4-rc01") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-icons:0.9.4-rc01") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-blur:0.9.4-rc01") // optional; Android target requires API 33
+            implementation("top.yukonga.miuix.kmp:miuix-nav:0.9.4-rc01") // optional
+        }
+    }
+}
 ```
 
 **Pure Android project:**
 
 ```kotlin
-// build.gradle.kts — ensure mavenCentral() is in the repositories block
-implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.3")
-implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.3") // optional, for settings screens
+// module build.gradle.kts — ensure mavenCentral() is configured
+android {
+    defaultConfig {
+        minSdk = 24
+    }
+}
+
+dependencies {
+    implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.4-rc01")
+    implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.4-rc01") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-icons-android:0.9.4-rc01") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-nav-android:0.9.4-rc01") // optional
+    // miuix-blur-android itself requires minSdk 33; add it only when that target is acceptable.
+}
 ```
+
+`miuix-ui`, `miuix-preference`, `miuix-icons`, and `miuix-nav` follow the candidate's Android baseline of `minSdk = 24`; `miuix-blur-android` is a separate API-33 target. Keep the dependency artifact aligned with the source set: use the common artifact in `commonMain` and the `-android` artifact for a pure Android module. Verify the target project's Compose/Kotlin/AGP compatibility before changing its build versions.
 
 ## MiuixTheme Setup
 
-Use `ThemeController` to support system dark mode / dynamic colors. Do NOT hardcode `lightColorScheme()` — it locks the app to light theme.
+Use `ThemeController` for runtime system dark mode and dynamic-color behavior. Do not choose `lightColorScheme()` merely for convenience, because that fixes the app to a light scheme; use a fixed `lightColorScheme()`/`darkColorScheme()` pair only for an intentional fixed palette, a light-only product, or deterministic preview/test content.
 
 ```kotlin
 @Composable
@@ -44,7 +66,8 @@ fun App() {
             topBar = { /* TopAppBar, NavigationBar, etc. */ },
             bottomBar = { /* NavigationBar, TabRow, etc. */ },
             floatingActionButton = { /* FloatingActionButton */ },
-            floatingToolbar = { /* FloatingToolbar */ }
+            floatingToolbar = { /* FloatingToolbar */ },
+            floatingToolbarPosition = ToolbarPosition.BottomCenter,
         ) { innerPadding ->
             // Apply innerPadding to the content root or scrolling content.
         }
@@ -54,11 +77,11 @@ fun App() {
 
 `ColorSchemeMode` options: `System` / `Light` / `Dark` / `MonetSystem` / `MonetLight` / `MonetDark`.
 
-> **Version pinning**: File paths and component mappings reflect source tree at tag `v0.9.3`. For full setup details (multiplatform, ProGuard, baseline profiles), read the Markdown source `docs/guide/getting-started.md` from that tag through [Source verification](source-verification.md).
+> **Version pinning**: Current file paths and component mappings reflect tag `v0.9.4-rc01` at commit `4a6b750b`. There is no stable `v0.9.4` tag yet; for stable `v0.9.3` work, use the historical migration reference and substitute that tag in [Source verification](source-verification.md).
 
 ## Android Studio Preview
 
-The `v0.9.3` repository does not provide a first-party `@Preview` sample, so treat Preview as target-tooling integration rather than a guaranteed Miuix runtime environment.
+The candidate repository does not provide a first-party `@Preview` sample, so treat Preview as target-tooling integration rather than a guaranteed Miuix runtime environment.
 
 - Use the target source set's normal Preview annotation/dependency and render a page/component with fake deterministic state and no real services.
 - Wrap preview content in one `MiuixTheme` with a deterministic Light or Dark `ThemeController`; avoid System/Monet inputs when the preview host cannot supply real platform theme data.

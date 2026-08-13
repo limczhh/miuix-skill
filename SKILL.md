@@ -1,6 +1,6 @@
 ---
 name: miuix
-description: "Miuix (HyperOS) Compose UI 组件库专家。当用户要求用 Miuix 构建、完善、审查或重构 UI，提到小米/HyperOS 设计风格，按截图调整现有 Miuix 界面，或引用任何 Miuix 组件名时触发此技能。触发关键词包括但不限于: NavigationBar, NavigationRail, SwitchPreference, Scaffold, OverlayDialog, ArrowPreference, SliderPreference, Tooltip, TooltipBox, PlainTooltip, RichTooltip, Badge, BadgedBox, TextButton, Snackbar, TopAppBar, SearchBar, 设置页, 偏好设置, 弹窗, 对话框, 底部弹出, 下拉选择, 搜索栏, 导航栏, 侧边导航, 标签页, 滑块, 开关, 复选框, 单选按钮, 卡片, 按钮, 文本框, 浮动操作按钮, 工具栏, 进度条, 消息条, 分割线, 颜色选择器, 下拉菜单, 级联菜单, UI 完善, UI 优化, UI 审查, HyperOS 风格 UI, 小米风格 UI。在 miuix-main 项目中, Miuix 是默认 UI 工具包 — 除非用户明确要求 Material 3 / MD3 / 其他设计系统, 否则所有 UI 工作都使用此技能。涵盖: 项目搭建、主题与视觉语言、组件选择、API 与 Example 证据、现有 UI 诊断、代码实现和版本迁移。当用户明确要求非 Miuix 设计系统时, 不使用此技能。"
+description: "Miuix (HyperOS) Compose UI 专家。用户用 Miuix 构建/审查/重构 UI，或提到 Miuix/HyperOS、小米风格、MiuixTheme、ThemeController、miuix-ui、miuix-preference、miuix-icons、miuix-blur、miuix-squircle、miuix-nav 及其 API 时触发。点名 Miuix 英文组件/写法也触发：NavigationBar/navigation bar、FloatingNavigationBar/floating navigation bar、NavigationRail、TopAppBar/top app bar、Scaffold、TabRow、Button、TextButton、IconButton、FloatingActionButton、FloatingToolbar、Card、TextField/text field、InputField、SearchBar/search bar、Slider/slider、SliderPreference、Switch、Checkbox、RadioButton、ProgressIndicator、Snackbar、Tooltip、TooltipBox、PlainTooltip、RichTooltip、Badge、BadgedBox、BreadcrumbBar/breadcrumb bar、PullToRefresh/pull to refresh、ColorPicker、OverlayDialog、OverlayBottomSheet、OverlayListPopup、WindowDialog、ArrowPreference、SwitchPreference、CheckboxPreference、RadioButtonPreference、miuix-nav/NavDisplay。也用于设置页、弹窗、导航、表单、颜色/主题、无障碍、自适应和 UI 优化。通用词如按钮、卡片、文本框、进度条、button、card、slider 仅在 Miuix/HyperOS 或项目已使用 Miuix 的上下文中触发；用户明确指定 Material 3/MD3/其他设计系统时不触发。涵盖搭建、主题、组件选择、API/Example 证据、UI 诊断、实现和版本迁移。"
 ---
 
 # Miuix Skill
@@ -15,16 +15,21 @@ Miuix is a Compose Multiplatform UI component library that implements Xiaomi Hyp
 | `miuix-ui` | Core UI components — Button, Switch, TextField, NavigationBar, Scaffold, dialogs, etc. | — (root module, includes miuix-core, miuix-squircle) |
 | `miuix-preference` | Settings-screen components — SwitchPreference, CheckboxPreference, SliderPreference, dropdown selectors, etc. | depends on miuix-ui |
 | `miuix-icons` | 100+ extended icons in 5 weights (Light/Normal/Regular/Medium/Demibold) | includes miuix-core |
-| `miuix-blur` | Backdrop blur effects (Android minSdk=33) | includes miuix-shader |
+| `miuix-blur` | Backdrop blur, texture effects, and progressive blur (Android effect paths require RuntimeShader/API 33) | includes miuix-shader |
 | `miuix-shader` | RuntimeShader abstraction layer (cross-platform shader support) | — (transitively included by miuix-blur / miuix-squircle) |
 | `miuix-squircle` | Squircle shape — continuous-curvature corners that look smoother than RoundedCornerShape on screen. Auto-falls back to RoundedCornerShape below API 33. | — (transitively included by miuix-ui) |
-| `miuix-navigation3-ui` | Jetpack Navigation 3 scene and transition UI | independent of miuix-ui; requires Navigation 3 runtime and uses miuix-squircle internally |
+| `miuix-nav` | Self-contained Compose Multiplatform navigation runtime with a serializable back stack, continuous-depth transitions, and predictive/edge back handling | independent of `miuix-ui`; uses `miuix-squircle`, lifecycle/ViewModel, navigation-event, and kotlinx serialization APIs internally |
 
-Most projects start with `miuix-ui` and add `miuix-preference` for settings rows. Add `miuix-icons`, `miuix-blur`, or `miuix-navigation3-ui` explicitly when those features are used. `miuix-ui` already brings in `miuix-core` and `miuix-squircle`; `miuix-shader` arrives transitively through `miuix-blur` or `miuix-squircle`.
+Most projects start with `miuix-ui` and add `miuix-preference` for settings rows. Add `miuix-icons`, `miuix-blur`, or `miuix-nav` explicitly when those features are used. `miuix-ui` already brings in `miuix-core` and `miuix-squircle`; `miuix-shader` arrives transitively through `miuix-blur` or `miuix-squircle`. `miuix-nav` is the current navigation module; do not infer `androidx.navigation3` APIs from the older module name.
 
 **Key concepts:**
 - The application UI subtree must be under an ancestor `MiuixTheme`, which provides `MiuixTheme.colorScheme.*` and `MiuixTheme.textStyles.*`; individual screens should not duplicate the root theme
+- Natural-language color requests need role lookup: read [Color semantics and visual lookup](references/color-lookup.md) and map the user's visual description to a verified token or component `*Defaults` factory; do not invent `warning`/`alert` tokens or equate a default blue sample with a permanent semantic hue
 - Overlay components (OverlayDialog, OverlayBottomSheet, etc.) render inside `Scaffold`'s popup layer — they follow the page lifecycle and need a `Scaffold` ancestor. Window components (WindowDialog, WindowBottomSheet, etc.) render in an independent window layer — they're standalone, ideal for cross-page global popups.
+- `Scaffold` can host a `floatingToolbar` with a `ToolbarPosition`; this slot predates the current candidate, while the candidate fixes bottom-toolbar spacing so the `Snackbar` stays above it.
+- `PullToRefresh` keeps `isRefreshing` hoisted, while `rememberPullToRefreshState(refreshThreshold = ...)` owns indicator mechanics and exposes full-range progress for optional observers.
+- `miuix-nav` separates route/back-stack ownership from `NavigationBar`/`NavigationRail` chrome. `rememberNavBackStack` requires `@Serializable` route keys for save/restore; the v1 runtime is a flat stack, does not provide dialog scenes or a built-in result channel, and defaults transition input blocking off.
+- Treat an exact Miuix English component name or its common spaced form as a direct signal: map `navigation bar`, `floating navigation bar`, `slider`, `search bar`, and similar names to the component catalog before applying generic Compose UI advice.
 - Public components generally follow a recognizable parameter order, but exact signatures must be verified in docs/demo/source rather than inferred
 - Many configurable components expose a dedicated `*Defaults` object for supported dimensions, shapes, colors, and state styling
 
@@ -40,6 +45,7 @@ Read only the reference files required for the task:
 **Design and component selection**
 
 - [Design language and component Defaults](references/design-language.md)
+- [Color semantics and visual lookup](references/color-lookup.md)
 - [Scenario map and basic component catalog](references/component-selection.md)
 - [Overlay and window component catalog](references/overlays-and-windows.md)
 - [Preference and dropdown menu catalog](references/preferences-and-menus.md)
@@ -49,7 +55,9 @@ Read only the reference files required for the task:
 - [Project setup and theme](references/setup-and-theme.md)
 - [Styling, icons, and effects](references/styling-icons-and-effects.md)
 - [Path conventions, supporting internals, and example app](references/source-verification.md)
-- [v0.9.2 → v0.9.3 migration notes](references/release-v0.9.3.md)
+- [`miuix-nav` routing and transition guide](references/miuix-nav.md)
+- [v0.9.3 → v0.9.4-rc01 migration notes](references/release-v0.9.4-rc01.md)
+- [Historical v0.9.2 → v0.9.3 migration notes](references/release-v0.9.3.md)
 
 ## Resolve Code Context
 
@@ -65,14 +73,15 @@ Decide which layer the requested code owns before writing it:
 
 Do not stop after locating a component or source file. Turn the evidence into an implementation:
 
-1. Resolve the code context above, then understand the user's visual and behavioral goal.
-2. Inspect the target project's theme, page shell, hierarchy, state ownership, navigation, insets, and existing conventions when project code is available.
-3. For an existing UI review or polish task, follow [UI review and improvement workflow](references/ui-review-workflow.md). Inspect both code and available visual evidence before changing geometry.
-4. Classify the request by scenario, then select Miuix components from the relevant catalog.
-5. Load evidence at the required depth. Read Markdown docs from the `v0.9.3` tag for intent, `docs/demo/` for a minimal call shape, `example/shared/` for integrated composition, and tagged source for the final API contract.
-6. Before designing or restructuring a page, read [Example-derived usage patterns](references/usage-patterns.md) and [Design language and Defaults](references/design-language.md). Extract the pattern; do not copy the showcase application wholesale.
-7. Implement with public Miuix components, semantic theme tokens, and component Defaults first. Customize only for an explicit product need or established project convention.
-8. Verify exact APIs against the pinned `v0.9.3` source. Compile code changes and validate visual changes with a render, screenshot, preview, emulator, or device when available.
+1. Resolve the target project's Miuix version before using a version-sensitive example: inspect its Gradle files, version catalog, dependency lock, or build output; identify the platform/source set; then choose the matching upstream tag or commit. Treat this Skill's `0.9.4-rc01` snapshot as a fallback reference only when the target version is unknown, and label the mismatch.
+2. Resolve the code context above, then understand the user's visual and behavioral goal.
+3. Inspect the target project's theme, page shell, hierarchy, state ownership, navigation, insets, and existing conventions when project code is available.
+4. For an existing UI review or polish task, follow [UI review and improvement workflow](references/ui-review-workflow.md). Inspect both code and available visual evidence before changing geometry.
+5. Classify the request by scenario, then select Miuix components from the relevant catalog.
+6. Load evidence at the required depth. For the current catalog, use the pinned web-source paths in [Source verification](references/source-verification.md): read the relevant Markdown doc, demo, Example code, and source from the `0.9.4-rc01` candidate snapshot at commit `4a6b750b`; use the historical `v0.9.3` tag only when the task explicitly targets that release.
+7. Before designing or restructuring a page, read [Example-derived usage patterns](references/usage-patterns.md) and [Design language and Defaults](references/design-language.md). Extract the pattern; do not copy the showcase application wholesale.
+8. Implement with public Miuix components, semantic theme tokens, and component Defaults first. Customize only for an explicit product need or established project convention.
+9. Verify exact APIs against the pinned candidate snapshot in [Source verification](references/source-verification.md). Compile code changes and validate visual changes with a render, screenshot, preview, emulator, or device when available.
 
 ## Evidence Loading Strategy
 
@@ -84,10 +93,24 @@ Load only what the request needs:
 | **Single component explanation** | Relevant catalog row + component doc | Explain purpose, states, and parameters |
 | **Single component code** | Component doc + matching `docs/demo/<Component>Demo.kt`; read source for uncertain parameters; add [Project setup and theme](references/setup-and-theme.md) if the example owns `App`/theme/host | Produce a minimal, version-correct call in the right ancestor context |
 | **Page creation or redesign** | [Example-derived usage patterns](references/usage-patterns.md) + [Design language and Defaults](references/design-language.md) + the closest page or section under `example/shared/`; add setup/theme when the code owns the root | Reuse integrated composition and semantic visual roles without duplicating hosts |
+| **Natural-language color or visual styling** | [Color semantics and visual lookup](references/color-lookup.md) + [Design language and Defaults](references/design-language.md) + tagged `Colors.kt` and the selected component's Defaults | Resolve hue plus visual role to a real Miuix token/factory, preserve container/`on*` pairing, and distinguish fixed default samples from dynamic theme output |
 | **Existing UI review or polish** | [UI review and improvement workflow](references/ui-review-workflow.md) + [Design language and Defaults](references/design-language.md) + target code and available visual evidence | Diagnose hierarchy, styling, state, inset, adaptive, and accessibility problems before editing |
+| **Accessibility, adaptive, or platform-sensitive UI** | [UI review and improvement workflow](references/ui-review-workflow.md) + [Styling, icons, and effects](references/styling-icons-and-effects.md) + target platform evidence | Check semantics, targets, text scaling, RTL, IME, light/dark/dynamic color, and supported platform behavior instead of treating a screenshot as the whole contract |
 | **Popup, dialog, or dropdown** | [Overlay and window component catalog](references/overlays-and-windows.md) or [Preference and dropdown menu catalog](references/preferences-and-menus.md) + matching demo + source | Choose the correct host/lifecycle and state model |
-| **Navigation architecture** | [Example-derived usage patterns](references/usage-patterns.md) + `docs/guide/navigation3.md` + `example/shared/.../AppState.kt` and `AppContent.kt` | Separate routing/back-stack architecture from NavigationBar or NavigationRail chrome |
+| **Navigation architecture** | [Example-derived usage patterns](references/usage-patterns.md) + [`miuix-nav` guide](references/miuix-nav.md) + `example/shared/.../AppState.kt`, `AppContent.kt`, and `navigation/` | Separate `NavDisplay` routing/back-stack architecture from NavigationBar or NavigationRail chrome |
 | **Internal behavior or debugging** | [Path conventions and supporting internals](references/source-verification.md) + doc + demo + source | Trace implementation instead of guessing |
+
+### Stop loading evidence
+
+Stop expanding the evidence set when the task has the minimum proof it needs:
+
+- For an explanation, the public purpose and relevant parameters are supported by the pinned documentation and, where behavior is non-obvious, source.
+- For a component snippet, the exact signature, imports/dependency, required ancestor, and state/callback contract are known from the doc/demo/source path.
+- For a page, the hierarchy, host, state owner, insets, and relevant Example composition are mapped; do not keep reading unrelated component demos.
+- For a review, the target code and available visual evidence have been classified, and the applicable static/render/runtime validation level is chosen.
+- For a migration, the exact target tag/commit, affected API diff, and target compilation/regression checks are identified.
+
+Reopen already-read references only when a version, platform, or source conflict appears. If the required pinned web evidence is unavailable, stop and report the verification gap instead of silently widening to unpinned sources.
 
 ## Code Delivery Contract
 
@@ -104,7 +127,7 @@ Before returning code:
 - Default to the smallest integration-ready snippet that fulfills the interaction. Return a complete root `App` only when the user asks for a standalone/runnable example or project setup owns the root; include exact imports for standalone code.
 - Preserve or explicitly define state ownership. Hoist persistent/business state; keep only transient presentation state such as local popup visibility in `remember`.
 - Make theme, `Scaffold`, popup-host, and inset ownership explicit according to **Resolve Code Context**. Never add a bare root `MiuixTheme {}` when the example is responsible for system theme behavior; use the `ThemeController` pattern from setup/theme.
-- Include dependency lines only when setup is part of the task or the target project is missing them. Respect the target project's Miuix version; this Skill's API catalog is pinned to `v0.9.3`.
+- Include dependency lines only when setup is part of the task or the target project is missing them. Respect the target project's Miuix version; this Skill's catalog follows the `0.9.4-rc01` candidate snapshot and must be rechecked when the target uses another version.
 - Do not omit callbacks, dismissal paths, disabled behavior, or selected-value updates needed to make the demonstrated interaction work.
 - Use Miuix components that match the scenario, consume Scaffold/inset padding, and prefer theme tokens/component Defaults before literal styling. Do not present Example-only helpers as library requirements.
 - Report source/API verification, compilation, and visual/device validation as separate facts.
@@ -119,9 +142,11 @@ Miuix is an independent library — its API surface is completely different from
 
 Apply these non-negotiable checks:
 
-- Read component intent from the tagged Markdown doc, isolated usage from its demo, integrated composition from the closest Example page, and uncertain or version-sensitive contracts from `v0.9.3` source.
+- Read the evidence depth required by the task: component intent from the upstream Markdown doc, isolated usage from its demo when producing a call shape, integrated composition from the closest Example page when composing a page, and uncertain or version-sensitive contracts from the exact snapshot in [Source verification](references/source-verification.md). Do not load every reference or every upstream file by default.
 - Treat Example as a reference implementation, not an API contract. Reuse hierarchy and state flow without importing showcase-only helpers or effects.
-- When `v0.9.3` has no public Miuix component for the requested interaction, compose it first from Compose Foundation/Layout/Animation primitives under `MiuixTheme`, reuse Miuix semantic tokens and nearby component Defaults, and keep the custom wrapper application-owned. Mix Material or Material 3 only when the target project intentionally does so or the user explicitly requests it. Disclose the custom behavior and verify its semantics, disabled/error states, and platform behavior.
-- Verify `NavigationBarItem.badge`, `FloatingNavigationBarItem.badge`, `NavigationRailState`, `TextButton.textStyle`, `SnackbarHostState`, and `PullToRefresh.isRefreshing` before giving migration-sensitive examples.
+- When the candidate snapshot has no public Miuix component for the requested interaction, compose it first from Compose Foundation/Layout/Animation primitives under `MiuixTheme`, reuse Miuix semantic tokens and nearby component Defaults, and keep the custom wrapper application-owned. Mix Material or Material 3 only when the target project intentionally does so or the user explicitly requests it. Disclose the custom behavior and verify its semantics, disabled/error states, and platform behavior.
+- Verify `BreadcrumbBar`, the existing `Scaffold.floatingToolbar` slot and its candidate snackbar spacing, `InputField.color` (not `SearchBar.color`), `OverlayDialog`/`WindowDialog` `maxWidth`/`largeScreen`/`cornerRadius`, `WindowNavigationEventScope`, `PullToRefresh` progress APIs, `RadioButtonPreference.colors`, and `ProgressiveBlur` before giving migration-sensitive examples.
+- For `miuix-nav`, verify `NavKey`, `rememberNavBackStack`, `NavDisplay`'s `entry<T> { ... }` DSL, `NavTransitions`, and `NavDisplayEffects` in the candidate source. Do not fabricate `androidx.navigation3` scene APIs or a built-in result channel.
 - Use only color and typography tokens present in tagged `Colors.kt` and `TextStyles.kt`; do not infer Material or Material 3 names.
+- For color descriptions such as “蓝色主按钮”“红色警告”“黄色警告”“灰色摘要文字”, read [Color semantics and visual lookup](references/color-lookup.md). Verify the actual `Colors` source and the selected component's Defaults; use `error` only for the candidate's red status role, and use an app-owned semantic token for yellow/non-error warning states instead of fabricating `alert`/`warning`/`success` properties. For named controls such as `Switch`, `Checkbox`, `RadioButton`, `Badge`, `Snackbar`, `TabRow`, `ProgressIndicator`, `ScrollBar`, and `Tooltip`, preserve their state-specific Defaults rather than inferring colors from hue alone.
 - For icon dependencies, verified icon names, blur limits, and the actual squircle modifiers, read [Styling, icons, and effects](references/styling-icons-and-effects.md).

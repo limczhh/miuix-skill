@@ -1,6 +1,6 @@
 # Example-Derived Usage Patterns
 
-At tag `v0.9.3`, `docs/guide/best-practices.md` explicitly points to the project's Example application as a real-world demonstration of how Miuix components and design principles are applied. Treat it as a first-party reference implementation, while keeping source code authoritative for API contracts. Before applying these patterns, resolve theme and host ownership in [Project setup and theme](setup-and-theme.md) and follow the [Code Delivery Contract](../SKILL.md#code-delivery-contract).
+At the `0.9.4-rc01` candidate snapshot, `docs/guide/best-practices.md` explicitly points to the project's Example application as a real-world demonstration of how Miuix components and design principles are applied. Treat it as a first-party reference implementation, while keeping source code authoritative for API contracts. Before applying these patterns, resolve theme and host ownership in [Project setup and theme](setup-and-theme.md) and follow the [Code Delivery Contract](../SKILL.md#code-delivery-contract).
 
 ## Contents
 
@@ -9,7 +9,7 @@ At tag `v0.9.3`, `docs/guide/best-practices.md` explicitly points to the project
 - [Derive a Pattern Before Coding](#derive-a-pattern-before-coding)
 - [Application Root and Theme](#application-root-and-theme)
 - [Page Shell and Adaptive Navigation](#page-shell-and-adaptive-navigation)
-- [Navigation 3 Routing](#navigation-3-routing)
+- [`miuix-nav` Routing](#miuix-nav-routing)
 - [Settings and Grouped Content](#settings-and-grouped-content)
 - [State and Component Variants](#state-and-component-variants)
 - [Overlay and Window Components](#overlay-and-window-components)
@@ -32,7 +32,7 @@ Use this map after choosing components. Unless a path starts with another root, 
 |---|---|---|
 | Application theme and global UI state | `App.kt`, `AppState.kt`, `ui/Theme.kt` | Root theme, theme inputs, and stable cross-screen state |
 | Adaptive app shell and navigation | `AppContent.kt`, `AppState.kt` | Compact/wide branching, Scaffold placement, NavigationBar/Rail, and shared controls |
-| Navigation 3 routing and scenes | `App.kt`, `AppState.kt`, `AppContent.kt`, then `docs/guide/navigation3.md` | Back stack, scenes, transitions, and their separation from NavigationBar/Rail presentation |
+| `miuix-nav` routing and transitions | `App.kt`, `AppState.kt`, `AppContent.kt`, `navigation/`, then `docs/guide/miuix-nav.md` | Serializable back stack, entry DSL, transitions, gestures, and their separation from NavigationBar/Rail presentation |
 | Home/list page with search and actions | `MainPage.kt`, `component/SuperSearchBar.kt` | App bar, scroll content, search, section composition, and popup actions |
 | Settings page | `SettingsPage.kt` | `SmallTitle` + `Card` grouping, Preference rows, dependent visibility, and content padding |
 | Dialog flow | `component/DialogSection.kt` | Overlay/Window choice, trigger rows, visibility, dismissal, actions, and exit cleanup |
@@ -48,7 +48,7 @@ Use this map after choosing components. Unless a path starts with another root, 
 2. Identify which parts are Miuix contracts, repeated composition patterns, and Example-specific choices.
 3. Compare the integrated use with the isolated `docs/demo/` file for each selected component.
 4. Adapt the pattern to the target project's state ownership, navigation, insets, and existing spacing.
-5. Verify exact names and parameters in the `v0.9.3` source before producing code.
+5. Verify exact names and parameters in the pinned candidate source before producing code.
 
 Do not copy a whole Example file into an application. The Example includes navigation infrastructure, blur helpers, diagnostics, and showcase-only effects that most projects do not need.
 
@@ -69,40 +69,40 @@ Evidence: `MainPage.kt`, `SettingsPage.kt`, and `utils/PageUtils.kt`.
 - Use `Scaffold` as the page shell when the page has bars, floating controls, snackbars, or Overlay components. Reuse an existing intended host instead of nesting one only for visual structure.
 - Consume the `PaddingValues` supplied by `Scaffold`; pass them to `LazyColumn.contentPadding` as the Example does, or apply them to the content root and consume the corresponding window insets as required by the Scaffold contract. Do not let content render underneath bars accidentally.
 - Connect a top app bar's scroll behavior to the scrolling content when the page uses collapsing or scroll-aware bars.
-- At `v0.9.3`, create `val scrollBehavior = MiuixScrollBehavior()`, pass it to `TopAppBar(scrollBehavior = scrollBehavior)`, and apply `Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)` to the scrolling container. Keep the `LazyListState` used by `LazyColumn(state = ...)` separate from the app-bar behavior state.
+- At the candidate snapshot, create `val scrollBehavior = MiuixScrollBehavior()`, pass it to `TopAppBar(scrollBehavior = scrollBehavior)`, and apply `Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)` to the scrolling container. Keep the `LazyListState` used by `LazyColumn(state = ...)` separate from the app-bar behavior state. When a `SmallTopAppBar` shares a scroll behavior with a collapsible bar, verify the pinned-state behavior in source rather than adding an external offset workaround.
+- If the page owns a `FloatingToolbar`, put it in the existing `Scaffold(floatingToolbar = ..., floatingToolbarPosition = ...)` slot; the current candidate fixes the layout so a bottom snackbar stays above the toolbar.
 - Keep adaptive width, system insets, scroll haptics, blur, and scrollbar helpers conditional. The Example's `PageUtils.kt` is application infrastructure, not public Miuix API.
 
 ### NavigationBar ↔ NavigationRail switching
 
-The `v0.9.3` Example computes its own window policy from `LocalWindowInfo`: it uses the wide/split layout at `width >= 840.dp`, or at `width >= 600.dp` when `height / width < 1.2`; it expands the rail at `width >= 1200.dp`. These are Example application breakpoints, not Miuix component requirements.
+The candidate Example computes its own window policy from `LocalWindowInfo`: it uses the wide/split layout at `width >= 840.dp`, or at `width >= 600.dp` when `height / width < 1.2`; it expands the rail at `width >= 1200.dp`. These are Example application breakpoints, not Miuix component requirements.
 
 - Reuse the target project's existing adaptive system. Android-only apps may already use a Window Size Class; multiplatform apps may use `LocalWindowInfo` or another shared policy. Keep the decision in one named function rather than scattering width checks through components.
 - Remember or hoist the selected destination/pager/back-stack before branching. Render `NavigationBar` and `NavigationRail` from that same state, so a resize changes chrome without resetting selection or creating two sources of truth.
 - Use compact/wide branches for materially different shells. If only the navigation component changes, keep page content and business state outside the branch.
 - Treat `600/840/1200.dp` as a source-derived starting point only when the product has no existing policy, then validate resizable windows, orientation changes, and foldable/tablet layouts.
 
-## Navigation 3 Routing
+## `miuix-nav` Routing
 
-Use Navigation 3 for route/back-stack ownership, and use `NavigationBar`/`NavigationRail` for top-level navigation chrome. At `v0.9.3`, the minimal route flow is `NavKey` → mutable `backStack` → `entryProvider` → `rememberDecoratedNavEntries` → `NavDisplay`:
+Use `miuix-nav` for route/back-stack ownership, and use `NavigationBar`/`NavigationRail` for top-level navigation chrome. The current minimal route flow is `@Serializable` route hierarchy → `rememberNavBackStack<Route>` → `NavDisplay` entry DSL:
 
 ```kotlin
+@Serializable
 sealed interface Route : NavKey {
-    data object Home : Route
-    data class Detail(val id: String) : Route
+    @Serializable data object Home : Route
+    @Serializable data class Detail(val id: String) : Route
 }
 
-val backStack = remember { mutableStateListOf<NavKey>(Route.Home) }
-val entryProvider = remember(backStack) {
-    entryProvider<NavKey> {
-        entry(Route.Home) { HomePage() }
-        entry<Route.Detail> { DetailPage(it.id) }
-    }
+val backStack = rememberNavBackStack<Route>(Route.Home)
+NavDisplay(backStack = backStack) {
+    entry<Route.Home> { HomePage() }
+    entry<Route.Detail> { DetailPage(it.id) }
 }
-val entries = rememberDecoratedNavEntries(backStack = backStack, entryProvider = entryProvider)
-NavDisplay(entries = entries, onBack = { if (backStack.size > 1) backStack.removeLast() })
 ```
 
-For a bottom/rail navigation shell, derive each item's `selected` and `onClick` from the same top-level page or pager state used by the content. Do not derive tab selection from a `NavDisplay` entry or create separate compact and wide selection states. Use `rememberNavBackStack` plus saved-state configuration when the target app needs restoration beyond the small in-memory pattern above. Read `docs/guide/navigation3.md` and the Example `AppContent.kt` before adding transitions or nested routes.
+Register every concrete route type; the DSL matches exact runtime classes. Use `NavController` when `push`, `pop`, `replace`, or `popUntil` reads more clearly than direct list operations. Built-in transitions are `NavTransitions.MiuixDefault`, `Modal`, and `None`; swipe-to-dismiss is opt-in through `entry(swipeDismiss = ...)`, and physical directions are not automatically mirrored for RTL. Use the complete [miuix-nav routing reference](miuix-nav.md) for saveable identity, `contentKey`, nested displays, multi-pane clipping, and v1 limitations.
+
+For a bottom/rail navigation shell, derive each item's `selected` and `onClick` from the same top-level page or pager state used by the content. Do not derive tab selection from a `NavDisplay` entry or create separate compact and wide selection states. Do not import the removed `androidx.navigation3` scene flow into current candidate code.
 
 ## Settings and Grouped Content
 

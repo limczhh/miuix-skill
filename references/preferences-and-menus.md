@@ -19,7 +19,7 @@ Choose Overlay versus Window lifetime with [Overlay and Window Components](overl
 | A settings row that displays one current value and owns a selected index | `*DropdownPreference` or richer `*SpinnerPreference`, not a menu |
 | A full `BasicComponent`-style row that opens flat actions, grouped choices, or multi-select items | `OverlayDropdownMenu` / `WindowDropdownMenu` |
 | A compact toolbar/action icon that opens the same flat menu model | `OverlayIconDropdownMenu` / `WindowIconDropdownMenu` |
-| An icon action whose top-level items open child choices | `OverlayIconCascadingDropdownMenu` / `WindowIconCascadingDropdownMenu`; `v0.9.3` supports at most two levels |
+| An icon action whose top-level items open child choices | `OverlayIconCascadingDropdownMenu` / `WindowIconCascadingDropdownMenu`; verify the candidate source before relying on a nesting-depth limit |
 
 “Icon” describes the anchor (`IconButton`) rather than promising an icon on every menu item. Plain menu items may still expose selection state. Choose Overlay versus Window after choosing flat versus cascading and row versus icon anchor.
 
@@ -37,6 +37,14 @@ Choose Overlay versus Window lifetime with [Overlay and Window Components](overl
 | WindowSpinnerPreference | `docs/components/windowspinnerpreference.md` | `docs/demo/WindowSpinnerPreferenceDemo.kt` | `miuix-preference/.../preference/WindowSpinnerPreference.kt` |
 | SliderPreference | `docs/components/sliderpreference.md` | — | `miuix-preference/.../preference/SliderPreference.kt` |
 | RangeSliderPreference | `docs/components/rangesliderpreference.md` | — | `miuix-preference/.../preference/SliderPreference.kt` |
+
+### RadioButtonPreference in the current candidate
+
+`RadioButtonPreference` remains a controlled row: hoist `selected` and update it from `onClick`. The candidate removes the old `titleColor` and `summaryColor` parameters and groups them in `RadioButtonPreferenceColors` through `colors = RadioButtonPreferenceDefaults.radioButtonPreferenceColors(...)`; selected title and summary colors default to the theme primary color. The entire row owns the radio interaction and haptic feedback, so do not add a second clickable wrapper around the radio control.
+
+Use `radioButtonLocation = RadioButtonLocation.Start` or `.End` when the control position matters. `startAction`, nullable `endActions`, and `bottomAction` are extension slots, and custom interactive content must receive the same `enabled` state explicitly.
+
+The candidate's cascading menu state is tracked by entry/item position rather than the `DropdownItem` object reference. This lets selected-state values refresh without closing the submenu, but requires the entry and item order to remain stable while the popup is visible. Predictive back can also interrupt and reverse the active enter/expand track.
 
 ### RangeSliderPreference quick cue
 
