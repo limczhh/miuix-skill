@@ -95,6 +95,8 @@ NavDisplay(backStack, transition = NavTransitions.MiuixDefault) {
 
 For asymmetric push/pop/predictive visuals, use `navDirectionalTransition(push, pop, predictivePop)`. For custom graphics-layer transitions, `navGraphicsTransition(...)` exposes `opaqueDepth`, `dismissDirection`, `motion`, an optional `scrim` curve, and a `NavTransitionScope` with depth, role, change, gesture/settle context, layout size, direction, and density. Read those values inside the deferred graphics-layer block.
 
+For lower-level hosts, the candidate also exposes `PredictiveBackHandler`/`NavBackEvent` for a custom predictive-back consumer, `Modifier.navSwipeDismiss` for a standalone swipe surface, and `rememberNavSystemCornerRadius()` for platform-reported screen-corner clipping. These are lower-level escape hatches; prefer `NavDisplay` and its `effects`/`entry(swipeDismiss = ...)` options for ordinary routing.
+
 The built-in `NavDisplay` installs the shared navigation-event bridge. If a custom host needs the lower-level stream, `PredictiveBackHandler` is in `nav/gesture`; if the host is a separate platform window, wrap its content in `miuix-ui`'s `WindowNavigationEventScope` so the focused window owns back dispatch.
 
 ## Keep routing separate from navigation chrome

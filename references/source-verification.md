@@ -83,7 +83,10 @@ These files underpin multiple components. They're read-on-demand, not listed per
 | `miuix-ui/.../basic/PullToRefresh.kt` | `PullToRefreshState` threshold/progress state machine and real-gesture gating |
 | `miuix-ui/.../basic/TopAppBar.kt` | `SmallTopAppBar` pinned-state handling and `TopAppBarState.Saver` |
 | `miuix-blur/.../TextureEffect.kt` | Uniform and progressive texture-blur modifier overloads |
+| `miuix-blur/.../ProgressiveBlur.kt` | `ProgressiveBlur` descriptor and edge-fade presets |
 | `miuix-blur/.../BackdropEffects.kt` | Custom backdrop effect-block APIs, including progressive blur |
+| `miuix-ui/.../utils/Overscroll.kt` | Modifier overscroll API, real-gesture gating, and stale-offset recovery |
+| `miuix-ui/.../utils/OverscrollFactory.kt` | Theme-level `MiuixOverscrollFactory` / `MiuixOverscrollEffect` behavior |
 
 ## Example App
 
