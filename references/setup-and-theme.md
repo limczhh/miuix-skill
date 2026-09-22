@@ -22,11 +22,11 @@ When theme inputs such as color mode, key color, palette style, or color specifi
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.4-rc01")
-            implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.4-rc01") // optional
-            implementation("top.yukonga.miuix.kmp:miuix-icons:0.9.4-rc01") // optional
-            implementation("top.yukonga.miuix.kmp:miuix-blur:0.9.4-rc01") // optional; Android target requires API 33
-            implementation("top.yukonga.miuix.kmp:miuix-nav:0.9.4-rc01") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.4")
+            implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.4") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-icons:0.9.4") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-blur:0.9.4") // optional; Android target requires API 33
+            implementation("top.yukonga.miuix.kmp:miuix-nav:0.9.4") // optional
         }
     }
 }
@@ -43,15 +43,15 @@ android {
 }
 
 dependencies {
-    implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.4-rc01")
-    implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.4-rc01") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-icons-android:0.9.4-rc01") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-nav-android:0.9.4-rc01") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.4")
+    implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.4") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-icons-android:0.9.4") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-nav-android:0.9.4") // optional
     // miuix-blur-android itself requires minSdk 33; add it only when that target is acceptable.
 }
 ```
 
-`miuix-ui`, `miuix-preference`, `miuix-icons`, and `miuix-nav` follow the candidate's Android baseline of `minSdk = 24`; `miuix-blur-android` is a separate API-33 target. Keep the dependency artifact aligned with the source set: use the common artifact in `commonMain` and the `-android` artifact for a pure Android module. Verify the target project's Compose/Kotlin/AGP compatibility before changing its build versions.
+`miuix-ui`, `miuix-preference`, `miuix-icons`, and `miuix-nav` follow the stable `0.9.4` Android baseline of `minSdk = 24`; `miuix-blur-android` is a separate API-33 target. Keep the dependency artifact aligned with the source set: use the common artifact in `commonMain` and the `-android` artifact for a pure Android module. Verify the target project's Compose/Kotlin/AGP compatibility before changing its build versions.
 
 ## MiuixTheme Setup
 
@@ -77,11 +77,11 @@ fun App() {
 
 `ColorSchemeMode` options: `System` / `Light` / `Dark` / `MonetSystem` / `MonetLight` / `MonetDark`.
 
-> **Version pinning**: Current file paths and component mappings reflect tag `v0.9.4-rc01` at commit `4a6b750b`. There is no stable `v0.9.4` tag yet; for stable `v0.9.3` work, use the historical migration reference and substitute that tag in [Source verification](source-verification.md).
+> **Version pinning**: Current file paths and component mappings reflect stable tag `v0.9.4` at commit `39c40f99`. For a project migrating from `v0.9.3`, use the single [v0.9.3 → v0.9.4 migration reference](release-v0.9.4.md); the rest of this Skill describes only the stable API.
 
 ## Android Studio Preview
 
-The candidate repository does not provide a first-party `@Preview` sample, so treat Preview as target-tooling integration rather than a guaranteed Miuix runtime environment.
+The repository does not provide a first-party `@Preview` sample, so treat Preview as target-tooling integration rather than a guaranteed Miuix runtime environment.
 
 - Use the target source set's normal Preview annotation/dependency and render a page/component with fake deterministic state and no real services.
 - Wrap preview content in one `MiuixTheme` with a deterministic Light or Dark `ThemeController`; avoid System/Monet inputs when the preview host cannot supply real platform theme data.

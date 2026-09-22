@@ -1,6 +1,6 @@
 # Color Semantics and Visual Lookup
 
-Use this reference when a user describes a color visually—“蓝色主按钮”“浅色卡片背景”“灰色摘要文字”“红色警告”，但还不知道对应的 Miuix 参数或 Token 名称。证据固定于上游 tag `v0.9.4-rc01`，提交为 `4a6b750b578880146876e4ab77097d9b01702413`。
+Use this reference when a user describes a color visually—“蓝色主按钮”“浅色卡片背景”“灰色摘要文字”“红色警告”，但还不知道对应的 Miuix 参数或 Token 名称。证据固定于上游稳定 tag `v0.9.4`，提交为 `39c40f99844227b853f0049a0933b1f3ae6c00ba`。
 
 Contents: [rules](#lookup-rules) · [visual lookup](#visual-to-semantic-lookup) · [component defaults](#component-defaults-first) · [core roles](#core-color-roles) · [theme and dynamic color](#theme-and-dynamic-color) · [evidence](#source-evidence)
 
@@ -44,7 +44,7 @@ The “default light/dark” values below come from `lightColorScheme()` and `da
 | 中性灰次要按钮背景 | `secondaryVariant` | `#FFF0F0F0` / `#FF434343` | Current ordinary `ButtonDefaults.buttonColors()` container role |
 | 输入框的灰色底 | `secondaryContainer` | `#FFF0F0F0` / `#FF434343` | Current `TextFieldDefaults.textFieldColors()` background role |
 | 下拉菜单选中项的浅蓝/深色容器 | `tertiaryContainer` | `#FFEAF2FF` / `#FF2B3B54` | Current Dropdown selected-container role; pair with `onTertiaryContainer` |
-| 红色错误、危险，或明确设计为红色的警告状态 | `error` | `#FFE94634` / `#FFF12522` | Miuix's official red status role is `error`; there is no `alert`, `warning`, `success`, or `info` token in the candidate `Colors` source |
+| 红色错误、危险，或明确设计为红色的警告状态 | `error` | `#FFE94634` / `#FFF12522` | Miuix's official red status role is `error`; there is no `alert`, `warning`, `success`, or `info` token in the stable `Colors` source |
 | 错误提示背景 | `errorContainer` | `#FFFDF6F4` / `#FF2E0603` | Error container; pair with `onErrorContainer` |
 | 黄色警告、成功、信息等非错误状态 | App-owned semantic token or custom `Color` | — | Miuix has no built-in warning/success/info family; define the product meaning explicitly instead of reusing `error` |
 | 页面最底层背景 | `background` | white / `#FF242424` | App/page canvas; pair with `onBackground` |
@@ -80,7 +80,7 @@ When the user names a standard component, map the visual request to the public c
 | Slider | `SliderDefaults.sliderColors()` | foreground `primary`, background `sliderBackground`, thumb `onPrimary`, plus slider-specific disabled/key-point roles |
 | Dialog | `DialogDefaults` | title `onBackground`, summary `onSurfaceSecondary`, background `background`; dimming uses `windowDimming` |
 | Dropdown selected item | dropdown color parameters/defaults | selected container `tertiaryContainer`, selected content/indicator `onTertiaryContainer` |
-| NavigationBar selected item | `NavigationBar` implementation defaults | selected content uses `onSurfaceContainer`; unselected content applies the documented alpha to that role |
+| NavigationBar selected item | `NavigationBarDefaults.navigationBarItemColors()` | selected content uses the supplied selected color; unselected and pressed states multiply the supplied alpha |
 | Switch | `SwitchDefaults.switchColors()` | checked track/thumb `primary` + `onPrimary`; unchecked track/thumb `secondary` + `onSecondary`; disabled tracks use `disabledPrimary` / `disabledSecondary` |
 | Checkbox | `CheckboxDefaults.checkboxColors()` | checked background/foreground `primary` + `onPrimary`; unchecked `secondary` + `secondary`; disabled backgrounds use `disabledPrimary` / `disabledSecondary` |
 | RadioButton | `RadioButtonDefaults.radioButtonColors()` | selected `primary`; disabled selected `disabledPrimary` |
@@ -97,7 +97,7 @@ When the user names a standard component, map the visual request to the public c
 
 The `Switch` mapping has a dynamic-color exception: its unchecked thumb uses `LocalColors.current.onSurface.copy(0.38f)` and its disabled checked thumb uses `LocalColors.current.surface` when dynamic colors are active. Preserve those component-specific defaults instead of reducing every state to one `primary`/`secondary` pair.
 
-For a component with a dedicated color parameter, verify the exact parameter name. For example, the 0.9.4 candidate adds `InputField.color`; it does not add `SearchBar.color` to the `SearchBar` wrapper.
+For a component with a dedicated color parameter, verify the exact parameter name. For example, stable 0.9.4 exposes `InputField.color`; it does not add `SearchBar.color` to the `SearchBar` wrapper.
 
 ## Core color roles
 
@@ -123,11 +123,11 @@ Do not invent `warning`, `alert`, `success`, `info`, `blue`, or `gray` propertie
 - `lightColorScheme()` and `darkColorScheme()` provide the fixed non-Monet defaults shown above.
 - `ThemeController(ColorSchemeMode.MonetSystem/MonetLight/MonetDark)` can generate roles from a key color or system wallpaper. In Monet mode, `primary` may no longer be blue and `error`/surface roles may also change tone.
 - If the user wants a fixed brand blue rather than a theme role, configure `lightColorScheme(primary = ...)` and `darkColorScheme(primary = ...)` or a custom `Colors` scheme, then verify contrast and every paired `on*` role. Do not silently replace a semantic role with a literal color.
-- If source and rendered documentation disagree, source at the pinned commit wins. At this candidate, the docs table lists a dark `onError` value that differs from `darkColorScheme()`; use the token and the source signature rather than copying that documentation hex blindly.
+- If source and rendered documentation disagree, source at the pinned commit wins. At this stable release, the docs table lists a dark `onError` value that differs from `darkColorScheme()`; use the token and the source signature rather than copying that documentation hex blindly.
 
 ## Source evidence
 
-Read these exact files at tag `v0.9.4-rc01` before answering a color-sensitive question:
+Read these exact files at tag `v0.9.4` before answering a color-sensitive question:
 
 - `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/theme/Colors.kt` — public `Colors` properties and fixed `lightColorScheme()` / `darkColorScheme()` defaults.
 - `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/theme/MiuixTheme.kt` — how `MiuixTheme.colorScheme` is provided and read.

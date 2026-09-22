@@ -1,6 +1,6 @@
 # Styling, Icons, and Effects
 
-Use this reference for styling resources that have dependency or platform consequences. Read only the relevant guide and exact source files from the `0.9.4-rc01` candidate snapshot at commit `4a6b750b` through [Source verification](source-verification.md). For semantic colors, typography, grouping, and customization boundaries, continue with [Design language and Defaults](design-language.md).
+Use this reference for styling resources that have dependency or platform consequences. Read only the relevant guide and exact source files from the stable `v0.9.4` snapshot at commit `39c40f99` through [Source verification](source-verification.md). For semantic colors, typography, grouping, and customization boundaries, continue with [Design language and Defaults](design-language.md).
 
 ## Version-Pinned Guides
 
@@ -15,12 +15,12 @@ Use this reference for styling resources that have dependency or platform conseq
 | Squircle | `docs/guide/squircle.md` | `miuix-squircle/src/commonMain/kotlin/` |
 | Multiplatform behavior | `docs/guide/multiplatform.md` | Platform source sets named by the selected API |
 
-Do not use the unversioned rendered docs site or generated online Dokka to infer a candidate signature. Read the pinned Kotlin source when a guide does not show the exact contract.
+Do not use the unversioned rendered docs site or generated online Dokka to infer a stable signature. Read the pinned Kotlin source when a guide does not show the exact contract.
 
 ## Icons
 
 - `miuix-ui` includes the seven basic Regular-weight icons: `ArrowRight`, `ArrowUpDown`, `Check`, `Close`, `Search`, `SearchCleanup`, and `Sidebar`.
-- Extended icons require an explicit `miuix-icons` dependency: `top.yukonga.miuix.kmp:miuix-icons:0.9.4-rc01` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:0.9.4-rc01` for Android-only projects.
+- Extended icons require an explicit `miuix-icons` dependency: `top.yukonga.miuix.kmp:miuix-icons:0.9.4` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:0.9.4` for Android-only projects.
 - Verify every requested name in `docs/guide/icons.md` and its source file. Use `MiuixIcons.Name` for Regular; use `MiuixIcons.Light.Name`, `MiuixIcons.Normal.Name`, `MiuixIcons.Medium.Name`, or `MiuixIcons.Demibold.Name` only when that weight exists in tagged source.
 - Prefer an existing semantic icon. Do not invent a Material icon name or add a custom vector before checking the basic and extended sets.
 
@@ -43,7 +43,7 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 
 ### Progressive blur
 
-The candidate adds `ProgressiveBlur` and `Modifier.progressiveTextureBlur`. Use `ProgressiveBlur.Top`, `.Bottom`, `.Left`, or `.Right` for edge fades, or copy a preset and tune `startFraction`, `endFraction`, and positive `curve`. `colors` and `noiseCoefficient` fade with the blur; progressive noise defaults to `0f`.
+The stable release provides `ProgressiveBlur` and `Modifier.progressiveTextureBlur`. Use `ProgressiveBlur.Top`, `.Bottom`, `.Left`, or `.Right` for edge fades, or copy a preset and tune `startFraction`, `endFraction`, and positive `curve`. `colors` and `noiseCoefficient` fade with the blur; progressive noise defaults to `0f`.
 
 Use progressive blur for navigation bars and narrow edge bands. Its pixel-sharp clear end adds a full-resolution overlay pass, so it is more expensive than a uniform `textureBlur` over the same area. In a custom `drawBackdrop` pipeline, call `progressiveBlur(...)` or `progressiveTextureBlurEffect(...)` in the effect block and pass the same `ProgressiveBlur` as `drawBackdrop(progressiveGradient = ...)`; the convenience modifier wires both sides together. Keep the progressive noise default (`BlurDefaults.ProgressiveNoiseCoefficient = 0f`) unless a grain effect is deliberate.
 

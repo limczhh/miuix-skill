@@ -71,8 +71,7 @@ OverlayDialog 和 WindowDialog 有什么区别？请给出使用建议。
 - [`setup-and-theme.md`](./references/setup-and-theme.md)：依赖、`ThemeController`、`MiuixTheme`、Preview 和根宿主。
 - [`source-verification.md`](./references/source-verification.md)：文档、Demo、Example 和源码路径。
 - [`miuix-nav.md`](./references/miuix-nav.md)：当前 `miuix-nav` 路由、返回栈、转场、手势和 v1 边界。
-- [`release-v0.9.4-rc01.md`](./references/release-v0.9.4-rc01.md)：从 `v0.9.3` 到当前候选快照的迁移与公开 API 变化。
-- [`release-v0.9.3.md`](./references/release-v0.9.3.md)：版本迁移时需要重新核对的 API。
+- [`release-v0.9.4.md`](./references/release-v0.9.4.md)：从 `v0.9.3` 迁移到稳定版 `v0.9.4` 的新增、删除、行为变化和迁移清单。
 
 ## 安装
 
@@ -112,7 +111,7 @@ git clone https://github.com/limczhh/miuix-skill.git .claude/skills/miuix
 
 这是一套专注于 Miuix Compose UI 的开发参考。它可以帮助你构建、完善、审查和重构 Miuix 界面；当 Miuix 没有对应组件时，会优先考虑 Compose 基础能力，并明确说明自定义行为，不会为了套用 Miuix 而强行替换项目中已有的其他 UI 体系。
 
-每个版本都会对应一组可复核的 API 证据。当前仓库的证据快照基于上游提交 `4a6b750b` / tag `v0.9.4-rc01`：源码版本基线为 `0.9.4`，发布脚本在 `-Prc=01` 下生成 `0.9.4-rc01`。上游目前还没有 `v0.9.4` 稳定 tag，因此本 Skill 会明确标注这是候选版本，并在正式稳定 tag 出现后重新核对。
+当前 Skill 只指导稳定版 `v0.9.4` 的使用。版本迁移不属于日常 API 指南；如果项目从 `v0.9.3` 升级，才阅读唯一的迁移 reference [`release-v0.9.4.md`](./references/release-v0.9.4.md)。当前 API 证据固定在上游提交 `39c40f99844227b853f0049a0933b1f3ae6c00ba` / tag `v0.9.4`。
 
 使用 Skill 时，Agent 按 [Source Verification](references/source-verification.md) 读取固定提交的上游网页源码；本地 `miuix-main` 不是终端用户的运行时依赖，只用于本项目维护和核对证据。
 
@@ -121,8 +120,7 @@ git clone https://github.com/limczhh/miuix-skill.git .claude/skills/miuix
 当前证据入口：
 
 - [Miuix GitHub](https://github.com/compose-miuix-ui/miuix)
-- [Miuix 当前候选快照文档源文件](https://github.com/compose-miuix-ui/miuix/tree/4a6b750b/docs)
-- [Miuix v0.9.3 稳定版文档源文件](https://github.com/compose-miuix-ui/miuix/tree/v0.9.3/docs)
+- [Miuix v0.9.4 稳定版文档源文件](https://github.com/compose-miuix-ui/miuix/tree/39c40f99844227b853f0049a0933b1f3ae6c00ba/docs)
 
 ## 贡献
 

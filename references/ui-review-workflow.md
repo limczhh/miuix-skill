@@ -19,7 +19,7 @@ Use this workflow when the user asks to improve, polish, modernize, restructure,
 
 1. Read the user's stated goal and constraints before proposing visual changes.
 2. Inspect the current implementation. If a screenshot, mockup, preview, or device capture is available, inspect it together with the code; neither view alone explains both appearance and behavior.
-3. Identify the Miuix dependency version used by the target project. This Skill's catalog follows the `0.9.4-rc01` candidate snapshot at `4a6b750b`; verify separately when the project targets another version or the stable `v0.9.3` release.
+3. Confirm that the target project uses stable `v0.9.4`. This Skill's catalog is pinned to commit `39c40f99`; if the project uses another version, flag the mismatch instead of treating this catalog as version-correct.
 4. Preserve intentional project conventions unless they cause the reported problem or the user asks to replace them.
 
 Ask a question only when a missing choice would materially change the visual direction. Continue read-only inspection while that choice is unresolved.
@@ -61,7 +61,7 @@ For every change, load the smallest evidence set that answers it:
 2. Read its doc for purpose and supported behavior.
 3. Read the matching `docs/demo/` file for a minimal call shape.
 4. Read the closest `example/shared/` page or section through [Example-derived usage patterns](usage-patterns.md) for grouping, state flow, and integration.
-5. Resolve exact paths through [Source verification](source-verification.md), then read the pinned candidate source and Defaults for uncertain parameters, colors, dimensions, host behavior, or edge cases.
+5. Resolve exact paths through [Source verification](source-verification.md), then read the pinned stable source and Defaults for uncertain parameters, colors, dimensions, host behavior, or edge cases.
 
 Record which finding is a source contract, an Example pattern, an existing project convention, or a user-directed visual choice. Do not present one category as another.
 

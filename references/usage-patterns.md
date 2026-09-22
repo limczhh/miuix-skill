@@ -1,6 +1,6 @@
 # Example-Derived Usage Patterns
 
-At the `0.9.4-rc01` candidate snapshot, `docs/guide/best-practices.md` explicitly points to the project's Example application as a real-world demonstration of how Miuix components and design principles are applied. Treat it as a first-party reference implementation, while keeping source code authoritative for API contracts. Before applying these patterns, resolve theme and host ownership in [Project setup and theme](setup-and-theme.md) and follow the [Code Delivery Contract](../SKILL.md#code-delivery-contract).
+At the stable `v0.9.4` snapshot, `docs/guide/best-practices.md` explicitly points to the project's Example application as a real-world demonstration of how Miuix components and design principles are applied. Treat it as a first-party reference implementation, while keeping source code authoritative for API contracts. Before applying these patterns, resolve theme and host ownership in [Project setup and theme](setup-and-theme.md) and follow the [Code Delivery Contract](../SKILL.md#code-delivery-contract).
 
 ## Contents
 
@@ -48,7 +48,7 @@ Use this map after choosing components. Unless a path starts with another root, 
 2. Identify which parts are Miuix contracts, repeated composition patterns, and Example-specific choices.
 3. Compare the integrated use with the isolated `docs/demo/` file for each selected component.
 4. Adapt the pattern to the target project's state ownership, navigation, insets, and existing spacing.
-5. Verify exact names and parameters in the pinned candidate source before producing code.
+5. Verify exact names and parameters in the pinned stable source before producing code.
 
 Do not copy a whole Example file into an application. The Example includes navigation infrastructure, blur helpers, diagnostics, and showcase-only effects that most projects do not need.
 
@@ -69,13 +69,13 @@ Evidence: `MainPage.kt`, `SettingsPage.kt`, and `utils/PageUtils.kt`.
 - Use `Scaffold` as the page shell when the page has bars, floating controls, snackbars, or Overlay components. Reuse an existing intended host instead of nesting one only for visual structure.
 - Consume the `PaddingValues` supplied by `Scaffold`; pass them to `LazyColumn.contentPadding` as the Example does, or apply them to the content root and consume the corresponding window insets as required by the Scaffold contract. Do not let content render underneath bars accidentally.
 - Connect a top app bar's scroll behavior to the scrolling content when the page uses collapsing or scroll-aware bars.
-- At the candidate snapshot, create `val scrollBehavior = MiuixScrollBehavior()`, pass it to `TopAppBar(scrollBehavior = scrollBehavior)`, and apply `Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)` to the scrolling container. Keep the `LazyListState` used by `LazyColumn(state = ...)` separate from the app-bar behavior state. When a `SmallTopAppBar` shares a scroll behavior with a collapsible bar, verify the pinned-state behavior in source rather than adding an external offset workaround.
-- If the page owns a `FloatingToolbar`, put it in the existing `Scaffold(floatingToolbar = ..., floatingToolbarPosition = ...)` slot; the current candidate fixes the layout so a bottom snackbar stays above the toolbar.
+- At the stable snapshot, create `val scrollBehavior = MiuixScrollBehavior()`, pass it to `TopAppBar(scrollBehavior = scrollBehavior)`, and apply `Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)` to the scrolling container. Keep the `LazyListState` used by `LazyColumn(state = ...)` separate from the app-bar behavior state. When a `SmallTopAppBar` shares a scroll behavior with a collapsible bar, verify the pinned-state behavior in source rather than adding an external offset workaround.
+- If the page owns a `FloatingToolbar`, put it in the existing `Scaffold(floatingToolbar = ..., floatingToolbarPosition = ...)` slot; the stable layout keeps a bottom snackbar above the toolbar.
 - Keep adaptive width, system insets, scroll haptics, blur, and scrollbar helpers conditional. The Example's `PageUtils.kt` is application infrastructure, not public Miuix API.
 
 ### NavigationBar ↔ NavigationRail switching
 
-The candidate Example computes its own window policy from `LocalWindowInfo`: it uses the wide/split layout at `width >= 840.dp`, or at `width >= 600.dp` when `height / width < 1.2`; it expands the rail at `width >= 1200.dp`. These are Example application breakpoints, not Miuix component requirements.
+The stable Example computes its own window policy from `LocalWindowInfo`: it uses the wide/split layout at `width >= 840.dp`, or at `width >= 600.dp` when `height / width < 1.2`; it expands the rail at `width >= 1200.dp`. These are Example application breakpoints, not Miuix component requirements.
 
 - Reuse the target project's existing adaptive system. Android-only apps may already use a Window Size Class; multiplatform apps may use `LocalWindowInfo` or another shared policy. Keep the decision in one named function rather than scattering width checks through components.
 - Remember or hoist the selected destination/pager/back-stack before branching. Render `NavigationBar` and `NavigationRail` from that same state, so a resize changes chrome without resetting selection or creating two sources of truth.
@@ -102,7 +102,7 @@ NavDisplay(backStack = backStack) {
 
 Register every concrete route type; the DSL matches exact runtime classes. Use `NavController` when `push`, `pop`, `replace`, or `popUntil` reads more clearly than direct list operations. Built-in transitions are `NavTransitions.MiuixDefault`, `Modal`, and `None`; swipe-to-dismiss is opt-in through `entry(swipeDismiss = ...)`, and physical directions are not automatically mirrored for RTL. Use the complete [miuix-nav routing reference](miuix-nav.md) for saveable identity, `contentKey`, nested displays, multi-pane clipping, and v1 limitations.
 
-For a bottom/rail navigation shell, derive each item's `selected` and `onClick` from the same top-level page or pager state used by the content. Do not derive tab selection from a `NavDisplay` entry or create separate compact and wide selection states. Do not import the removed `androidx.navigation3` scene flow into current candidate code.
+For a bottom/rail navigation shell, derive each item's `selected` and `onClick` from the same top-level page or pager state used by the content. Do not derive tab selection from a `NavDisplay` entry or create separate compact and wide selection states. Do not import the removed `androidx.navigation3` scene flow into current stable code.
 
 ## Settings and Grouped Content
 

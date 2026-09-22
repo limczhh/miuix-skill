@@ -1,6 +1,6 @@
 # Source Verification
 
-Use this reference after another catalog or workflow identifies an evidence path. It defines how every abbreviated path in this Skill maps to the public Miuix repository and pins the current catalog evidence to the `0.9.4-rc01` candidate snapshot.
+Use this reference after another catalog or workflow identifies an evidence path. It defines how every abbreviated path in this Skill maps to the public Miuix repository and pins the current catalog evidence to the stable `v0.9.4` snapshot.
 
 Contents: [evidence workflow](#evidence-resolution-workflow) · [snapshot scope](#snapshot-scope) · [path convention](#path-convention) · [supporting internals](#supporting-internals) · [Example app](#example-app)
 
@@ -9,7 +9,7 @@ Contents: [evidence workflow](#evidence-resolution-workflow) · [snapshot scope]
 1. Start from the component catalog, [usage-pattern evidence levels](usage-patterns.md#evidence-levels), or the exact file named by another reference.
 2. Expand abbreviated paths with the table below.
 3. Read the relevant `docs/**/*.md` file from the pinned snapshot for intent, the matching `docs/demo/` file for an isolated call, the closest `example/shared/` section for integration, and source for the API/behavior contract. Do not read every document or source file unless the task is a release audit.
-4. For current catalog work, keep all evidence on commit `4a6b750b` / tag `v0.9.4-rc01`. The upstream repository has not created a stable `v0.9.4` tag, so do not present this snapshot as a stable release. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters. If the target project uses another version, state that mismatch and verify that version separately.
+4. For current catalog work, keep all evidence on commit `39c40f99844227b853f0049a0933b1f3ae6c00ba` / tag `v0.9.4`. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters. If the user explicitly requests the `v0.9.3 → v0.9.4` migration, follow the single migration reference and use its comparison source only for that task.
 5. Return to the [Code Delivery Contract](../SKILL.md#code-delivery-contract) before presenting implementation or validation claims.
 
 If the pinned web source cannot be reached, do not silently substitute memory, the rolling documentation site, or an unpinned snippet. State that API verification is blocked, or ask the user to provide the relevant tagged file, before making a version-sensitive claim.
@@ -18,9 +18,8 @@ If the pinned web source cannot be reached, do not silently substitute memory, t
 
 | Evidence role | Pinned snapshot |
 |---|---|
-| Current catalog and migration target | `v0.9.4-rc01` at commit `4a6b750b578880146876e4ab77097d9b01702413` |
-| Historical comparison | `v0.9.3` tag, only for tasks that target or compare that release |
-| Other versions | Resolve the target project's exact tag or commit before making version-sensitive claims |
+| Current catalog and migration target | `v0.9.4` at commit `39c40f99844227b853f0049a0933b1f3ae6c00ba` |
+| Migration comparison | `v0.9.3` tag, only through `references/release-v0.9.4.md` |
 
 This table describes the Skill's maintained evidence scope. It is not a substitute for checking a target project's actual dependency version.
 
@@ -30,10 +29,10 @@ All file paths in the tables below are relative to the Miuix repository root. Re
 
 | Source | URL pattern |
 |--------|------------|
-| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/4a6b750b578880146876e4ab77097d9b01702413/<file-path>` |
-| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/4a6b750b578880146876e4ab77097d9b01702413/<dir-path>` |
+| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/39c40f99844227b853f0049a0933b1f3ae6c00ba/<file-path>` |
+| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/39c40f99844227b853f0049a0933b1f3ae6c00ba/<dir-path>` |
 
-The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the pinned `docs/**/*.md` file during a candidate-snapshot task. For historical `v0.9.3` work, substitute the `v0.9.3` tag explicitly.
+The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the pinned `docs/**/*.md` file during a version-sensitive task. The current Skill does not maintain standalone references for older Miuix versions.
 
 | Abbreviation | Relative path |
 |---|---|
@@ -87,6 +86,9 @@ These files underpin multiple components. They're read-on-demand, not listed per
 | `miuix-blur/.../BackdropEffects.kt` | Custom backdrop effect-block APIs, including progressive blur |
 | `miuix-ui/.../utils/Overscroll.kt` | Modifier overscroll API, real-gesture gating, and stale-offset recovery |
 | `miuix-ui/.../utils/OverscrollFactory.kt` | Theme-level `MiuixOverscrollFactory` / `MiuixOverscrollEffect` behavior |
+| `miuix-ui/.../utils/PagerGestureUtils.kt` | Horizontal pager conflict modes, nested-list interception, and spring page navigation |
+| `miuix-nav/.../core/LocalNavTransitionScope.kt` | Entry-local live transition scope CompositionLocal |
+| `miuix-nav/.../state/NavEntryViewModel.kt` | Entry ViewModel stores and saved-state creation context |
 
 ## Example App
 

@@ -23,6 +23,7 @@ When the user describes a *scenario* rather than a component name, use this tabl
 | "页面路由 / 返回栈 / route / back stack" | `miuix-nav`'s `NavDisplay` + `rememberNavBackStack`; read [the routing reference](miuix-nav.md). Do not mistake navigation chrome for routing architecture |
 | "路径导航 / 文件路径 / 目录层级" | `BreadcrumbBar` + `BreadcrumbItem`; use `highlightIndex` for the active segment and `joinToPath()` for path reconstruction |
 | "标签页 / tabs" | `TabRow` |
+| "HorizontalPager 手势冲突 / pager gesture / 嵌套列表横滑" | `Modifier.pagerGestureOverride()` + `PagerGestureNestedScrollConnection`; read `docs/guide/utils.md` for the required pager configuration |
 | "提示气泡 / tooltip" | `TooltipBox` + `PlainTooltip` / `RichTooltip` |
 | "角标 / 徽章 / badge" | `Badge` + `BadgedBox`; for navigation, use `NavigationBarItem(badge = { ... })` or `FloatingNavigationBarItem(badge = { ... })` |
 | "滑块 / slider" | `Slider` (basic) or `SliderPreference` (in settings) |
@@ -78,6 +79,12 @@ When the user asks about a component, first match it case-insensitively against 
 | Tooltip | `docs/components/tooltip.md` | `docs/demo/TooltipDemo.kt` | `miuix-ui/.../basic/Tooltip.kt` |
 | Badge | `docs/components/badge.md` | `docs/demo/BadgeDemo.kt` | `miuix-ui/.../basic/Badge.kt` |
 
+### Utilities (miuix-ui)
+
+| Utility | Guide | Source |
+|---|---|---|
+| Pager gesture conflict and spring page navigation | `docs/guide/utils.md` | `miuix-ui/.../utils/PagerGestureUtils.kt` |
+
 ### Public API boundaries
 
 The table above is a catalog of public entry points. Supporting source paths are evidence for behavior, not automatically importable APIs. In particular:
@@ -89,7 +96,7 @@ The table above is a catalog of public entry points. Supporting source paths are
 
 ### SmallTitle and section labels
 
-At the current `0.9.4-rc01` candidate snapshot there is no public Miuix `SectionHeader`. `SmallTitle` is the library's auxiliary/category label and the Example normally places it immediately before the related `Card`, not inside the Card as another preference row. If a target project has a `SectionHeader`, inspect it as an application-owned wrapper before replacing it.
+At the current `v0.9.4` snapshot there is no public Miuix `SectionHeader`. `SmallTitle` is the library's auxiliary/category label and the Example normally places it immediately before the related `Card`, not inside the Card as another preference row. If a target project has a `SectionHeader`, inspect it as an application-owned wrapper before replacing it.
 
 ### Scrollbar integration
 
@@ -97,10 +104,14 @@ At the current `0.9.4-rc01` candidate snapshot there is no public Miuix `Section
 
 ### TextField validation
 
-`TextField` has no `isError` or `supportingText` parameter at the current candidate snapshot. For field, Preference-row, transient-network, and blocking-page failure patterns, read [Error and Failure States](design-language.md#error-and-failure-states) rather than inferring Material parameters.
+`TextField` has no `isError` or `supportingText` parameter at the current `v0.9.4` snapshot. For field, Preference-row, transient-network, and blocking-page failure patterns, read [Error and Failure States](design-language.md#error-and-failure-states) rather than inferring Material parameters.
 
-### Current candidate additions and behavior notes
+### Current stable additions and behavior notes
 
-- `Scaffold` already hosted `floatingToolbar` and `floatingToolbarPosition` before this candidate; use the scaffold slot instead of manually overlaying a toolbar, and rely on the candidate's snackbar spacing fix for a bottom toolbar.
+- `Scaffold` hosts `floatingToolbar` and `floatingToolbarPosition`; use the scaffold slot instead of manually overlaying a toolbar, and rely on its snackbar spacing for a bottom toolbar.
 - `InputField` accepts `color`; the `SearchBar` wrapper does not. Pass `Color.Transparent` only when another surface, such as a backdrop blur, intentionally owns the capsule background.
-- `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; read the migration reference before deriving a second refresh state.
+- `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; keep one state owner for a refresh interaction instead of deriving a second refresh state.
+- `NavigationRail` has a fixed-layout overload (`expanded = false/true`) and a separate expandable overload with required non-null `state`; `state = null` is not a stable call shape.
+- `NavigationBarItem` and `FloatingNavigationBarItem` share `NavigationBarItemColors` through `NavigationBarDefaults.navigationBarItemColors()`; the new `colors` parameter appears before `badge`, so positional badge calls must be named.
+- `TabRow` and `TabRowWithContour` contain horizontal nested scroll/overscroll. For a pager containing vertical lists, use the dedicated `PagerGestureUtils` configuration instead of layering an ad-hoc nested-scroll interceptor.
+- `LocalNavTransitionScope.current` is available only inside a `NavDisplay` entry; use its `isRunning` signal for coarse lifecycle decisions and deferred scope properties for frame-level effects.
