@@ -4,7 +4,18 @@ Use this reference when an exact API, behavior, dependency, or version claim nee
 
 Read only the evidence workflow, API gate, path table, or supporting-internals entry required by the claim. Do not load the Example-app inventory during an ordinary API check.
 
-Contents: [evidence workflow](#evidence-resolution-workflow) · [API verification gate](#api-verification-gate) · [snapshot scope](#snapshot-scope) · [path convention](#path-convention) · [supporting internals](#supporting-internals) · [Example app](#example-app)
+Contents: [acquire source evidence](#acquire-source-evidence) · [evidence workflow](#evidence-resolution-workflow) · [API verification gate](#api-verification-gate) · [snapshot scope](#snapshot-scope) · [path convention](#path-convention) · [supporting internals](#supporting-internals) · [Example app](#example-app)
+
+## Acquire source evidence
+
+Use the strongest source available for the claim, while keeping target-project compatibility separate from the maintained library snapshot:
+
+1. Inspect the target project's declared Miuix dependency, source set, and available source attachment first. This determines what can actually compile in that project.
+2. For maintained library facts, use a local Miuix checkout only after confirming it is exactly `39c40f99844227b853f0049a0933b1f3ae6c00ba` / `v0.9.4`.
+3. If no verified local checkout is available, open the pinned raw source URL from [Path Convention](#path-convention).
+4. Do not use the rolling documentation site, an untagged branch, a search-result snippet, or remembered Compose/Material APIs as a substitute for the pinned declaration.
+
+The target project can override the maintained snapshot only when the task is explicitly about that project's version. In that case, record the target declaration and do not present it as a `v0.9.4` contract.
 
 ## Evidence Resolution Workflow
 

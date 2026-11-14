@@ -25,7 +25,7 @@ When the task asks for Miuix code, the references are a route into evidence, not
 
 1. Inspect the target project's Miuix version, platform/source set, dependency declaration, existing theme, and host before choosing a call. If the target project is unavailable, mark those parts as placeholders.
 2. Choose one reference route below to locate the component or source area.
-3. Open the pinned declaration and verify the public package, module, overload, parameters, defaults, opt-in, and host/lifecycle behavior required by the task.
+3. Acquire the declaration through [Source verification](references/source-verification.md#acquire-source-evidence), then verify the public package, module, overload, parameters, defaults, opt-in, and host/lifecycle behavior required by the task.
 4. Use docs and Demo for intended usage, and Example or real consumer code only for integrated composition. Do not promote any of them to API authority.
 5. Write the smallest call that matches the verified declaration. Do not fill an uncovered API or import by analogy.
 6. Compile the affected target when it is available. Report `source-verified; compilation pending` when compilation was not run.
