@@ -1,6 +1,6 @@
 # Project Setup and Theme
 
-Use this reference to decide who owns the application theme and page/popup host. After ownership is resolved, continue with [integrated usage patterns](usage-patterns.md) for page composition and [design language](design-language.md) for visual decisions.
+Use this reference only for dependency, theme, root-host, and preview setup. It is not a page-composition guide. If the task is about page structure rather than setup, use the `miuix-guidelines` Skill instead of loading this file.
 
 ## Theme and Host Ownership
 
@@ -88,9 +88,6 @@ The repository does not provide a first-party `@Preview` sample, so treat Previe
 - Add `Scaffold` when previewing an Overlay component because it needs the popup host. Window popups, system back, focus/IME, animation timing, dynamic color, and platform windows still require runtime validation.
 - Preview cannot prove shader or blur behavior. Keep the unsupported fallback renderable and validate those effects on an API/platform that supports them.
 
-## Continue With
+## Boundary
 
-- For application root, page shell, Scaffold padding, and state patterns, read [Example-derived usage patterns](usage-patterns.md).
-- For semantic colors, typography, grouping, and component Defaults, read [Design language and Defaults](design-language.md).
-- For exact `MiuixTheme`, `ThemeController`, and Scaffold source paths, use [Source verification](source-verification.md).
-- Before returning code, satisfy the [Code Delivery Contract](../SKILL.md#code-delivery-contract).
+This file establishes setup facts and library-host assumptions. It does not require the agent to read the Example, visual references, or source-verification reference afterward. Open one of those only when the task contains that separate question. Before returning code, satisfy the [Code Delivery Contract](../SKILL.md#delivery-contract).

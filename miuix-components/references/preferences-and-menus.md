@@ -1,5 +1,7 @@
 # Preference and Dropdown Menu Components
 
+Use this reference only to choose between Preference rows, basic controls, dropdown/spinner preferences, and anchored menus. It does not replace an exact API contract or a page skeleton.
+
 ## Choose the Family
 
 | User need | Prefer | Why |
@@ -10,7 +12,7 @@
 | Rich options with icons/summaries, or spinner dialog mode | `OverlaySpinnerPreference` or `WindowSpinnerPreference` | Uses richer `DropdownItem` content and spinner-specific presentation |
 | Standalone anchored action menu rather than a settings row | `*DropdownMenu` family | The caller owns the anchor and menu action semantics |
 
-Choose Overlay versus Window lifetime with [Overlay and Window Components](overlays-and-windows.md#choose-the-host-first). For settings-page grouping and state ownership, continue with [Example-derived usage patterns](usage-patterns.md#settings-and-grouped-content). Verify the chosen row's exact call shape in its doc/demo/source through [Source verification](source-verification.md).
+Choose Overlay versus Window lifetime only when that is part of the request. Verify an exact call only when the selected component is not already covered by the API contract sheet.
 
 ## Choose a Menu Variant
 

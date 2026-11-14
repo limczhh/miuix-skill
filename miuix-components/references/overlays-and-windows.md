@@ -1,5 +1,7 @@
 # Overlay and Window Components
 
+Use this reference only for Overlay versus Window host, dismissal, back behavior, and popup lifecycle. It does not define page structure or exact signatures.
+
 ## Choose the Host First
 
 | Required lifetime/host | Choose | Integration rule |
@@ -7,7 +9,7 @@
 | Page-scoped popup that follows the current page and its bounds | `Overlay*` | Require the intended ancestor `Scaffold`; reuse it rather than creating an accidental nested host |
 | Popup independent of the current page's Scaffold, including cross-page/global UI | `Window*` | Use the Window counterpart; no Scaffold popup host is required |
 
-Resolve standalone versus existing host ownership in [Project setup and theme](setup-and-theme.md). For visibility, dismissal, and integrated action patterns, read [Overlay and Window usage patterns](usage-patterns.md#overlay-and-window-components); verify exact parameters through [Source verification](source-verification.md).
+Use the table above to choose the host family. For page ownership, use the `miuix-guidelines` Skill; open an API reference only if the task contains an exact-signature question.
 
 ## Dismissal and System Back
 

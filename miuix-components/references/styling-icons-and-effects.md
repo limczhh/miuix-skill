@@ -1,6 +1,6 @@
 # Styling, Icons, and Effects
 
-Use this reference for styling resources that have dependency or platform consequences. Read only the relevant guide and exact source files from the stable `v0.9.4` snapshot at commit `39c40f99` through [Source verification](source-verification.md). For semantic colors, typography, grouping, and customization boundaries, continue with [Design language and Defaults](design-language.md).
+Use this reference only for icon dependencies, blur, squircle, shader, and platform-specific visual effects. Read the relevant topic in this file; do not load the broader design or source-verification references unless the task contains that separate question.
 
 ## Version-Pinned Guides
 

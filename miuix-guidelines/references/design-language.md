@@ -1,18 +1,21 @@
 # Design Language and Defaults
 
-Use this reference when creating, restyling, or reviewing a Miuix interface. Resolve root/host ownership in [Project setup and theme](setup-and-theme.md), then use [Example-derived usage patterns](usage-patterns.md) for composition. The token and Defaults names below are verified at the stable `v0.9.4` snapshot. The hierarchy guidance is a practical decision rule derived from Miuix source defaults and the first-party Example; it is not a substitute for a future formal design specification.
+Use this reference only for typography, semantic colors, grouping, component Defaults, visual hierarchy, and failure-state presentation. It does not define page ownership or require the Example workflow. The hierarchy guidance is a practical decision rule derived from Miuix source defaults and the first-party Example; exact token names, signatures, and Defaults contracts belong to the `miuix-components` Skill.
 
-Contents: [decision order](#decision-order) · [surface and color](#surface-and-color-roles) · [typography](#typography-roles) · [component Defaults](#component-defaults) · [hierarchy](#hierarchy-and-grouping) · [errors and loading](#error-and-failure-states) · [state and async](#state-and-async-ownership) · [customization](#when-customization-is-justified)
+Read only the section matching the visual question; do not load color lookup, error-state, and typography guidance for an unrelated styling decision.
+
+Contents: [decision order](#decision-order) · [surface and color](#surface-and-color-roles) · [typography](#typography-roles) · [component Defaults](#component-defaults) · [page composition defaults](#page-composition-defaults) · [hierarchy](#hierarchy-and-grouping) · [errors and loading](#error-and-failure-states) · [state and async](#state-and-async-ownership) · [customization](#when-customization-is-justified)
 
 ## Decision Order
 
 Make each visual decision in this order:
 
-1. Preserve an intentional convention already used by the target project.
-2. Use the public Miuix component that owns the behavior and its default parameters.
-3. If customization is necessary, use that component's `*Defaults` object and `MiuixTheme` semantic tokens.
-4. Use Compose layout primitives such as `Row`, `Column`, `Box`, padding, and size constraints to arrange Miuix components.
-5. Add custom colors, shapes, drawing, or effects only for a concrete product requirement that the public component and defaults cannot express.
+1. Resolve the page/application skeleton and ownership with [Page structure and ownership](page-structure.md) when the task is page-level.
+2. Preserve an intentional convention already used by the target project.
+3. Use the public Miuix component that owns the behavior and its default parameters.
+4. If customization is necessary, use that component's `*Defaults` object and `MiuixTheme` semantic tokens.
+5. Use Compose layout primitives such as `Row`, `Column`, `Box`, padding, and size constraints to arrange Miuix components.
+6. Add custom colors, shapes, drawing, or effects only for a concrete product requirement that the public component and defaults cannot express.
 
 Do not introduce a Material or Material 3 component merely because its API is familiar. First verify that Miuix does not provide the intended component or interaction.
 
@@ -20,7 +23,7 @@ Do not introduce a Material or Material 3 component merely because its API is fa
 
 Prefer the component's default colors. When code must choose a token directly, select it by semantic role rather than by its current light-theme appearance.
 
-For a natural-language request such as “蓝色主按钮” or “灰色摘要文字”, use [Color semantics and visual lookup](color-lookup.md). It verifies the stable `Colors` source and component Defaults, and distinguishes a semantic role from a fixed default-theme hue.
+For a natural-language request such as “蓝色主按钮” or “灰色摘要文字”, use the Color Semantics and Visual Lookup reference in the `miuix-components` Skill. It verifies the stable `Colors` source and component Defaults, and distinguishes a semantic role from a fixed default-theme hue.
 
 | UI role | Start with | Notes |
 |---|---|---|
@@ -54,7 +57,7 @@ These names are a type scale, not a rigid HTML-like heading hierarchy. Do not ch
 
 ## Component Defaults
 
-Search the selected component source for its `*Defaults` object before adding a magic number. Common public defaults include `BasicComponentDefaults`, `CardDefaults`, `SmallTitleDefaults`, `ButtonDefaults`, `TopAppBarDefaults`, `DialogDefaults`, `BottomSheetDefaults`, `NavigationBarDefaults`, `TextFieldDefaults`, `SliderDefaults`, `SwitchDefaults`, `CheckboxDefaults`, `RadioButtonDefaults`, `RadioButtonPreferenceDefaults`, `BadgeDefaults`, `SnackbarDefaults`, `TabRowDefaults`, `ProgressIndicatorDefaults`, `ScrollBarDefaults`, `TooltipDefaults`, and `BreadcrumbBarDefaults`; for navigation item colors also verify `NavigationBarDefaults.navigationBarItemColors()`. Use [Color semantics and visual lookup](color-lookup.md) for their verified color mappings.
+Search the selected component's verified `*Defaults` contract before adding a magic number. Use the corresponding color lookup in the `miuix-components` Skill for exact token mappings and component color factories.
 
 - Omit optional visual parameters when the stock result is acceptable.
 - Call the component's color factory when changing one supported role, instead of recreating all state colors manually.
@@ -62,13 +65,23 @@ Search the selected component source for its `*Defaults` object before adding a 
 - Treat spacing found only in `example/shared/` as composition evidence, not as a library constant.
 - Recheck source when a Defaults member is not shown in the component doc; do not infer its name from another component.
 
+## Page composition defaults
+
+These are Skill-level composition defaults for a grouped page when the target project has no established spacing system. They are not `Card`, `Scaffold`, or Preference library defaults:
+
+- Use `12.dp` as the default horizontal outer inset for a grouped content container.
+- Use `12.dp` as the default gap after a grouped container before the next section.
+- When a page uses a `Scaffold` and has no existing bottom-spacing convention, add `16.dp` of bottom breathing room after the host's supplied content padding.
+
+Apply these values at the page-composition boundary, not again inside every component. Do not add them when the existing host, component `insideMargin`, or project spacing system already supplies the same space. Keep the values consistent within one page rather than tuning each section independently.
+
 ## Hierarchy and Grouping
 
-- Give every page one clear structural shell. Avoid nested Scaffolds or nested Cards unless they represent distinct behavior or containment.
-- Group related settings under `SmallTitle` + `Card`; keep unrelated actions in separate groups.
+- Use [Page structure and ownership](page-structure.md) to give every page one clear structural shell. The shell is a responsibility boundary, not a requirement to use `Card`, `SmallTitle`, or Preference components on every page. Avoid nested Scaffolds or nested Cards unless they represent distinct behavior or containment.
+- For grouped settings content, prefer `SmallTitle` + `Card` when those components express the section label and containment; this is a content pattern, not a requirement for every page. Keep unrelated actions in separate groups.
 - In the stable source, Card is a plain `Column` with `CardDefaults.InsideMargin = 0.dp`; it does not insert gaps or Dividers between children. Preference rows provide their own internal padding and disabled styling. Do not add row spacing or separators by habit—add a Divider only when the grouping remains ambiguous.
 - Place `SmallTitle` before its Card for a section label. Its own Defaults provide label padding; it is not a row inside the Card and there is no public `SectionHeader` component at this tag.
-- The Example's repeated 12 dp Card/section margins are application composition evidence, not a hard Miuix spacing rule. Reuse target-project spacing first; use 12 dp only as a starting point when no convention exists and verify the resulting hierarchy.
+- For grouped content without a target-project spacing convention, use the page composition defaults above: `12.dp` outer inset and `12.dp` section gap. These are composition values, not a claim about Miuix component internals.
 - Avoid nested Cards for visual decoration. Nest only when the inner Card has a distinct containment or interaction role that remains understandable in accessibility traversal.
 - Use the title for the setting or action and the summary for consequence, status, or context. Do not repeat the same wording in both.
 - Keep the primary action visually dominant and secondary/destructive actions distinguishable through supported component roles, placement, and wording.
@@ -77,8 +90,8 @@ Search the selected component source for its `*Defaults` object before adding a 
 
 ## Error and Failure States
 
-- `TextField` at the stable snapshot has no `isError` or `supportingText` parameter. Track validation state outside it, use `TextFieldDefaults.textFieldColors(labelColor = error, borderColor = error)` with `MiuixTheme.colorScheme.error`, and place a concise supporting `Text` below the field. Do not communicate the error by color alone.
-- Preference components do not expose one uniform error flag. For a row-level validation problem, keep the row visible, explain the problem in its summary or nearby inline text, and use an exposed `summaryColor`/`BasicComponentDefaults` error role only after verifying that row's signature.
+- Do not invent Material-style error parameters for a Miuix field. Track validation state outside the field, use its verified error-color contract with the semantic error role, and place concise supporting text below it. Do not communicate the error by color alone.
+- Preference components do not expose one uniform error flag. For a row-level validation problem, keep the row visible, explain the problem in its summary or nearby inline text, and use an exposed error-role color only after the `miuix-components` Skill verifies that row's signature.
 - Use `Snackbar` for transient operation/network feedback when the current content remains usable. Use an inline page/section error with a retry action for persistent or blocking failures; preserve entered form data.
 - Validate error, disabled, loading, empty, and retry states independently in light/dark and dynamic color modes when affected.
 
@@ -107,4 +120,4 @@ Customize beyond defaults only when at least one of these is true:
 
 Keep the smallest coherent customization, document any non-obvious reason in code, and verify light/dark or dynamic color behavior when affected.
 
-Before delivery, use the single authoritative [Code Delivery Contract](../SKILL.md#code-delivery-contract); for an existing screen review, use [UI review and improvement workflow](ui-review-workflow.md).
+Use the [Code Delivery Contract](../SKILL.md#code-delivery-contract) for delivery facts. Do not load the UI review workflow unless the task is specifically an existing-screen review.

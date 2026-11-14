@@ -1,18 +1,43 @@
 # Source Verification
 
-Use this reference after another catalog or workflow identifies an evidence path. It defines how every abbreviated path in this Skill maps to the public Miuix repository and pins the current catalog evidence to the stable `v0.9.4` snapshot.
+Use this reference when an exact API, behavior, dependency, or version claim needs pinned Miuix evidence. It can be the primary reference for an uncovered API or a version mismatch. It defines how abbreviated paths in this Skill map to the public Miuix repository and pins the current catalog evidence to the stable `v0.9.4` snapshot.
 
-Contents: [evidence workflow](#evidence-resolution-workflow) · [snapshot scope](#snapshot-scope) · [path convention](#path-convention) · [supporting internals](#supporting-internals) · [Example app](#example-app)
+Read only the evidence workflow, API gate, path table, or supporting-internals entry required by the claim. Do not load the Example-app inventory during an ordinary API check.
+
+Contents: [evidence workflow](#evidence-resolution-workflow) · [API verification gate](#api-verification-gate) · [snapshot scope](#snapshot-scope) · [path convention](#path-convention) · [supporting internals](#supporting-internals) · [Example app](#example-app)
 
 ## Evidence Resolution Workflow
 
-1. Start from the component catalog, [usage-pattern evidence levels](usage-patterns.md#evidence-levels), or the exact file named by another reference.
+1. Start from the exact declaration or evidence path required by the task. Use a component catalog or Example evidence only when the task does not already identify the symbol or integration point.
 2. Expand abbreviated paths with the table below.
-3. Read the relevant `docs/**/*.md` file from the pinned snapshot for intent, the matching `docs/demo/` file for an isolated call, the closest `example/shared/` section for integration, and source for the API/behavior contract. Do not read every document or source file unless the task is a release audit.
+3. Read only the evidence required by the claim: choose the relevant docs, demo, Example section, or pinned source path; do not load all evidence types by default. The pinned source is required for an API/behavior contract, while docs, demos, and Example code are optional evidence for the specific claim.
 4. For current catalog work, keep all evidence on commit `39c40f99844227b853f0049a0933b1f3ae6c00ba` / tag `v0.9.4`. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters. If the user explicitly requests the `v0.9.3 → v0.9.4` migration, follow the single migration reference and use its comparison source only for that task.
-5. Return to the [Code Delivery Contract](../SKILL.md#code-delivery-contract) before presenting implementation or validation claims.
+5. Return to the [Delivery Contract](../SKILL.md#delivery-contract) before presenting implementation or validation claims.
 
 If the pinned web source cannot be reached, do not silently substitute memory, the rolling documentation site, or an unpinned snippet. State that API verification is blocked, or ask the user to provide the relevant tagged file, before making a version-sensitive claim.
+
+## API verification gate
+
+Use this gate whenever delivered code contains a Miuix symbol, dependency, or version-sensitive call. It is a correctness gate, not a component catalog:
+
+1. **Pin the target.** Confirm the project's Miuix version, platform, and source set. Do not call a `v0.9.4` declaration verified for a different target version.
+2. **Locate the declaration.** In the pinned source, confirm the public package/module, symbol name, overload, full parameter list, parameter order, required/optional parameters, defaults, and any experimental or platform opt-in.
+3. **Match intended usage when needed.** Use the matching Markdown doc for intent or the demo for an isolated call only when that claim matters. Use Example code only to understand integrated composition; never use Example code as the API contract.
+4. **Check behavior assumptions.** Confirm state/callback direction, required ancestor or host, insets, lifecycle, and disabled/dismissal behavior when they affect the call.
+5. **Compile the affected target.** Run the target project's relevant source-set/module compilation after the change when the project is available. A source check without compilation is `source-verified`, not `compile-verified`.
+6. **Report the boundary.** If compilation cannot run, state `source-verified; compilation pending` and do not describe the code as fully verified. If the pinned source or target version cannot be checked, state `API verification blocked` and stop the version-sensitive claim.
+
+Use this compact record when the API risk is non-trivial:
+
+```text
+Miuix target:       version / platform / source set
+Declaration:        pinned source path + symbol
+Call contract:      import / overload / required state and callbacks
+Host contract:      ancestor / inset / lifecycle requirement
+Verification:       source-verified / compile-verified / pending
+```
+
+`references/api-contracts.md` is a maintained, source-verified subset of common public calls. Treat it as a copyable index into this gate, not as a second API authority: the pinned declaration wins, and every target version change invalidates the contract until it is rechecked.
 
 ## Snapshot scope
 
@@ -37,6 +62,10 @@ The repository Markdown file is the documentation evidence. The rendered site ma
 | Abbreviation | Relative path |
 |---|---|
 | `miuix-ui/.../basic/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/` |
+| `miuix-ui/.../anim/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/anim/` |
+| `miuix-ui/.../color/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/color/` |
+| `miuix-ui/.../interfaces/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/interfaces/` |
+| `miuix-ui/.../icon/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/` |
 | `miuix-ui/.../overlay/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/overlay/` |
 | `miuix-ui/.../window/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/window/` |
 | `miuix-ui/.../layout/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/layout/` |
@@ -104,4 +133,4 @@ These files underpin multiple components. They're read-on-demand, not listed per
 | `example/shared/.../component/` | `LazyListScope` sections and popup examples composed into `MainPage`; these are sections, not one screen per component |
 | `example/shared/.../utils/PageUtils.kt` | Example-specific adaptive app bar, insets, scroll, haptic, and blur helpers |
 
-Read [Example-derived usage patterns](usage-patterns.md) before translating these files into application code. Reuse repeated hierarchy and state patterns, but verify APIs in source and do not treat Example-specific helpers as public Miuix requirements.
+Use the `miuix-guidelines` Skill only when translating integrated Example composition into application code. Reuse repeated hierarchy and state patterns there, but verify APIs in this Skill's pinned source and do not treat Example-specific helpers as public Miuix requirements.

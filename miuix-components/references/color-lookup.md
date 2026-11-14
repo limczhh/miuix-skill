@@ -2,6 +2,8 @@
 
 Use this reference when a user describes a color visually—“蓝色主按钮”“浅色卡片背景”“灰色摘要文字”“红色警告”，但还不知道对应的 Miuix 参数或 Token 名称。证据固定于上游稳定 tag `v0.9.4`，提交为 `39c40f99844227b853f0049a0933b1f3ae6c00ba`。
 
+Read the matching visual lookup or component-defaults section only; do not load the entire token table for a single color role.
+
 Contents: [rules](#lookup-rules) · [visual lookup](#visual-to-semantic-lookup) · [component defaults](#component-defaults-first) · [core roles](#core-color-roles) · [theme and dynamic color](#theme-and-dynamic-color) · [evidence](#source-evidence)
 
 ## Lookup rules

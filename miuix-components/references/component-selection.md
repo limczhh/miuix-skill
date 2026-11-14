@@ -1,32 +1,20 @@
 # Component Selection
 
-Use this catalog after resolving code context in [SKILL.md](../SKILL.md#resolve-code-context). After choosing a component, read its doc/demo/source at the depth defined by the entry Skill. For multi-component pages, continue with [Example-derived usage patterns](usage-patterns.md); for visual customization, use [Design language and Defaults](design-language.md).
+Use this catalog when the available public Miuix component family or capability is unclear. It is a library lookup table, not a page workflow. If the component and call are already known, skip this file and use the exact API or host reference directly.
 
-Contents: [scenario map](#scenario-component-quick-map) · [component table](#component-reference-table) · [public API boundaries](#public-api-boundaries) · [validation notes](#textfield-validation)
+Read only the matching module table or boundary note; do not scan the entire catalog for a single component.
 
-## Scenario → Component Quick Map
+Contents: [component table](#component-reference-table) · [public API boundaries](#public-api-boundaries) · [validation notes](#textfield-validation)
 
-When the user describes a *scenario* rather than a component name, use this table to short-circuit the lookup — no need to fetch `docs/components/index.md` first.
+## Match a semantic role to a public component
 
-| User says | Likely components |
-|-----------|-------------------|
-| "设置页 / 偏好设置 / settings" | `Scaffold` + `SwitchPreference` + `CheckboxPreference` + `ArrowPreference` + `SliderPreference` |
-| "弹窗 / 对话框 / dialog" | `OverlayDialog` (in-page) or `WindowDialog` (global) |
-| "确认操作 / 二次确认 / confirm" | `OverlayDialog` (page-scoped) or `WindowDialog` (global) + secondary cancel action + primary confirm action |
-| "底部弹出 / bottom sheet" | `OverlayBottomSheet` (in-page) or `WindowBottomSheet` (global) |
-| "下拉选择 / dropdown / spinner" | `OverlayDropdownPreference` / `OverlaySpinnerPreference` (in settings) or `OverlayDropdownMenu` (standalone) |
-| "搜索 / search" | `SearchBar` |
-| "表单 / form / 登录" | `TextField` + `Button`; add `Switch` only for an actual binary option |
-| "列表弹出 / popup menu" | `OverlayListPopup` / `OverlayCascadingListPopup` |
-| "底部导航 / navigation bar / 侧边导航 / navigation chrome" | `NavigationBar` (bottom), `FloatingNavigationBar` (floating bottom), or `NavigationRail` (side) |
-| "浮动导航 / floating navigation bar / floating nav" | `FloatingNavigationBar` + `FloatingNavigationBarItem` |
-| "页面路由 / 返回栈 / route / back stack" | `miuix-nav`'s `NavDisplay` + `rememberNavBackStack`; read [the routing reference](miuix-nav.md). Do not mistake navigation chrome for routing architecture |
-| "路径导航 / 文件路径 / 目录层级" | `BreadcrumbBar` + `BreadcrumbItem`; use `highlightIndex` for the active segment and `joinToPath()` for path reconstruction |
-| "标签页 / tabs" | `TabRow` |
-| "HorizontalPager 手势冲突 / pager gesture / 嵌套列表横滑" | `Modifier.pagerGestureOverride()` + `PagerGestureNestedScrollConnection`; read `docs/guide/utils.md` for the required pager configuration |
-| "提示气泡 / tooltip" | `TooltipBox` + `PlainTooltip` / `RichTooltip` |
-| "角标 / 徽章 / badge" | `Badge` + `BadgedBox`; for navigation, use `NavigationBarItem(badge = { ... })` or `FloatingNavigationBarItem(badge = { ... })` |
-| "滑块 / slider" | `Slider` (basic) or `SliderPreference` (in settings) |
+This catalog helps identify a public component for an already-understood semantic role. It does not define a universal page template or decide the page's ownership model; those are handled by the `miuix-guidelines` Skill. When the role is clear, choose the least specialized public component that expresses it:
+
+- Use a host component only when the page owns host behavior.
+- Choose one primary content owner and let its children follow the content's semantics.
+- Use Preference components for complete setting rows, not merely because a page happens to be a settings-like screen.
+- Use `Card`, `SmallTitle`, custom layouts, or plain Compose primitives when their containment or content relationship is justified.
+- Keep the component choice independent from route and navigation state ownership.
 
 ## Component Reference Table
 
@@ -104,7 +92,7 @@ At the current `v0.9.4` snapshot there is no public Miuix `SectionHeader`. `Smal
 
 ### TextField validation
 
-`TextField` has no `isError` or `supportingText` parameter at the current `v0.9.4` snapshot. For field, Preference-row, transient-network, and blocking-page failure patterns, read [Error and Failure States](design-language.md#error-and-failure-states) rather than inferring Material parameters.
+`TextField` has no `isError` or `supportingText` parameter at the current `v0.9.4` snapshot. For field, Preference-row, transient-network, and blocking-page failure composition, consult the `miuix-guidelines` Skill rather than inferring Material parameters.
 
 ### Current stable additions and behavior notes
 

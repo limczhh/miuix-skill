@@ -1,6 +1,6 @@
 # Example-Derived Usage Patterns
 
-At the stable `v0.9.4` snapshot, `docs/guide/best-practices.md` explicitly points to the project's Example application as a real-world demonstration of how Miuix components and design principles are applied. Treat it as a first-party reference implementation, while keeping source code authoritative for API contracts. Before applying these patterns, resolve theme and host ownership in [Project setup and theme](setup-and-theme.md) and follow the [Code Delivery Contract](../SKILL.md#code-delivery-contract).
+This is an optional Example-evidence reference, not the default page workflow. At the stable `v0.9.4` snapshot, `docs/guide/best-practices.md` points to the project's Example application as a real-world demonstration of how Miuix components and design principles are applied. Use it only when the task needs integrated hierarchy, state flow, or adaptive composition evidence. Example code is never the API authority.
 
 ## Contents
 
@@ -44,11 +44,11 @@ Use this map after choosing components. Unless a path starts with another root, 
 
 ## Derive a Pattern Before Coding
 
-1. Locate the closest integrated Example page or component section.
-2. Identify which parts are Miuix contracts, repeated composition patterns, and Example-specific choices.
-3. Compare the integrated use with the isolated `docs/demo/` file for each selected component.
-4. Adapt the pattern to the target project's state ownership, navigation, insets, and existing spacing.
-5. Verify exact names and parameters in the pinned stable source before producing code.
+1. Confirm or write the page map before opening an integrated Example page. Open [Page structure and ownership](page-structure.md) only if ownership or the page boundary is still unresolved.
+2. Locate the closest Example page or component section for the content relationship, not for a mandatory page type or component recipe.
+3. Separate Miuix contracts, repeated composition patterns, Example-specific choices, and target-project conventions.
+4. Compare only the selected components with their isolated `docs/demo/` files.
+5. Adapt the pattern to the target project's state ownership, navigation, insets, and spacing, then verify uncertain names and parameters in the pinned source.
 
 Do not copy a whole Example file into an application. The Example includes navigation infrastructure, blur helpers, diagnostics, and showcase-only effects that most projects do not need.
 
@@ -56,7 +56,7 @@ Do not copy a whole Example file into an application. The Example includes navig
 
 Evidence: `example/shared/src/commonMain/kotlin/App.kt` and `ui/Theme.kt`.
 
-- Apply the ownership decision from [Project setup and theme](setup-and-theme.md): create the root only for a standalone app/example; otherwise integrate below the existing application theme.
+- Apply the ownership decision from the `miuix-components` Skill's Project Setup and Theme reference: create the root only for a standalone app/example; otherwise integrate below the existing application theme.
 - Provide `MiuixTheme` once around the application subtree rather than recreating it in every screen.
 - Create `ThemeController` from the application's actual color-mode inputs. Remember it with every input that changes the resulting theme.
 - Keep cross-screen theme and UI configuration in stable application state. Use composition locals only when the target architecture already benefits from tree-wide access; they are not required by Miuix.
@@ -66,7 +66,7 @@ Evidence: `example/shared/src/commonMain/kotlin/App.kt` and `ui/Theme.kt`.
 
 Evidence: `MainPage.kt`, `SettingsPage.kt`, and `utils/PageUtils.kt`.
 
-- Use `Scaffold` as the page shell when the page has bars, floating controls, snackbars, or Overlay components. Reuse an existing intended host instead of nesting one only for visual structure.
+- Use the [page structure rules](page-structure.md) to decide whether the page owns a shell. Use `Scaffold` when the page has bars, floating controls, snackbars, or Overlay components that belong to this boundary; reuse an existing intended host instead of nesting one only for visual structure.
 - Consume the `PaddingValues` supplied by `Scaffold`; pass them to `LazyColumn.contentPadding` as the Example does, or apply them to the content root and consume the corresponding window insets as required by the Scaffold contract. Do not let content render underneath bars accidentally.
 - Connect a top app bar's scroll behavior to the scrolling content when the page uses collapsing or scroll-aware bars.
 - At the stable snapshot, create `val scrollBehavior = MiuixScrollBehavior()`, pass it to `TopAppBar(scrollBehavior = scrollBehavior)`, and apply `Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)` to the scrolling container. Keep the `LazyListState` used by `LazyColumn(state = ...)` separate from the app-bar behavior state. When a `SmallTopAppBar` shares a scroll behavior with a collapsible bar, verify the pinned-state behavior in source rather than adding an external offset workaround.
@@ -75,32 +75,14 @@ Evidence: `MainPage.kt`, `SettingsPage.kt`, and `utils/PageUtils.kt`.
 
 ### NavigationBar ↔ NavigationRail switching
 
-The stable Example computes its own window policy from `LocalWindowInfo`: it uses the wide/split layout at `width >= 840.dp`, or at `width >= 600.dp` when `height / width < 1.2`; it expands the rail at `width >= 1200.dp`. These are Example application breakpoints, not Miuix component requirements.
-
 - Reuse the target project's existing adaptive system. Android-only apps may already use a Window Size Class; multiplatform apps may use `LocalWindowInfo` or another shared policy. Keep the decision in one named function rather than scattering width checks through components.
 - Remember or hoist the selected destination/pager/back-stack before branching. Render `NavigationBar` and `NavigationRail` from that same state, so a resize changes chrome without resetting selection or creating two sources of truth.
 - Use compact/wide branches for materially different shells. If only the navigation component changes, keep page content and business state outside the branch.
-- Treat `600/840/1200.dp` as a source-derived starting point only when the product has no existing policy, then validate resizable windows, orientation changes, and foldable/tablet layouts.
+- Keep any fallback breakpoints in one named policy and validate resizable windows, orientation changes, and foldable/tablet layouts.
 
 ## `miuix-nav` Routing
 
-Use `miuix-nav` for route/back-stack ownership, and use `NavigationBar`/`NavigationRail` for top-level navigation chrome. The current minimal route flow is `@Serializable` route hierarchy → `rememberNavBackStack<Route>` → `NavDisplay` entry DSL:
-
-```kotlin
-@Serializable
-sealed interface Route : NavKey {
-    @Serializable data object Home : Route
-    @Serializable data class Detail(val id: String) : Route
-}
-
-val backStack = rememberNavBackStack<Route>(Route.Home)
-NavDisplay(backStack = backStack) {
-    entry<Route.Home> { HomePage() }
-    entry<Route.Detail> { DetailPage(it.id) }
-}
-```
-
-Register every concrete route type; the DSL matches exact runtime classes. Use `NavController` when `push`, `pop`, `replace`, or `popUntil` reads more clearly than direct list operations. Built-in transitions are `NavTransitions.MiuixDefault`, `Modal`, and `None`; swipe-to-dismiss is opt-in through `entry(swipeDismiss = ...)`, and physical directions are not automatically mirrored for RTL. Use the complete [miuix-nav routing reference](miuix-nav.md) for saveable identity, `contentKey`, nested displays, multi-pane clipping, and v1 limitations.
+Use `miuix-nav` for route/back-stack ownership, and use `NavigationBar`/`NavigationRail` for top-level navigation chrome. Use the complete miuix-nav reference in the `miuix-components` Skill for the exact route key, back-stack, entry, transition, save/restore, and v1 limitation contracts.
 
 For a bottom/rail navigation shell, derive each item's `selected` and `onClick` from the same top-level page or pager state used by the content. Do not derive tab selection from a `NavDisplay` entry or create separate compact and wide selection states. Do not import the removed `androidx.navigation3` scene flow into current stable code.
 
@@ -108,47 +90,17 @@ For a bottom/rail navigation shell, derive each item's `selected` and `onClick` 
 
 Evidence: `SettingsPage.kt` and the files under `example/shared/src/commonMain/kotlin/component/`.
 
-- Build a settings page from scrollable sections. Use the [Preference family guide](preferences-and-menus.md#choose-the-family) to distinguish a complete setting row from a standalone control or menu.
-- Use `SmallTitle` to label a section and `Card` to group related Preference components.
-- Put related `SwitchPreference`, `CheckboxPreference`, `ArrowPreference`, dropdown, and slider rows in the same Card rather than styling every row as an unrelated surface.
+This is a content-composition example, not a different page skeleton. The same page-host, content-owner, inset, and state rules apply to pages whose main content is not a settings group.
+
+- When settings content is long, use a scrollable main content flow. Use the Preference and Dropdown Menu reference in the `miuix-components` Skill to distinguish a complete setting row from a standalone control or menu.
+- When a group needs a section label and shared containment, use `SmallTitle` and `Card`; choose another content composition when those semantics do not apply.
+- Put related `SwitchPreference`, `CheckboxPreference`, `ArrowPreference`, dropdown, and slider rows in the same Card when they are part of one meaningful setting group rather than styling every row as an unrelated surface.
 - Use `summary` for consequences or context, not to repeat the title.
 - Show dependent settings conditionally, as the Example does with `AnimatedVisibility`, while keeping their state owned by the screen or application model.
-- Hide a dependent setting when it is irrelevant or unsupported; leave it visible but disabled when discoverability matters and the summary can explain the prerequisite. See [Preference enabled and dependent states](preferences-and-menus.md#enabled-and-dependent-states).
+- Hide a dependent setting when it is irrelevant or unsupported; leave it visible but disabled when discoverability matters and the summary can explain the prerequisite. Use the `miuix-components` Preference reference for the exact row capabilities.
 - Treat the Example's repeated 12 dp group margins as a reference value, not a global Miuix constant. Preserve the target project's established spacing unless the user asks to change it, and use [Design language and Defaults](design-language.md) for semantic styling decisions.
 
-Reference shape, adapted from `SettingsPage.kt`:
-
-```kotlin
-@Composable
-fun SettingsScreen(
-    enabled: Boolean,
-    onEnabledChange: (Boolean) -> Unit,
-) {
-    Scaffold(
-        topBar = { TopAppBar(title = "Settings") },
-    ) { innerPadding ->
-        LazyColumn(contentPadding = innerPadding) {
-            item {
-                SmallTitle(text = "General")
-                Card(
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp),
-                ) {
-                    SwitchPreference(
-                        title = "Feature",
-                        summary = "Explain what enabling it changes",
-                        checked = enabled,
-                        onCheckedChange = onEnabledChange,
-                    )
-                }
-            }
-        }
-    }
-}
-```
-
-Use this as a structural pattern. Confirm imports and exact component APIs against the target project and pinned source.
+Use the integrated settings files only to inspect grouping, dependent visibility, state flow, and content-padding decisions. Do not copy their page shell or row composition without checking that the target content has the same semantics. Confirm all selected component APIs against the target project and pinned source.
 
 ## State and Component Variants
 
@@ -163,7 +115,7 @@ Evidence: `docs/demo/` and the Example component sections.
 
 Evidence: `component/DialogSection.kt`, `component/BottomSheetSection.kt`, and their matching `docs/demo/` files.
 
-- Choose the lifecycle/host family with [Overlay and Window Components](overlays-and-windows.md#choose-the-host-first).
+- Choose the lifecycle/host family with the Overlay and Window reference in the `miuix-components` Skill.
 - Use Overlay components for page-scoped UI and place them under the intended `Scaffold` popup host.
 - Use Window components when the popup must be independent of that page's Scaffold.
 - Model visibility explicitly with `show` and close it through `onDismissRequest`.

@@ -135,4 +135,4 @@ The current runtime is deliberately a single flat stack. It does not provide dia
 - Entry state: `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/state/NavEntryViewModel.kt`
 - Integrated example: `example/shared/src/commonMain/kotlin/navigation/` and `AppContent.kt`
 
-Verify those paths at the exact snapshot in [Source verification](source-verification.md); do not substitute the deleted `docs/guide/navigation3.md` or infer APIs from another Navigation library.
+The paths above are the evidence boundary for this guide. Open [Source verification](source-verification.md) only when the target version differs or a declaration in this guide is insufficient; do not substitute the deleted `docs/guide/navigation3.md` or infer APIs from another Navigation library.

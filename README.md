@@ -1,127 +1,50 @@
-# Miuix Skill
+# Miuix Skills
 
-Miuix Compose UI 组件库的开发参考与工作指南。
+本仓库维护两类相互配合、但职责独立的 Miuix Skill：一个回答“组件库实际有什么、怎么调用”，另一个回答“界面应该如何组织和使用”。本仓库本身是维护用的 monorepo，不是第三个 Skill。
 
-Miuix 是一个独立的 Compose UI 组件库，可用于实现具有小米设计风格的界面，但不等同于小米官方 HyperOS UI 组件库。本 Skill 整理了 Miuix 的组件、页面结构、主题、状态、弹窗、导航和源码核验之间的关系，为界面设计和代码实现提供统一参考。
+## 两个 Skill
 
-## 使用场景
+| Skill | 负责的问题 | 入口 |
+|---|---|---|
+| `miuix-components` | 组件能力、真实 API、导入和模块、默认值、宿主与生命周期、版本差异、源码核验 | [`miuix-components/SKILL.md`](./miuix-components/SKILL.md) |
+| `miuix-guidelines` | 页面骨架、所有权、组件语义选择、层级、间距、状态、Insets、自适应和界面审查 | [`miuix-guidelines/SKILL.md`](./miuix-guidelines/SKILL.md) |
 
-- 新建设置页、搜索页、表单页或多页面应用，但尚未确定页面结构。
-- 优化现有 Compose 页面，使其更符合 Miuix 的层级、间距和交互规范。
-- 判断 `OverlayDialog` 与 `WindowDialog` 的适用场景，或组合 Preference、菜单和导航组件。
-- 核对组件的实际参数、默认行为、主题依赖或版本变化。
-- 参考 Miuix Example 的完整页面，将其整理为适合目标项目的实现方式。
+## 选择规则
 
-## 使用方式
+- 询问实际签名、参数、依赖、版本、编译错误或组件行为时，使用 `miuix-components`。
+- 新建页面、调整页面结构、改善视觉层级或审查现有界面时，使用 `miuix-guidelines`。
+- 同时涉及设计和实现时，让 `miuix-guidelines` 决定页面组合，只把实际调用到的具体符号交给 `miuix-components` 核验。
+- 两个 Skill 都按自己的 Reference 路由工作，不要求预加载另一个 Skill 的全部文档。
 
-无需预先记忆组件名称或参数，直接描述目标界面即可：
+## 内容归属
 
-```text
-我想做一个带底部导航、设置页和确认弹窗的 Miuix 风格页面，应该如何组织？
-```
+### `miuix-components`
 
-也可以从更具体的问题开始：
+- [`api-contracts.md`](./miuix-components/references/api-contracts.md)：固定版本中已核对的高频公开 API。
+- [`library-map.md`](./miuix-components/references/library-map.md)：固定源码中各模块和 commonMain 区域的导览与路由。
+- [`component-selection.md`](./miuix-components/references/component-selection.md)：公共组件能力和组件家族查找。
+- [`source-verification.md`](./miuix-components/references/source-verification.md)：固定源码、文档、Demo 和 Example 的核验边界。
+- `miuix-nav`、Overlay/Window、Preference、主题设置、颜色 Token、视觉效果和版本迁移等库事实。
 
-```text
-用 Miuix 创建一个包含开关和下拉选择的设置页。
-```
+### `miuix-guidelines`
 
-```text
-OverlayDialog 和 WindowDialog 有什么区别？请给出使用建议。
-```
+- [`page-structure.md`](./miuix-guidelines/references/page-structure.md)：页面宿主、主内容、Insets、状态和瞬态层的所有权。
+- [`page-compositions.md`](./miuix-guidelines/references/page-compositions.md)：Scaffold、顶栏、底栏、悬浮导航、浮动操作、滚动内容和 Overlay 的组合配方。
+- [`design-language.md`](./miuix-guidelines/references/design-language.md)：层级、排版、分组、颜色语义、加载和失败状态。
+- [`usage-patterns.md`](./miuix-guidelines/references/usage-patterns.md)：仅在需要集成组合证据时读取的 Example 模式。
+- [`ui-review-workflow.md`](./miuix-guidelines/references/ui-review-workflow.md)：现有页面的诊断、改进和验证。
 
-```text
-把这个 Compose 页面改成 Miuix 风格，并核对实际 API。
-```
+## 共同证据版本
 
-## 输出内容
-
-根据任务范围，输出内容可以是：
-
-- 一个带状态和回调的最小组件调用，明确它需要什么祖先组件。
-- 一个可以接入现有项目的完整页面，包含状态归属、主题和导航假设。
-- 一个独立运行的 `App` 示例，包含依赖、主题和宿主结构。
-- 一份现有 UI 的改进方案，说明层级、间距、状态、Insets、自适应和无障碍问题。
-- 一组经过文档、Demo、Example 和源码核对的 API 结论，以及清楚区分的编译和视觉验证结果。
-
-## 内容从哪里来
-
-遇到具体组件时，可以从文档了解用途，从 Demo 看到最小调用，从 Example 看到完整组合，再回到对应版本的源码确认参数和行为。这样既能保持 Miuix 的设计语言，也不会把 Example 中的应用代码误当成公共 API。
-
-当前目录中的 Reference 不需要从头读完；它们按主题组织，方便在需要时展开，也方便维护者定位证据：
-
-`SKILL.md` 是 Agent 的机器路由与交付规则；本 README 是面向维护者和读者的项目说明。两者出现重复链接时，以 `SKILL.md` 的路由规则为准。
-
-### 页面与工作流
-
-- [`ui-review-workflow.md`](./references/ui-review-workflow.md)：已有页面的诊断、改进和结果报告。
-- [`usage-patterns.md`](./references/usage-patterns.md)：从 Example 提炼的页面、设置、导航、弹窗和状态模式。
-
-### 设计与组件
-
-- [`design-language.md`](./references/design-language.md)：颜色、文字、层级、间距、Defaults 和错误/加载状态。
-- [`color-lookup.md`](./references/color-lookup.md)：把“蓝色主按钮”“红色/黄色警告”“灰色摘要文字”等视觉描述映射到已验证的 Miuix 颜色 Token，并覆盖常见组件的状态化 Defaults。
-- [`component-selection.md`](./references/component-selection.md)：场景地图和基础组件目录。
-- [`overlays-and-windows.md`](./references/overlays-and-windows.md)：Overlay、Window、弹窗和返回行为。
-- [`preferences-and-menus.md`](./references/preferences-and-menus.md)：Preference、Dropdown 和菜单组件。
-- [`styling-icons-and-effects.md`](./references/styling-icons-and-effects.md)：图标、模糊、Squircle 和视觉效果。
-
-### 配置与版本证据
-
-- [`setup-and-theme.md`](./references/setup-and-theme.md)：依赖、`ThemeController`、`MiuixTheme`、Preview 和根宿主。
-- [`source-verification.md`](./references/source-verification.md)：文档、Demo、Example 和源码路径。
-- [`miuix-nav.md`](./references/miuix-nav.md)：当前 `miuix-nav` 路由、返回栈、转场、手势和 v1 边界。
-- [`release-v0.9.4.md`](./references/release-v0.9.4.md)：从 `v0.9.3` 迁移到稳定版 `v0.9.4` 的新增、删除、行为变化和迁移清单。
+两个 Skill 当前都以 Miuix `v0.9.4` 为基准，源码证据固定在提交 `39c40f99844227b853f0049a0933b1f3ae6c00ba`。版本迁移和具体 API 事实由 `miuix-components` 负责；页面规范不会把某个组件或 Example 页面宣称为所有页面的强制模板。
 
 ## 安装
 
-### Codex
+每个子目录都是一个独立 Skill 根目录，必须让使用环境分别看到其中的 `SKILL.md`。如果宿主不支持从 monorepo 直接发现嵌套 Skill，请分别复制或链接以下两个目录到 Skill 目录：
 
-全局安装：
-
-```bash
-git clone https://github.com/limczhh/miuix-skill.git ~/.codex/skills/miuix
+```text
+miuix-components/
+miuix-guidelines/
 ```
 
-项目内安装：
-
-```bash
-git clone https://github.com/limczhh/miuix-skill.git .codex/skills/miuix
-```
-
-### Claude Code
-
-全局安装：
-
-```bash
-git clone https://github.com/limczhh/miuix-skill.git ~/.claude/skills/miuix
-```
-
-项目内安装：
-
-```bash
-git clone https://github.com/limczhh/miuix-skill.git .claude/skills/miuix
-```
-
-其他工具请将仓库放入对应的 Skill 目录，并确保 `SKILL.md` 位于目录根部。
-
-如果已经通过 Git 克隆安装，进入对应的 Skill 目录后执行 `git pull --ff-only` 即可更新；本仓库不要求使用者另行下载 Miuix 源码。
-
-## 范围与版本
-
-这是一套专注于 Miuix Compose UI 的开发参考。它可以帮助你构建、完善、审查和重构 Miuix 界面；当 Miuix 没有对应组件时，会优先考虑 Compose 基础能力，并明确说明自定义行为，不会为了套用 Miuix 而强行替换项目中已有的其他 UI 体系。
-
-当前 Skill 只指导稳定版 `v0.9.4` 的使用。版本迁移不属于日常 API 指南；如果项目从 `v0.9.3` 升级，才阅读唯一的迁移 reference [`release-v0.9.4.md`](./references/release-v0.9.4.md)。当前 API 证据固定在上游提交 `39c40f99844227b853f0049a0933b1f3ae6c00ba` / tag `v0.9.4`。
-
-使用 Skill 时，Agent 按 [Source Verification](references/source-verification.md) 读取固定提交的上游网页源码；本地 `miuix-main` 不是终端用户的运行时依赖，只用于本项目维护和核对证据。
-
-具体的视觉效果和设备行为，仍取决于目标项目、平台以及可用的编译、预览或设备环境。
-
-当前证据入口：
-
-- [Miuix GitHub](https://github.com/compose-miuix-ui/miuix)
-- [Miuix v0.9.4 稳定版文档源文件](https://github.com/compose-miuix-ui/miuix/tree/39c40f99844227b853f0049a0933b1f3ae6c00ba/docs)
-
-## 贡献
-
-欢迎补充组件用法、修正文档和完善 API 参考。涉及具体 API 时，请附上对应的文档、Demo、Example 或源码路径，并说明验证所依据的 Miuix 版本。
+具体使用哪一个 Skill，由任务是“核对组件库事实”还是“设计/审查界面”决定；两者同时需要时也只读取各自当前任务相关的 Reference。
