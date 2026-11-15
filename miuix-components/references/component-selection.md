@@ -1,6 +1,6 @@
 # Component Selection
 
-Use this catalog when the available public Miuix component family or capability is unclear. It is a library lookup table, not a page workflow. If the component and call are already known, skip this file and use the exact API or host reference directly.
+Use this catalog when the available public Miuix component family or capability is unclear. For a general library tour or module/dependency question, start with the [Library overview](library-overview.md); this catalog begins after the semantic role is understood. It is a library lookup table, not a page workflow. If the component and call are already known, skip this file and use the exact API or host reference directly.
 
 Read only the matching module table or boundary note; do not scan the entire catalog for a single component.
 

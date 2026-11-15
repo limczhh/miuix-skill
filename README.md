@@ -27,6 +27,7 @@
 
 1. 先确认目标项目的 Miuix 版本、平台、source set、依赖、已有主题和宿主。
 2. 按问题选择一个入口：
+   - 想了解 Miuix 整体有什么、模块如何分工或该从哪个依赖开始：读 **library-overview.md**。
    - 不认识源码区域：读 **library-map.md**。
    - 不确定语义组件家族：读 **component-selection.md**。
    - 已知组件但需要准确调用：读 **api-contracts.md**。
@@ -39,7 +40,7 @@
 ### 页面规范流程
 
 1. 先确认已有主题、路由 owner、页面边界、页面 host、平台和 source set。
-2. 先填写页面骨架：路由/导航 owner、主内容或滚动 owner、唯一 Insets consumer、host slots、瞬态层和持久状态 owner。
+2. 先填写页面骨架：路由/导航 owner、shell/page host、主内容或滚动 owner、Insets 交接与最终 consumer、host slots、瞬态层和持久状态 owner。
 3. 再按语义选择组件；页面是设置页、列表页还是表单页，不会自动决定组件。
 4. 只把最终确实要调用的 Miuix 符号交给 **miuix-components** 核对。
 5. 根据已核对的 API 写组合代码，保留目标项目已有的行为和状态归属。

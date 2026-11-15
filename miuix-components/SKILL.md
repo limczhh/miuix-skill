@@ -7,9 +7,20 @@ description: "Use when a task needs factual Miuix library knowledge: surveying a
 
 ## Scope
 
-Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS visual language. This Skill answers what the library provides and how its public contracts work. It does not prescribe a page template, information hierarchy, or product-specific visual direction; use `miuix-guidelines` for those decisions when that Skill is available.
+Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS visual language. This Skill has two related jobs: orient the agent inside the Miuix library, and verify the public contract needed by an implementation. It does not prescribe a page template, information hierarchy, or product-specific visual direction; use `miuix-guidelines` for those decisions when that Skill is available.
 
 The maintained evidence is Miuix `v0.9.4`, pinned to commit `39c40f99`. If the target project uses another version, identify the mismatch before presenting version-sensitive code.
+
+## Workflow modes
+
+Classify the request before opening a reference:
+
+- **Library orientation:** the user asks what Miuix is, what modules or component families exist, or what dependency fits a capability. Read [Library overview](references/library-overview.md) first and return a map, not guessed code.
+- **Semantic selection:** the capability is known but the appropriate public family is unclear. Read [Component selection](references/component-selection.md), then stop at the smallest matching family.
+- **API contract:** the symbol is known and the user needs its real signature, import, module, default, or host rule. Read [Verified API contracts](references/api-contracts.md) when covered; otherwise use [Source verification](references/source-verification.md).
+- **Source investigation:** the symbol, source package, or version behavior is unfamiliar. Read [Library map](references/library-map.md) to locate the pinned source area, then verify the declaration.
+
+Do not start an orientation request with the API contract sheet, and do not answer an exact API request by scanning the whole library overview. The workflow should narrow the question before it increases evidence depth.
 
 ## Operating contract
 
@@ -50,6 +61,7 @@ Start with exactly one primary reference. A link is a route, not an instruction 
 
 | Task | Primary reference | Open another reference only when |
 |---|---|---|
+| What is Miuix, what modules or capability layers does it provide, or which dependency should start a task? | [Library overview](references/library-overview.md) | A semantic role or exact symbol still needs to be selected |
 | Survey an unfamiliar Miuix module or source area | [Library map](references/library-map.md) | The map routes to a public component, exact call, or source behavior that the task needs |
 | Identify a component family or public capability | [Component selection](references/component-selection.md) | The selected symbol needs an exact call or host contract |
 | Exact call for a covered API | [Verified API contracts](references/api-contracts.md) | The target version differs or the contract is incomplete |
@@ -74,5 +86,7 @@ Start with exactly one primary reference. A link is a route, not an instruction 
 If the task changes page ownership, page skeleton, information hierarchy, grouping, or visual review, hand that concern to `miuix-guidelines` instead of expanding this Skill into a page-design manual. If the task is both page design and implementation, let the guidelines Skill own composition and use this Skill only for the concrete library contracts that the implementation actually calls.
 
 ## Delivery contract
+
+For a library-orientation answer, report the relevant capability layer, smallest likely module set, public family route, and unresolved version/platform questions. Do not present representative names from the overview as verified imports.
 
 When returning Miuix code, include the smallest integration-ready call, its required ancestor or host, the module/import boundary, and the state or dismissal contract. State whether the declaration was source-verified and whether the affected target compiled. Do not claim visual or device validation from source inspection alone.

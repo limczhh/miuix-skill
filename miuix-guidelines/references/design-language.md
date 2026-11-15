@@ -1,6 +1,6 @@
 # Design Language and Defaults
 
-Use this reference only for typography, semantic colors, grouping, component Defaults, visual hierarchy, and failure-state presentation. It does not define page ownership or require the Example workflow. The hierarchy guidance is a practical decision rule derived from Miuix source defaults and the first-party Example; exact token names, signatures, and Defaults contracts belong to the `miuix-components` Skill.
+Use this reference only for the visual baseline defined by this Skill: typography, semantic colors, grouping, component Defaults, visual hierarchy, and failure-state presentation. It does not define page ownership or require the Example workflow. This is one practical Miuix usage profile, not an official rule that every Miuix page or application must follow. The hierarchy guidance is a practical decision rule derived from Miuix source defaults and the first-party Example; exact token names, signatures, and Defaults contracts belong to the `miuix-components` Skill.
 
 Read only the section matching the visual question; do not load color lookup, error-state, and typography guidance for an unrelated styling decision.
 
@@ -18,6 +18,19 @@ Make each visual decision in this order:
 6. Add custom colors, shapes, drawing, or effects only for a concrete product requirement that the public component and defaults cannot express.
 
 Do not introduce a Material or Material 3 component merely because its API is familiar. First verify that Miuix does not provide the intended component or interaction.
+
+## Baseline versus choice
+
+Keep these categories separate when explaining or reviewing a design:
+
+| Category | Default in this profile | What can override it |
+|---|---|---|
+| Structural responsibility | Theme, route, host, scroll, inset, persistent state, and transient state each have a clear owner | Existing target architecture or a concrete product behavior |
+| Component semantics | Use the public component that owns the interaction and its stock Defaults | A different public component or application-owned component better expresses the role |
+| Visual hierarchy | Use semantic theme roles, Miuix text styles, meaningful grouping, and whitespace before custom decoration | A supplied visual target, brand rule, accessibility need, or proven visual defect |
+| Spacing fallback | Use the page-level values documented below only when the target has no spacing convention | Existing project tokens, host/component padding, or measured layout requirements |
+
+Do not call a profile default a Miuix API requirement. Do not call a target-project convention a universal design rule.
 
 ## Surface and Color Roles
 
@@ -65,9 +78,9 @@ Search the selected component's verified `*Defaults` contract before adding a ma
 - Treat spacing found only in `example/shared/` as composition evidence, not as a library constant.
 - Recheck source when a Defaults member is not shown in the component doc; do not infer its name from another component.
 
-## Page composition defaults
+## Page composition fallback values
 
-These are Skill-level composition defaults for a grouped page when the target project has no established spacing system. They are not `Card`, `Scaffold`, or Preference library defaults:
+These are Skill-level fallback values for a grouped page when the target project has no established spacing system. They are not `Card`, `Scaffold`, or Preference library defaults:
 
 - Use `12.dp` as the default horizontal outer inset for a grouped content container.
 - Use `12.dp` as the default gap after a grouped container before the next section.

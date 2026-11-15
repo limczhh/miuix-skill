@@ -6,10 +6,12 @@ Use this reference only for Overlay versus Window host, dismissal, back behavior
 
 | Required lifetime/host | Choose | Integration rule |
 |---|---|---|
-| Page-scoped popup that follows the current page and its bounds | `Overlay*` | Require the intended ancestor `Scaffold`; reuse it rather than creating an accidental nested host |
+| Page-scoped popup that follows the current page and its bounds | `Overlay*` | Require the intended ancestor `Scaffold`; reuse it rather than creating an accidental nested host. If that host is nested, verify or set `renderInRootScaffold = false` |
 | Popup independent of the current page's Scaffold, including cross-page/global UI | `Window*` | Use the Window counterpart; no Scaffold popup host is required |
 
 Use the table above to choose the host family. For page ownership, use the `miuix-guidelines` Skill; open an API reference only if the task contains an exact-signature question.
+
+In the pinned source, Overlay components that expose `renderInRootScaffold` default it to `true`, which routes their popup state to the root Scaffold. That default is appropriate for a full-screen application overlay, but it is not a safe assumption for a page-local overlay below nested Scaffolds. Confirm the declaration for the target version and set the flag explicitly when the page host must own the surface.
 
 ## Dismissal and System Back
 

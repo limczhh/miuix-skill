@@ -27,19 +27,19 @@ Before selecting a recipe, name these owners:
 |---|---|---|
 | Theme | Application/root shell | Do not create a page-local `MiuixTheme` just to style a page |
 | Route and back stack | Application or navigation shell | Bottom/rail navigation presents selected state; it does not create a second back stack |
-| Page host | The page boundary that owns bars, insets, and transient layers | Use one `Scaffold` when it has real slots or a content-window contract |
+| Page host | The shell or page boundary that owns bars, insets, and transient layers | Use one `Scaffold` per real host boundary; nested hosts are valid only when their responsibilities are distinct |
 | Primary content/scroll | The page's `LazyColumn`, `Column` with `verticalScroll`, pager, or custom layout | Keep bars and floating controls out of the scroll content |
-| Scaffold/window padding | One content boundary | Apply `PaddingValues` to the primary content and consume the same boundary once |
+| Scaffold/window padding | One final page content boundary | Each host may emit local `PaddingValues`; combine an intentional shell handoff with page padding before applying it once to primary content |
 | Persistent state | Screen owner or model | Do not recreate selection or form state inside a bar branch |
 | Transient state | The host that renders it | Keep dialog, snackbar, popup, and expanded-menu state near that host |
 
 The normal order is:
 
 1. Reuse the existing theme and route host.
-2. Decide whether this page owns a `Scaffold`.
+2. Decide which shell and/or page host owns each real slot, inset, and transient layer.
 3. Choose the primary content/scroll owner.
-4. Place bars, navigation, floating controls, and transient layers in host slots.
-5. Apply the received `PaddingValues` once at the content boundary.
+4. Place bars, navigation, floating controls, and transient layers in their owning host slots.
+5. Combine any shell handoff with page-host padding intentionally, then apply the result once at the final content boundary.
 6. Choose the content components by semantic role.
 
 Do not add a `Scaffold` merely for background, grouping, or a convenient `padding` modifier. Do add one when the page owns a top/bottom bar, floating action or toolbar, snackbar/popup host, or content-window inset contract.
@@ -105,7 +105,7 @@ Use `SmallTopAppBar` instead when the title must remain pinned. Do not add colla
 
 ## Fixed bottom navigation
 
-Use `NavigationBar` when compact navigation is part of the page shell. Keep the selected destination and destination click callback in the route/screen owner, then present them in the bar.
+Use `NavigationBar` when compact navigation is part of the persistent shell. Keep the selected destination and destination click callback in the route/screen owner, then present them in the bar. If the shell already owns a bottom bar, a page `Scaffold` may still own its top bar; pass the shell's effective padding into the page content instead of moving navigation into the page's scroll content.
 
 ```kotlin
 Scaffold(
@@ -130,7 +130,7 @@ Scaffold(
 
 ## Floating bottom navigation
 
-Use `FloatingNavigationBar` when the same bottom-navigation role should be visually separated from the window edge. It is still navigation chrome, so place it in `Scaffold(bottomBar = ...)`, not as an arbitrary `Box` overlay above the list.
+Use `FloatingNavigationBar` when the same persistent bottom-navigation role should be visually separated from the window edge. It is still navigation chrome, so place it in the `Scaffold(bottomBar = ...)` belonging to the shell that owns navigation, not as an arbitrary `Box` overlay above the list.
 
 ```kotlin
 Scaffold(
@@ -227,6 +227,8 @@ page Scaffold
 
 Keep the overlay's show/dismiss state near the page host, pass an explicit `onDismissRequest`, and let the page's `Scaffold`/popup host own its lifecycle. Choose a `WindowDialog` or `WindowBottomSheet` only when the surface must be independent of the page host or use a separate platform window. Do not replace a lifecycle decision with z-order or manual `Box` layering.
 
+`OverlayDialog` and the related Overlay families default to `renderInRootScaffold = true` in the pinned source. If the overlay belongs to a nested page host rather than the outer shell, set `renderInRootScaffold = false` and verify that the target declaration exposes the parameter.
+
 ## Selection table
 
 | Need | Default composition | Avoid |
@@ -247,10 +249,11 @@ Treat these as defects unless the product requirement explicitly explains them:
 
 - a page creates a second `MiuixTheme`, route host, or navigation state;
 - a top/bottom bar is part of the scrolling list instead of its host slot;
-- `Scaffold` `PaddingValues` are ignored, applied twice, or replaced by guessed system-bar constants;
+- shell/page `Scaffold` padding is ignored, applied twice, or replaced by guessed system-bar constants;
 - `MiuixScrollBehavior` is created but its connection is not attached to the primary scroll owner;
 - `NavigationBar`/`FloatingNavigationBar` is manually overlaid when the `bottomBar` slot would express the same role;
 - compact and wide branches duplicate selected destination or business state;
 - a `Window` surface is used when the surface must remain page-scoped, or an `Overlay` is used when it must outlive the page host;
 - nested vertical scroll containers exist without an intentional parent-child scrolling relationship;
 - a recipe is copied without checking the exact component declaration in the companion components Skill.
+- nested shell/page hosts are added without distinct ownership, or a page-scoped Overlay silently resolves to the root host because its root-host flag was not reviewed;

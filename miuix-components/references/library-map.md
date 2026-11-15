@@ -1,6 +1,6 @@
 # Miuix Library Map
 
-Use this reference when the task asks what a part of Miuix contains, names an unfamiliar source package, or requires a tour of the pinned repository. It is an index, not a replacement for API contracts. Read the row that matches the task, then follow its focused reference; do not read the whole map and every linked document by default.
+Use this reference when the task names an unfamiliar source package, asks where a behavior is implemented, or requires a tour of the pinned source tree. For a general explanation of what Miuix provides or which module to use, start with the [Library overview](library-overview.md) instead. This is a source locator, not a component catalog or API contract. Read the row that matches the task, then follow its focused reference; do not read the whole map and every linked document by default.
 
 The map covers the `commonMain` source areas present in all eight library modules in Miuix `v0.9.4`, pinned to commit `39c40f99844227b853f0049a0933b1f3ae6c00ba`: `miuix-ui`, `miuix-preference`, `miuix-nav`, `miuix-blur`, `miuix-shader`, `miuix-squircle`, `miuix-core`, and `miuix-icons`. It is complete as a source-area index, not as a symbol catalog. A source directory is not automatically a public import boundary: confirm visibility, package, overload, platform source set, and opt-in requirements before writing code.
 
@@ -63,7 +63,8 @@ Only the `Verified API Contracts` reference provides a maintained fast path for 
 
 | Question | Start here | Then stop at |
 |---|---|---|
-| Does Miuix provide this kind of component? | This map, then [Component selection](component-selection.md) | A matching public family and its semantic boundary |
+| What does Miuix provide, and which module is the likely starting point? | [Library overview](library-overview.md) | A semantic role or exact symbol still needs to be selected |
+| Does Miuix provide this kind of component? | [Component selection](component-selection.md) | A matching public family and its semantic boundary |
 | What is the exact call, default, or import? | [Verified API contracts](api-contracts.md) | The declaration and module/import contract |
 | The symbol is not covered by the contract sheet | [Source verification](source-verification.md) | Source plus docs/Demo/Example evidence appropriate to the claim |
 | How should several known components form a page? | Hand the composition question to `miuix-guidelines` | Its page skeleton or composition recipe; return here only for exact calls |
