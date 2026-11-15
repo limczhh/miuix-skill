@@ -1,0 +1,22 @@
+{
+  "name": "miuix-skill",
+  "interface": {
+    "displayName": "Miuix Skills"
+  },
+  "plugins": [
+    {
+      "name": "miuix-skills",
+      "description": "Source-grounded Miuix Compose UI skills for exact library contracts and page composition.",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/limczhh/miuix-skill.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

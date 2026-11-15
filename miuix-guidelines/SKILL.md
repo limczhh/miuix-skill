@@ -20,6 +20,31 @@ Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS v
 5. If implementation needs an exact Miuix symbol, ask `miuix-components` for that narrow contract; do not preload its entire component catalog.
 6. Treat every code block in a composition reference as a placement shape, not API proof. Before implementation, verify each Miuix symbol through the companion Skill's pinned source-first workflow.
 
+## Page-first delivery protocol
+
+For any new page, shell refactor, or page-level UI change, complete these decisions in order:
+
+1. **Context:** identify the existing theme, route host, page boundary, platform/source set, and target project's relevant constraints.
+2. **Skeleton:** name the route owner, navigation-chrome owner, page host, primary content/scroll owner, single inset boundary, host slots, transient layer, and persistent state owner.
+3. **Semantics:** choose components by the role they express inside that skeleton. A page type does not select its components automatically.
+4. **API handoff:** send only the concrete Miuix symbols the implementation will call to `miuix-components` for source verification.
+5. **Composition:** write the smallest page composition that satisfies the skeleton and preserves the target project's behavior.
+6. **Validation:** compile the affected target when available, then separately report preview/render/device and accessibility evidence.
+
+Use this compact record before page code when the task is non-trivial:
+
+```text
+Existing theme/host:    file or caller
+Route owner:            file, type, or none
+Page boundary:          route/entry/composable
+Primary content owner:  LazyColumn / Column / Pager / other
+Inset boundary:         one named consumer
+Host slots/layers:      top / bottom / floating / snackbar / Overlay / Window
+Persistent state owner: screen owner, ViewModel, or application model
+```
+
+If a context item is unavailable, mark it as unknown or pending inspection; do not invent a host, route, inset policy, or target-project convention. For a standalone API question with no page composition, stop this protocol and use `miuix-components` directly.
+
 ## Structural invariants
 
 - Keep one application-owned `MiuixTheme` around the UI subtree.

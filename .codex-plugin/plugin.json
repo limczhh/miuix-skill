@@ -1,0 +1,32 @@
+{
+  "name": "miuix-skills",
+  "version": "0.9.4",
+  "description": "Source-grounded Miuix Compose UI skills for exact library contracts and page composition.",
+  "repository": "https://github.com/limczhh/miuix-skill",
+  "keywords": [
+    "android",
+    "compose",
+    "miuix",
+    "hyperos",
+    "skills"
+  ],
+  "skills": [
+    "./miuix-components",
+    "./miuix-guidelines"
+  ],
+  "interface": {
+    "displayName": "Miuix Skills",
+    "shortDescription": "Source-grounded Miuix Compose UI skills.",
+    "longDescription": "Two complementary skills for Miuix Compose UI: one verifies library contracts against pinned source, and one guides page skeleton and composition.",
+    "developerName": "miuix-skill",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Skills"
+    ],
+    "websiteURL": "https://github.com/limczhh/miuix-skill",
+    "defaultPrompt": [
+      "Verify the exact Miuix API and module for this component.",
+      "Design this Miuix page from its skeleton and ownership boundaries."
+    ]
+  }
+}

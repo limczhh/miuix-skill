@@ -19,6 +19,20 @@ The maintained evidence is Miuix `v0.9.4`, pinned to commit `39c40f99`. If the t
 - Report source inspection and compilation as separate facts. `source-verified` does not mean `compile-verified`.
 - Do not turn a component's existence or default into a requirement that every page use it.
 
+## Evidence levels
+
+Do not promote a lower-level route into a stronger claim:
+
+| Evidence level | It can answer | It cannot answer by itself |
+|---|---|---|
+| **Verified API contract** | A covered declaration's package, module, parameters, defaults, and basic host/state contract | Whether the target project's dependency and source set compile it |
+| **Component catalog** | Which public family or capability matches a semantic role | The complete overload, import block, or version-sensitive behavior |
+| **Library map** | Which pinned source area and focused reference to inspect next | That every symbol in that area is public or importable |
+| **Docs/Demo/Example** | Intended use, isolated call shape, or integrated composition/state flow | A replacement for the pinned declaration or a universal page rule |
+| **Target-project evidence** | The version, dependency, source set, existing host, and compilation result that govern the actual task | A claim about the maintained `v0.9.4` snapshot when the target uses another version |
+
+When returning an API fact, name the strongest evidence actually checked. If the answer came only from a map, catalog, or Example, route to source verification before writing a version-sensitive call.
+
 ## Source-first implementation loop
 
 When the task asks for Miuix code, the references are a route into evidence, not a substitute for the pinned source.

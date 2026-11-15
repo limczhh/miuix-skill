@@ -2,7 +2,7 @@
 
 Use this reference when the task asks what a part of Miuix contains, names an unfamiliar source package, or requires a tour of the pinned repository. It is an index, not a replacement for API contracts. Read the row that matches the task, then follow its focused reference; do not read the whole map and every linked document by default.
 
-The map covers the `commonMain` source areas present in Miuix `v0.9.4`, pinned to commit `39c40f99844227b853f0049a0933b1f3ae6c00ba`. A source directory is not automatically a public import boundary: confirm visibility, package, overload, platform source set, and opt-in requirements before writing code.
+The map covers the `commonMain` source areas present in all eight library modules in Miuix `v0.9.4`, pinned to commit `39c40f99844227b853f0049a0933b1f3ae6c00ba`: `miuix-ui`, `miuix-preference`, `miuix-nav`, `miuix-blur`, `miuix-shader`, `miuix-squircle`, `miuix-core`, and `miuix-icons`. It is complete as a source-area index, not as a symbol catalog. A source directory is not automatically a public import boundary: confirm visibility, package, overload, platform source set, and opt-in requirements before writing code.
 
 ## How to use the map
 
@@ -11,6 +11,19 @@ The map covers the `commonMain` source areas present in Miuix `v0.9.4`, pinned t
 3. Verify the requested symbol in source when the focused reference does not contain its declaration.
 4. Treat `internal`, generated, platform-specific, and implementation-only paths as behavior evidence, not as importable API.
 5. Stop when the task has the public symbol, module/import boundary, host or lifecycle rule, and version evidence it needs.
+
+## Coverage labels
+
+The `Coverage` column describes how far this repository routes the investigation; it is not a substitute for API verification:
+
+| Label | Meaning | Code consequence |
+|---|---|---|
+| **Catalogued** | A public family or focused guide is named | It may identify the next component route, but the declaration still controls the call |
+| **Mapped** | The source area is included so an unfamiliar symbol can be located | Inspect visibility, package, module, overload, defaults, and opt-in before importing |
+| **Internal** | The path supports public behavior but is not a public entry point | Do not import it or expose it as a component |
+| **Platform-sensitive** | The behavior depends on a target/platform implementation | Verify the target source set and runtime platform before claiming support |
+
+Only the `Verified API Contracts` reference provides a maintained fast path for exact declarations, and it remains subordinate to the pinned source and target-project compilation.
 
 ## Repository source areas
 
