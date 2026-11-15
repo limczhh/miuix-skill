@@ -9,6 +9,7 @@ Exact Miuix signatures, imports, defaults, and version-sensitive behavior belong
 - [Composition contract](#composition-contract)
 - [Pinned top bar and one scroll owner](#pinned-top-bar-and-one-scroll-owner)
 - [Collapsing top bar](#collapsing-top-bar)
+- [Optional Glass shell](#optional-glass-shell)
 - [Fixed bottom navigation](#fixed-bottom-navigation)
 - [Floating bottom navigation](#floating-bottom-navigation)
 - [Adaptive bottom navigation and rail](#adaptive-bottom-navigation-and-rail)
@@ -102,6 +103,58 @@ Scaffold(
 The `nestedScrollConnection` is part of the behavior contract, not an optional visual tweak. Do not create one behavior for `TopAppBar` and another for `LazyColumn`. Keep `LazyListState` for list position and `TopAppBarState`/`ScrollBehavior` for app-bar motion; they are related through nested scroll, not interchangeable.
 
 Use `SmallTopAppBar` instead when the title must remain pinned. Do not add collapsing behavior to a page whose hierarchy does not benefit from a large-title transition.
+
+## Optional Glass shell
+
+Use this recipe only when the product explicitly asks for Miuix's optional Glass family. It adds a backdrop-recording boundary to the ordinary page skeleton; it does not replace the ownership rules above or make every Miuix page translucent.
+
+```kotlin
+val backdrop = rememberLayerBackdrop()
+val listState = rememberLazyListState()
+val scrollBehavior = MiuixScrollBehavior()
+
+Scaffold(
+    topBar = {
+        GlassTopAppBar(
+            title = "Page",
+            isContentScrolled = listState.canScrollBackward,
+            backdrop = backdrop,
+            scrollBehavior = scrollBehavior,
+        )
+    },
+    bottomBar = {
+        GlassNavigationBar(
+            items = destinations,
+            selectedIndex = selectedIndex,
+            onSelect = onDestinationSelected,
+            backdrop = backdrop,
+        )
+    },
+) { innerPadding ->
+    LazyColumn(
+        state = listState,
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .layerBackdrop(backdrop)
+            .background(MiuixTheme.colorScheme.surface),
+        contentPadding = innerPadding,
+    ) {
+        // Page content is the recorded background.
+    }
+}
+```
+
+The exact Glass imports, overloads, and dependency boundary belong to the companion [Glass Components](../../miuix-components/references/glass.md) reference. The composition rules are:
+
+- record an opaque page/content layer with `rememberLayerBackdrop` + `Modifier.layerBackdrop`;
+- keep `GlassTopAppBar`, `GlassNavigationBar`, and their action controls outside that recorded layer, then pass the same `backdrop` to them;
+- keep the same `MiuixScrollBehavior` attached to the Glass top bar and the primary scroll owner;
+- keep `selectedIndex` and destination callbacks in the shell/route owner, not in `GlassNavigationBar`;
+- use `null` backdrop only as an intentional opaque fallback, not as a substitute for setting up sampling;
+- do not enable `progressiveBlur` or custom material/strokes until the basic fallback and host/inset behavior are correct.
+
+When the user only wants a normal Miuix page, use the ordinary top-bar/navigation recipes instead. When the user wants a Glass dialog, sheet, or `GlassDropdownPreference`, keep it under the intended `Scaffold` and apply the backdrop exclusion rules from the components reference. `GlassPopup`/`GlassTransformPopup`/`GlassIconDropdownMenu` are different `BoxScope` components; keep them beside their anchor in the same root box.
 
 ## Fixed bottom navigation
 
@@ -235,6 +288,7 @@ Keep the overlay's show/dismiss state near the page host, pass an explicit `onDi
 |---|---|---|
 | Pinned title over a scrollable page | `Scaffold` + `SmallTopAppBar` + one primary scroll owner | Putting the bar inside the list |
 | Large title that collapses with content | `Scaffold` + `TopAppBar` + one shared `MiuixScrollBehavior` + `nestedScroll` | A behavior that is not attached to the scroll owner |
+| Explicit Glass page shell | `Scaffold` + `GlassTopAppBar`/`GlassNavigationBar` + one recorded `Backdrop` | Recording the Glass surface or popup host into its own backdrop |
 | Compact destination navigation | `Scaffold.bottomBar` + `NavigationBar` | A second back stack inside the bar |
 | Separated/floating destination navigation | `Scaffold.bottomBar` + `FloatingNavigationBar` | Manually overlaying it over the list by default |
 | Wide navigation | Shell side slot + `NavigationRail` | Recreating route state for the wide branch |

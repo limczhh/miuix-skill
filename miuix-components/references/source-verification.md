@@ -1,6 +1,6 @@
 # Source Verification
 
-Use this reference when an exact API, behavior, dependency, or version claim needs pinned Miuix evidence. It can be the primary reference for an uncovered API or a version mismatch. It defines how abbreviated paths in this Skill map to the public Miuix repository and pins the current catalog evidence to the stable `v0.9.4` snapshot.
+Use this reference when an exact API, behavior, dependency, or version claim needs pinned Miuix evidence. It can be the primary reference for an uncovered API or a version mismatch. It defines how abbreviated paths in this Skill map to the public Miuix repository and pins the current catalog evidence to the upstream `main` snapshot listed below.
 
 Read only the evidence workflow, API gate, path table, or supporting-internals entry required by the claim. Do not load the Example-app inventory during an ordinary API check.
 
@@ -11,18 +11,18 @@ Contents: [acquire source evidence](#acquire-source-evidence) · [evidence workf
 Use the strongest source available for the claim, while keeping target-project compatibility separate from the maintained library snapshot:
 
 1. Inspect the target project's declared Miuix dependency, source set, and available source attachment first. This determines what can actually compile in that project.
-2. For maintained library facts, use a local Miuix checkout only after confirming it is exactly `39c40f99844227b853f0049a0933b1f3ae6c00ba` / `v0.9.4`.
+2. For maintained current-library facts, use a local Miuix checkout only after confirming it is exactly the current audit commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`. For a historical release question, use the requested tag instead.
 3. If no verified local checkout is available, open the pinned raw source URL from [Path Convention](#path-convention).
 4. Do not use the rolling documentation site, an untagged branch, a search-result snippet, or remembered Compose/Material APIs as a substitute for the pinned declaration.
 
-The target project can override the maintained snapshot only when the task is explicitly about that project's version. In that case, record the target declaration and do not present it as a `v0.9.4` contract.
+The target project can override the maintained snapshot whenever its declared version or commit differs. In that case, record the target declaration and do not present the current-main contract as a target-version contract.
 
 ## Evidence Resolution Workflow
 
 1. Start from the exact declaration or evidence path required by the task. Use a component catalog or Example evidence only when the task does not already identify the symbol or integration point.
 2. Expand abbreviated paths with the table below.
 3. Read only the evidence required by the claim: choose the relevant docs, demo, Example section, or pinned source path; do not load all evidence types by default. The pinned source is required for an API/behavior contract, while docs, demos, and Example code are optional evidence for the specific claim.
-4. For current catalog work, keep all evidence on commit `39c40f99844227b853f0049a0933b1f3ae6c00ba` / tag `v0.9.4`. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters. If the user explicitly requests the `v0.9.3 → v0.9.4` migration, follow the single migration reference and use its comparison source only for that task.
+4. For current catalog work, keep all evidence on commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` / upstream `main`. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters. If the user explicitly requests the `v0.9.3 → v0.9.4` migration, follow the single migration reference and use the historical tag only for that task.
 5. Return to the [Delivery Contract](../SKILL.md#delivery-contract) before presenting implementation or validation claims.
 
 If the pinned web source cannot be reached, do not silently substitute memory, the rolling documentation site, or an unpinned snippet. State that API verification is blocked, or ask the user to provide the relevant tagged file, before making a version-sensitive claim.
@@ -31,7 +31,7 @@ If the pinned web source cannot be reached, do not silently substitute memory, t
 
 Use this gate whenever delivered code contains a Miuix symbol, dependency, or version-sensitive call. It is a correctness gate, not a component catalog:
 
-1. **Pin the target.** Confirm the project's Miuix version, platform, and source set. Do not call a `v0.9.4` declaration verified for a different target version.
+1. **Pin the target.** Confirm the project's Miuix version or commit, platform, and source set. Do not call a current-main declaration verified for a different target version.
 2. **Locate the declaration.** In the pinned source, confirm the public package/module, symbol name, overload, full parameter list, parameter order, required/optional parameters, defaults, and any experimental or platform opt-in.
 3. **Match intended usage when needed.** Use the matching Markdown doc for intent or the demo for an isolated call only when that claim matters. Use Example code only to understand integrated composition; never use Example code as the API contract.
 4. **Check behavior assumptions.** Confirm state/callback direction, required ancestor or host, insets, lifecycle, and disabled/dismissal behavior when they affect the call.
@@ -54,8 +54,8 @@ Verification:       source-verified / compile-verified / pending
 
 | Evidence role | Pinned snapshot |
 |---|---|
-| Current catalog and migration target | `v0.9.4` at commit `39c40f99844227b853f0049a0933b1f3ae6c00ba` |
-| Migration comparison | `v0.9.3` tag, only through `references/release-v0.9.4.md` |
+| Current catalog and source-audit target | upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` (`v0.9.4-80-gd8efe187`, not a release tag) |
+| Historical release comparison | `v0.9.4` at commit `39c40f99844227b853f0049a0933b1f3ae6c00ba`, with `v0.9.3` comparison only through `references/release-v0.9.4.md` |
 
 This table describes the Skill's maintained evidence scope. It is not a substitute for checking a target project's actual dependency version.
 
@@ -65,8 +65,8 @@ All file paths in the tables below are relative to the Miuix repository root. Re
 
 | Source | URL pattern |
 |--------|------------|
-| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/39c40f99844227b853f0049a0933b1f3ae6c00ba/<file-path>` |
-| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/39c40f99844227b853f0049a0933b1f3ae6c00ba/<dir-path>` |
+| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/d8efe1872c08c863a8b33e7044dd2a8b43038032/<file-path>` |
+| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/d8efe1872c08c863a8b33e7044dd2a8b43038032/<dir-path>` |
 
 The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the pinned `docs/**/*.md` file during a version-sensitive task. The current Skill does not maintain standalone references for older Miuix versions.
 
@@ -89,14 +89,20 @@ The repository Markdown file is the documentation evidence. The rendered site ma
 | `miuix-preference/.../popup/` | `miuix-preference/src/commonMain/kotlin/top/yukonga/miuix/kmp/popup/` |
 | `miuix-core/.../icon/` | `miuix-core/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/` |
 | `miuix-icons/.../extended/` | `miuix-icons/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/extended/` |
-| `miuix-shader/.../shader/` | `miuix-shader/src/commonMain/kotlin/top/yukonga/miuix/kmp/shader/` |
+| `miuix-material/.../material/` | `miuix-material/src/commonMain/kotlin/top/yukonga/miuix/kmp/material/` |
+| `miuix-glass/.../glass/` | `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/` |
+| `miuix-glass-icons/.../icon/glass/` | `miuix-glass-icons/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/glass/` |
+| `miuix-window/.../window/` | `miuix-window/src/desktopMain/kotlin/top/yukonga/miuix/kmp/window/` (Desktop JVM only) |
 | `miuix-squircle/.../squircle/` | `miuix-squircle/src/commonMain/kotlin/top/yukonga/miuix/kmp/squircle/` |
 | `miuix-nav/.../core/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/core/` |
 | `miuix-nav/.../gesture/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/gesture/` |
 | `miuix-nav/.../runtime/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/runtime/` |
 | `miuix-nav/.../state/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/state/` |
 | `miuix-nav/.../transition/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/transition/` |
-| `docs/components/` | `docs/components/` |
+| `docs/components/basic/` | `docs/components/basic/` |
+| `docs/components/extended/` | `docs/components/extended/` |
+| `docs/components/glass/` | `docs/components/glass/` |
+| `docs/guide/` | `docs/guide/` |
 | `docs/demo/` | `docs/demo/src/commonMain/kotlin/` |
 | `example/shared/.../` | `example/shared/src/commonMain/kotlin/` |
 | `example/shared/.../navigation/` | `example/shared/src/commonMain/kotlin/navigation/` |

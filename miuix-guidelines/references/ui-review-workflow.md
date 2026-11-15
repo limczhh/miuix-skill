@@ -19,7 +19,7 @@ Use this workflow as the primary reference when the user asks to improve, polish
 
 1. Read the user's stated goal and constraints before proposing visual changes.
 2. Inspect the current implementation. If a screenshot, mockup, preview, or device capture is available, inspect it together with the code; neither view alone explains both appearance and behavior.
-3. Confirm that the target project uses stable `v0.9.4`. This Skill's catalog is pinned to commit `39c40f99`; if the project uses another version, flag the mismatch instead of treating this catalog as version-correct.
+3. Confirm that the target project uses the current-audit API snapshot or record its published version/commit. This Skill's companion catalog is pinned to `d8efe1872c08c863a8b33e7044dd2a8b43038032`; if the project uses another version, flag the mismatch instead of treating current-main contracts as target-correct.
 4. Preserve intentional project conventions unless they cause the reported problem or the user asks to replace them.
 
 Ask a question only when a missing choice would materially change the visual direction. Continue read-only inspection while that choice is unresolved.

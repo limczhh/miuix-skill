@@ -1,6 +1,6 @@
 # Verified API Contracts
 
-This is a curated, source-checked fast path for Miuix `v0.9.4` at commit `39c40f99844227b853f0049a0933b1f3ae6c00ba`. It answers the narrow question “what is the real public call shape?” for the APIs that most often define a page or cause compile errors.
+This is a curated, source-checked fast path for the current Miuix source-audit snapshot: upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` (`v0.9.4-80-gd8efe187`, not a release tag). It answers the narrow question “what is the real public call shape?” for the APIs that most often define a page or cause compile errors.
 
 It is not a complete component catalog and it is not a page template. The page skeleton remains independent from the component choice. When an API is not covered here, use the [API verification gate](source-verification.md#api-verification-gate); never fill the gap by analogy with Material, Material 3, or another Miuix overload.
 
@@ -77,7 +77,7 @@ Do not add a second page-level `MiuixTheme` only to obtain colors or text styles
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/Scaffold.kt`  
-**Documentation:** `docs/components/scaffold.md`  
+**Documentation:** `docs/components/basic/scaffold.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/ScaffoldDemo.kt`
 
 Miuix import:
@@ -128,19 +128,20 @@ The `content` lambda receives `PaddingValues`; apply and consume them at one kno
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/TopAppBar.kt`  
-**Documentation:** `docs/components/topappbar.md`  
+**Documentation:** `docs/components/basic/topappbar.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/TopAppBarDemo.kt`
 
 Miuix imports:
 
 ```kotlin
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
+import top.yukonga.miuix.kmp.basic.BlurTopAppBar
 import top.yukonga.miuix.kmp.basic.SmallTopAppBar
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 ```
 
-`TopAppBar` and `SmallTopAppBar` are separate public functions. The title is a `String`, the actions use `RowScope`, and `scrollBehavior` is nullable.
+`TopAppBar`, `BlurTopAppBar`, and `SmallTopAppBar` are separate public functions. The title is a `String`, the actions use `RowScope`, and `scrollBehavior` is nullable. `BlurTopAppBar` is the current-main variant whose large title blur radius is a required parameter; it is not an extra parameter on `TopAppBar`.
 
 ```kotlin
 @Composable
@@ -180,6 +181,28 @@ fun SmallTopAppBar(
     actionIconPadding: Dp = TopAppBarDefaults.ActionIconPadding,
     bottomContent: @Composable () -> Unit = {},
 )
+
+@Composable
+fun BlurTopAppBar(
+    title: String,
+    largeTitleBlurRadius: Dp,
+    modifier: Modifier = Modifier,
+    color: Color = MiuixTheme.colorScheme.surface,
+    titleColor: Color = MiuixTheme.colorScheme.onSurface,
+    largeTitle: String = title,
+    largeTitleColor: Color = MiuixTheme.colorScheme.onSurface,
+    subtitle: String = "",
+    subtitleColor: Color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
+    scrollBehavior: ScrollBehavior? = null,
+    defaultWindowInsetsPadding: Boolean = true,
+    titlePadding: Dp = TopAppBarDefaults.TitlePadding,
+    navigationIconPadding: Dp = TopAppBarDefaults.NavigationIconPadding,
+    actionIconPadding: Dp = TopAppBarDefaults.ActionIconPadding,
+    titleAlpha: () -> Float = { 1f },
+    bottomContent: @Composable () -> Unit = {},
+)
 ```
 
 Minimal call:
@@ -193,11 +216,13 @@ TopAppBar(
 
 Use `SmallTopAppBar` when the bar must remain pinned. Do not pass a composable title or invent a separate `largeTitle` parameter for `SmallTopAppBar`.
 
+Use `BlurTopAppBar` only when the large-title blur is an intentional product effect. Its required `largeTitleBlurRadius` has no default, and the same nested-scroll connection rule applies when it receives `scrollBehavior`.
+
 ## Collapsing top bar behavior
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/TopAppBar.kt`  
-**Documentation:** `docs/components/topappbar.md`, `docs/components/scaffold.md`  
+**Documentation:** `docs/components/basic/topappbar.md`, `docs/components/basic/scaffold.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/TopAppBarDemo.kt`
 
 Miuix imports:
@@ -260,7 +285,7 @@ Use `TopAppBar` for the large-title/collapsing form. `SmallTopAppBar` is the pin
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/Card.kt`, `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/SmallTitle.kt`  
-**Documentation:** `docs/components/card.md`, `docs/components/smalltitle.md`  
+**Documentation:** `docs/components/basic/card.md`, `docs/components/basic/smalltitle.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/CardDemo.kt`, `SmallTitleDemo.kt`
 
 Miuix imports:
@@ -327,7 +352,7 @@ These defaults do not make `Card` mandatory for every page. Select it only when 
 
 **Module:** `miuix-ui` (icons may additionally require `miuix-icons`)  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/NavigationBar.kt`  
-**Documentation:** `docs/components/navigationbar.md`  
+**Documentation:** `docs/components/basic/navigationbar.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/NavigationBarDemo.kt`
 
 Miuix imports:
@@ -384,7 +409,7 @@ NavigationBar {
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/NavigationBar.kt`  
-**Documentation:** `docs/components/navigationbar.md`  
+**Documentation:** `docs/components/basic/navigationbar.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/NavigationBarDemo.kt`
 
 `FloatingNavigationBar` is still bottom navigation, not a generic overlay. Put it in the owning `Scaffold`'s `bottomBar` slot so the page content receives the correct bottom `PaddingValues`. The documented navigation pattern supports two to five icon items. The component always creates its own floating bottom spacing; `defaultWindowInsetsPadding = true` additionally applies the animated caption-bar inset. It does not mean that every surrounding bottom inset is transferred to the caller.
@@ -454,13 +479,14 @@ The public parameter spelling is `horizontalOutSidePadding` with a capital `S`; 
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/overlay/OverlayDialog.kt`, `window/WindowDialog.kt`  
-**Documentation:** `docs/components/overlaydialog.md`, `docs/components/windowdialog.md`  
+**Documentation:** `docs/components/basic/overlaydialog.md`, `docs/components/basic/windowdialog.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/OverlayDialogDemo.kt`, `WindowDialogDemo.kt`
 
 Miuix imports:
 
 ```kotlin
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import top.yukonga.miuix.kmp.layout.DialogSurfaceScope
 import top.yukonga.miuix.kmp.window.WindowDialog
 ```
 
@@ -486,6 +512,8 @@ fun OverlayDialog(
     maxWidth: Dp = DialogDefaults.MaxWidth,
     largeScreen: Boolean? = null,
     cornerRadius: Dp? = null,
+    dimColor: Color = MiuixTheme.colorScheme.windowDimming,
+    surface: (@Composable DialogSurfaceScope.() -> Modifier)? = null,
     content: @Composable () -> Unit,
 )
 
@@ -524,13 +552,13 @@ OverlayDialog(
 }
 ```
 
-Use `OverlayDialog` for a surface owned by the current page/shell. Use `WindowDialog` when the surface must be independent of the page `Scaffold`. In both cases, `show` and the dismissal callback are two sides of the same state owner; do not rely on an implicit close behavior.
+Use `OverlayDialog` for a surface owned by the current page/shell. Use `WindowDialog` when the surface must be independent of the page `Scaffold`. In both cases, `show` and the dismissal callback are two sides of the same state owner; do not rely on an implicit close behavior. The current `OverlayDialog` also exposes `dimColor` and a `surface` slot; `surface` receives the resolved dialog state through `DialogSurfaceScope` and is not a replacement for the popup host.
 
 ## Preferences
 
 **Module:** `miuix-preference`  
 **Source:** `miuix-preference/src/commonMain/kotlin/top/yukonga/miuix/kmp/preference/SwitchPreference.kt`, `ArrowPreference.kt`  
-**Documentation:** `docs/components/switchpreference.md`, `docs/components/arrowpreference.md`  
+**Documentation:** `docs/components/extended/switchpreference.md`, `docs/components/extended/arrowpreference.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/SwitchPreferenceDemo.kt`, `ArrowPreferenceDemo.kt`
 
 Miuix imports:
@@ -601,7 +629,7 @@ ArrowPreference(
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/TextField.kt`  
-**Documentation:** `docs/components/textfield.md`  
+**Documentation:** `docs/components/basic/textfield.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/TextFieldDemo.kt`
 
 Miuix import:
@@ -659,7 +687,7 @@ At this snapshot, this API has no `isError` or `supportingText` parameter. Put v
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/Button.kt`  
-**Documentation:** `docs/components/button.md`  
+**Documentation:** `docs/components/basic/button.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/ButtonDemo.kt`
 
 Miuix imports:

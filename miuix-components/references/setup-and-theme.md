@@ -22,11 +22,18 @@ When theme inputs such as color mode, key color, palette style, or color specifi
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.4")
-            implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.4") // optional
-            implementation("top.yukonga.miuix.kmp:miuix-icons:0.9.4") // optional
-            implementation("top.yukonga.miuix.kmp:miuix-blur:0.9.4") // optional; Android target requires API 33
-            implementation("top.yukonga.miuix.kmp:miuix-nav:0.9.4") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-ui:<version>")
+            implementation("top.yukonga.miuix.kmp:miuix-preference:<version>") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-icons:<version>") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-glass-icons:<version>") // optional Glass icons
+            implementation("top.yukonga.miuix.kmp:miuix-material:<version>") // optional direct material types
+            implementation("top.yukonga.miuix.kmp:miuix-blur:<version>") // optional; Android artifact requires API 33
+            implementation("top.yukonga.miuix.kmp:miuix-squircle:<version>") // optional direct shape use
+            implementation("top.yukonga.miuix.kmp:miuix-glass:<version>") // optional Glass family
+            implementation("top.yukonga.miuix.kmp:miuix-nav:<version>") // optional
+        }
+        desktopMain.dependencies {
+            implementation("top.yukonga.miuix.kmp:miuix-window:<version>") // optional; Desktop JVM only
         }
     }
 }
@@ -43,15 +50,31 @@ android {
 }
 
 dependencies {
-    implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.4")
-    implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.4") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-icons-android:0.9.4") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-nav-android:0.9.4") // optional
-    // miuix-blur-android itself requires minSdk 33; add it only when that target is acceptable.
+    implementation("top.yukonga.miuix.kmp:miuix-ui-android:<version>")
+    implementation("top.yukonga.miuix.kmp:miuix-preference-android:<version>") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-icons-android:<version>") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-glass-icons-android:<version>") // optional Glass icons
+    implementation("top.yukonga.miuix.kmp:miuix-material-android:<version>") // optional direct material types
+    implementation("top.yukonga.miuix.kmp:miuix-glass-android:<version>") // optional Glass family
+    implementation("top.yukonga.miuix.kmp:miuix-nav-android:<version>") // optional
+    // miuix-blur-android and the Android blur dependency of miuix-glass declare minSdk 33;
+    // add them only when that target boundary is acceptable.
 }
 ```
 
-`miuix-ui`, `miuix-preference`, `miuix-icons`, and `miuix-nav` follow the stable `0.9.4` Android baseline of `minSdk = 24`; `miuix-blur-android` is a separate API-33 target. Keep the dependency artifact aligned with the source set: use the common artifact in `commonMain` and the `-android` artifact for a pure Android module. Verify the target project's Compose/Kotlin/AGP compatibility before changing its build versions.
+`miuix-ui`, `miuix-preference`, `miuix-icons`, `miuix-material`, and `miuix-nav` follow the repository's Android baseline of `minSdk = 24`; `miuix-blur-android` declares `minSdk = 33`. `miuix-glass` targets API 24 and has an opaque fallback below API 33, but its transitive `miuix-blur` Android artifact still creates the dependency/manifest boundary described by the upstream Glass guide. Keep the dependency artifact aligned with the source set: use the common artifact in `commonMain`, `-android` for a pure Android module, and `miuix-window` only in `desktopMain`. Verify the target project's published version and Compose/Kotlin/AGP compatibility before changing its build versions.
+
+For an Android app with `minSdk < 33` that uses `miuix-glass`, follow the upstream manifest boundary for its transitive blur artifact: add `tools:overrideLibrary="top.yukonga.miuix.kmp.blur"` only after accepting that shader-backed blur is skipped below API 33, and keep an opaque fallback. This is a build/runtime constraint, not a promise that Glass blur works on older Android versions.
+
+The manifest entry is placed on the `<uses-sdk>` element, not on a Glass composable:
+
+```xml
+<manifest xmlns:tools="http://schemas.android.com/tools">
+    <uses-sdk tools:overrideLibrary="top.yukonga.miuix.kmp.blur" />
+</manifest>
+```
+
+Use this only for the `minSdk < 33` compatibility decision above; it does not make the Android blur implementation available on older releases.
 
 ## MiuixTheme Setup
 
@@ -77,7 +100,7 @@ fun App() {
 
 `ColorSchemeMode` options: `System` / `Light` / `Dark` / `MonetSystem` / `MonetLight` / `MonetDark`.
 
-> **Version pinning**: Current file paths and component mappings reflect stable tag `v0.9.4` at commit `39c40f99`. For a project migrating from `v0.9.3`, use the single [v0.9.3 → v0.9.4 migration reference](release-v0.9.4.md); the rest of this Skill describes only the stable API.
+> **Version pinning**: Current file paths and component mappings reflect the source-audit snapshot `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`, not a new published version. For a project pinned to `v0.9.4` or another release, inspect that target declaration before using a main-branch-only API. For the historical `v0.9.3` → `v0.9.4` migration, use the single [migration reference](release-v0.9.4.md).
 
 ## Android Studio Preview
 

@@ -24,6 +24,21 @@ Independent window layer (only when required)
 
 The route shell may render the active page directly or through `miuix-nav`. Navigation chrome presents the selected destination; it does not become a second route/back-stack owner.
 
+## Translate ordinary page requests
+
+The following are source- and Example-backed routing cues for requests that do not name an architecture. Use them to start the investigation, then return to the ownership map below.
+
+| User wording | Start by resolving | Do not assume |
+|---|---|---|
+| “做个普通页面/设置页” | Existing theme, route/page boundary, primary content owner, and state owner | A page type does not require `Scaffold`, `Card`, `SmallTitle`, or Preference rows |
+| “像系统设置一样” | Meaningful groups, section hierarchy, and complete setting-row semantics | The Example's `SmallTitle` + `Card` arrangement is a universal template |
+| “顶部大标题随滚动收起” | Page `topBar`, one primary scroll owner, and the shared scroll-behavior connection | A second scroll state or a manually offset app bar |
+| “底下放几个页面入口” | Shell navigation ownership, selected destination/back-stack state, and compact/wide policy | That a bottom action group is navigation, or that a page should create its own route state |
+| “做个弹窗/下拉选择” | Current page `Scaffold` lifetime versus independent window lifetime | That “dialog” always means `Window*`, or that a nested page overlay should use the root host by default |
+| “加个搜索框” | Search input, expansion, result content, and which scroll owner displays the results | That `SearchBar` alone owns the whole page or that search results need a new scroll container |
+
+The pinned Example demonstrates the shell/page distinction: `AppContent.kt` owns persistent navigation and global layers in shell scaffolds, while `SettingsPage.kt` owns its page app bar and forwards the shell padding into page content. The pinned `Scaffold.kt`, `TopAppBar.kt`, and `NavigationBar.kt` declarations define the corresponding slots and scroll/navigation contracts. Use those facts to choose the next reference, not to turn one Example page into a mandatory template.
+
 ## Shell and page host layering
 
 An application may have an outer shell `Scaffold` and a page `Scaffold`. This is valid when the two hosts have different responsibilities, as in the Miuix Example: the shell owns persistent navigation or global transient layers, while the page host owns a page app bar or page-scoped behavior.

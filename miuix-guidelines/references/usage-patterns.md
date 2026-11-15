@@ -1,6 +1,6 @@
 # Example-Derived Usage Patterns
 
-This is an optional Example-evidence reference, not the default page workflow. At the stable `v0.9.4` snapshot, `docs/guide/best-practices.md` points to the project's Example application as a real-world demonstration of how Miuix components and design principles are applied. Use it only when the task needs integrated hierarchy, state flow, or adaptive composition evidence. Example code is never the API authority.
+This is an optional Example-evidence reference, not the default page workflow. At the current source-audit snapshot (`main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`), the upstream best-practices guide points to the Example application as a real-world demonstration of how Miuix components and design principles are applied. Use it only when the task needs integrated hierarchy, state flow, adaptive composition, or the optional Glass/backdrop composition. Example code is never the API authority.
 
 ## Contents
 
@@ -35,6 +35,7 @@ Use this map after choosing components. Unless a path starts with another root, 
 | `miuix-nav` routing and transitions | `App.kt`, `AppState.kt`, `AppContent.kt`, `navigation/`, then `docs/guide/miuix-nav.md` | Serializable back stack, entry DSL, transitions, gestures, and their separation from NavigationBar/Rail presentation |
 | Home/list page with search and actions | `MainPage.kt`, `component/SuperSearchBar.kt` | App bar, scroll content, search, section composition, and popup actions |
 | Settings page | `SettingsPage.kt` | `SmallTitle` + `Card` grouping, Preference rows, dependent visibility, and content padding |
+| Glass page and backdrop-based shell | `GlassPage.kt`, `GlassSearchOverlay.kt`, `component/GlassBottomSheetDemo.kt`, `utils/PageUtils.kt` | Backdrop recording boundary, Glass bars/controls, overlay sampling, and effect fallback; treat Glass as an optional family |
 | Dialog flow | `component/DialogSection.kt` | Overlay/Window choice, trigger rows, visibility, dismissal, actions, and exit cleanup |
 | Bottom-sheet flow | `component/BottomSheetSection.kt` | Overlay/Window choice, scrolling content, action layout, and inset handling |
 | Dropdown or spinner selection | `component/DropdownSection.kt`, `component/SpinnerSection.kt` | Controlled selection, grouped entries, and row integration |
@@ -69,8 +70,8 @@ Evidence: `MainPage.kt`, `SettingsPage.kt`, and `utils/PageUtils.kt`.
 - Use the [page structure rules](page-structure.md) to decide whether the page owns a shell. The Example separates an outer shell `Scaffold` for persistent navigation/global layers from a page `Scaffold` for a page app bar; this nesting is valid because the ownership differs. Use `Scaffold` when the relevant boundary has bars, floating controls, snackbars, or Overlay components that belong to it, and reuse an existing intended host instead of nesting one only for visual structure.
 - Consume the `PaddingValues` supplied by `Scaffold`; pass them to `LazyColumn.contentPadding` as the Example does, or apply them to the content root and consume the corresponding window insets as required by the Scaffold contract. Do not let content render underneath bars accidentally.
 - Connect a top app bar's scroll behavior to the scrolling content when the page uses collapsing or scroll-aware bars.
-- At the stable snapshot, create `val scrollBehavior = MiuixScrollBehavior()`, pass it to `TopAppBar(scrollBehavior = scrollBehavior)`, and apply `Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)` to the scrolling container. Keep the `LazyListState` used by `LazyColumn(state = ...)` separate from the app-bar behavior state. When a `SmallTopAppBar` shares a scroll behavior with a collapsible bar, verify the pinned-state behavior in source rather than adding an external offset workaround.
-- If the page owns a `FloatingToolbar`, put it in the existing `Scaffold(floatingToolbar = ..., floatingToolbarPosition = ...)` slot; the stable layout keeps a bottom snackbar above the toolbar.
+- At the pinned Example snapshot, create `val scrollBehavior = MiuixScrollBehavior()`, pass it to `TopAppBar(scrollBehavior = scrollBehavior)`, and apply `Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)` to the scrolling container. Keep the `LazyListState` used by `LazyColumn(state = ...)` separate from the app-bar behavior state. When a `SmallTopAppBar` shares a scroll behavior with a collapsible bar, verify the pinned-state behavior in source rather than adding an external offset workaround.
+- If the page owns a `FloatingToolbar`, put it in the existing `Scaffold(floatingToolbar = ..., floatingToolbarPosition = ...)` slot; the current layout keeps a bottom snackbar above the toolbar.
 - Keep adaptive width, system insets, scroll haptics, blur, and scrollbar helpers conditional. The Example's `PageUtils.kt` is application infrastructure, not public Miuix API.
 
 ### NavigationBar ↔ NavigationRail switching
@@ -84,15 +85,15 @@ Evidence: `MainPage.kt`, `SettingsPage.kt`, and `utils/PageUtils.kt`.
 
 Use `miuix-nav` for route/back-stack ownership, and use `NavigationBar`/`NavigationRail` for top-level navigation chrome. Use the complete miuix-nav reference in the `miuix-components` Skill for the exact route key, back-stack, entry, transition, save/restore, and v1 limitation contracts.
 
-For a bottom/rail navigation shell, derive each item's `selected` and `onClick` from the same top-level page or pager state used by the content. Do not derive tab selection from a `NavDisplay` entry or create separate compact and wide selection states. Do not import the removed `androidx.navigation3` scene flow into current stable code.
+For a bottom/rail navigation shell, derive each item's `selected` and `onClick` from the same top-level page or pager state used by the content. Do not derive tab selection from a `NavDisplay` entry or create separate compact and wide selection states. Do not import the removed `androidx.navigation3` scene flow into current code.
 
 ## Settings and Grouped Content
 
 Evidence: `SettingsPage.kt` and the files under `example/shared/src/commonMain/kotlin/component/`.
 
-This is a content-composition example, not a different page skeleton. The same page-host, content-owner, inset, and state rules apply to pages whose main content is not a settings group.
+This is a content-composition example, not a different page skeleton. The same page-host, content-owner, inset, and state rules apply to pages whose main content is not a settings group. The current Example also contains Glass pages; use them only when the target explicitly adopts the optional Glass family.
 
-- When settings content is long, use a scrollable main content flow. Use the Preference and Dropdown Menu reference in the `miuix-components` Skill to distinguish a complete setting row from a standalone control or menu.
+- When settings content is long, use a scrollable main content flow. Use the Preference and Dropdown Menu reference in the `miuix-components` Skill to distinguish a complete setting row from a standalone control or menu. The current Example may use `GlassDropdownPreference` in Glass-oriented sections; do not replace ordinary preferences with it unless the target also uses the Glass/backdrop contract.
 - When a group needs a section label and shared containment, use `SmallTitle` and `Card`; choose another content composition when those semantics do not apply.
 - Put related `SwitchPreference`, `CheckboxPreference`, `ArrowPreference`, dropdown, and slider rows in the same Card when they are part of one meaningful setting group rather than styling every row as an unrelated surface.
 - Use `summary` for consequences or context, not to repeat the title.

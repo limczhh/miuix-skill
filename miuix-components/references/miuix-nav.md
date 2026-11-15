@@ -1,12 +1,12 @@
 # `miuix-nav` Routing and Transitions
 
-Use this reference for route/back-stack architecture in the stable `v0.9.4` snapshot. `miuix-nav` is a self-contained Compose Multiplatform runtime; it replaces the old `miuix-navigation3-ui` module and does not use `androidx.navigation3` scene APIs. This is a whole-module migration: old `androidx.navigation3.*` imports, scene decorators, `NavDisplayTransitionEffects`, and the old transition-spec overloads have no compatibility alias.
+Use this reference for route/back-stack architecture in the current source-audit snapshot (`main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`). `miuix-nav` is a self-contained Compose Multiplatform runtime; it replaces the old `miuix-navigation3-ui` module and does not use `androidx.navigation3` scene APIs. This is a whole-module migration: old `androidx.navigation3.*` imports, scene decorators, `NavDisplayTransitionEffects`, and the old transition-spec overloads have no compatibility alias.
 
 Contents: [route model](#dependency-and-route-model) · [basic display](#minimal-navdisplay) · [state and lifecycle](#saveable-identity-and-lifecycle) · [transitions and gestures](#transitions-and-back-gestures) · [navigation chrome](#keep-routing-separate-from-navigation-chrome) · [v1 boundaries](#v1-boundaries) · [evidence](#evidence-paths)
 
 ## Dependency and route model
 
-Add `top.yukonga.miuix.kmp:miuix-nav:0.9.4` to `commonMain` or the matching platform source set. A persisted stack uses `kotlinx.serialization`, so annotate the complete route hierarchy and every concrete route key with `@Serializable`.
+Add `top.yukonga.miuix.kmp:miuix-nav:<version>` to `commonMain` or the matching platform source set. A persisted stack uses `kotlinx.serialization`, so annotate the complete route hierarchy and every concrete route key with `@Serializable`.
 
 The consumer project must also enable the Kotlin Serialization compiler plugin; the Miuix library's runtime dependency does not apply that compiler plugin to the application. Use the syntax that matches the target project's plugin management:
 

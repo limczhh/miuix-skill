@@ -32,17 +32,19 @@ Keep these categories separate when explaining or reviewing a design:
 
 Do not call a profile default a Miuix API requirement. Do not call a target-project convention a universal design rule.
 
+Glass is an optional visual family, not a stronger version of the ordinary profile. If the product chooses Glass, the recorded `Backdrop`, opaque fallback, surface exclusion, and popup-host/`BoxScope` boundary become structural requirements for that family; material presets, strokes, blur strength, and translucency remain visual choices. Do not mix a translucent-looking custom surface into an ordinary page without adopting the corresponding backdrop and fallback contract.
+
 ## Surface and Color Roles
 
 Prefer the component's default colors. When code must choose a token directly, select it by semantic role rather than by its current light-theme appearance.
 
-For a natural-language request such as “蓝色主按钮” or “灰色摘要文字”, use the Color Semantics and Visual Lookup reference in the `miuix-components` Skill. It verifies the stable `Colors` source and component Defaults, and distinguishes a semantic role from a fixed default-theme hue.
+For a natural-language request such as “蓝色主按钮” or “灰色摘要文字”, use the Color Semantics and Visual Lookup reference in the `miuix-components` Skill. It verifies the pinned `Colors` source and component Defaults, and distinguishes a semantic role from a fixed default-theme hue.
 
 | UI role | Start with | Notes |
 |---|---|---|
 | Page canvas | `background` + `onBackground` | Use for the root page and content placed directly on it |
 | General elevated or chrome surface | `surface` + `onSurface` | Follow the closest Example or component default before applying it manually |
-| Grouped content container | `CardDefaults.defaultColors()` | At the stable snapshot, Card already uses `surfaceContainer` + `onSurfaceContainer` |
+| Grouped content container | `CardDefaults.defaultColors()` | At the pinned snapshot, Card already uses `surfaceContainer` + `onSurfaceContainer` |
 | Primary action or selected control | The component's primary/selected Defaults | For example, use `ButtonDefaults.buttonColorsPrimary()` instead of recreating primary and disabled colors |
 | Preference summary | `BasicComponentDefaults.summaryColor()` | Its default uses `onSurfaceVariantSummary` and handles disabled state |
 | Row action or trailing affordance | Component default or `onSurfaceVariantActions` | Use the latter only where an action-role color is required explicitly |
@@ -92,7 +94,7 @@ Apply these values at the page-composition boundary, not again inside every comp
 
 - Use [Page structure and ownership](page-structure.md) to give every page one clear structural shell. The shell is a responsibility boundary, not a requirement to use `Card`, `SmallTitle`, or Preference components on every page. Avoid nested Scaffolds or nested Cards unless they represent distinct behavior or containment.
 - For grouped settings content, prefer `SmallTitle` + `Card` when those components express the section label and containment; this is a content pattern, not a requirement for every page. Keep unrelated actions in separate groups.
-- In the stable source, Card is a plain `Column` with `CardDefaults.InsideMargin = 0.dp`; it does not insert gaps or Dividers between children. Preference rows provide their own internal padding and disabled styling. Do not add row spacing or separators by habit—add a Divider only when the grouping remains ambiguous.
+- In the pinned source, Card is a plain `Column` with `CardDefaults.InsideMargin = 0.dp`; it does not insert gaps or Dividers between children. Preference rows provide their own internal padding and disabled styling. Do not add row spacing or separators by habit—add a Divider only when the grouping remains ambiguous.
 - Place `SmallTitle` before its Card for a section label. Its own Defaults provide label padding; it is not a row inside the Card and there is no public `SectionHeader` component at this tag.
 - For grouped content without a target-project spacing convention, use the page composition defaults above: `12.dp` outer inset and `12.dp` section gap. These are composition values, not a claim about Miuix component internals.
 - Avoid nested Cards for visual decoration. Nest only when the inner Card has a distinct containment or interaction role that remains understandable in accessibility traversal.

@@ -3,8 +3,8 @@
 This is the only version-migration reference maintained by this Skill. It
 describes the changes a project must make when moving from `v0.9.3` to the
 stable `v0.9.4` contract. For new code and normal API questions, use the
-current `v0.9.4` guidance in `SKILL.md` and the component references; do not
-apply this document as a substitute for current source verification.
+current source-audit guidance in `SKILL.md` and the component references; do
+not apply this document as a substitute for current source verification.
 
 Contents: [baseline](#dependency-and-platform-baseline) · [navigation migration](#1-navigation-module-and-route-migration) · [new public content](#2-new-public-content) · [breaking changes](#3-breaking-and-removed-content) · [behavior changes](#4-behavior-changes) · [tooling](#5-tooling-baseline) · [checklist](#migration-checklist) · [evidence](#evidence)
 

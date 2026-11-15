@@ -5,7 +5,7 @@
 - **miuix-components**：回答组件库“有什么、真实 API 怎么调用、需要什么模块和宿主”。
 - **miuix-guidelines**：回答页面“如何组织骨架、所有权、层级、Insets 和组件组合”。
 
-仓库根目录只是源码仓库和维护说明，不是第三个 Skill。当前维护的 Miuix 证据版本是 **v0.9.4**，固定在提交 **39c40f99844227b853f0049a0933b1f3ae6c00ba**。
+仓库根目录只是源码仓库和维护说明，不是第三个 Skill。当前维护的 Miuix 源码审计快照是上游 `main` 的提交 **d8efe1872c08c863a8b33e7044dd2a8b43038032**（位于 `v0.9.4` 之后、尚未对应新的发布版本）；`v0.9.4` 仅作为历史发布版本和迁移对照保留。
 
 ## 两个 Skill
 
@@ -32,7 +32,7 @@
    - 不确定语义组件家族：读 **component-selection.md**。
    - 已知组件但需要准确调用：读 **api-contracts.md**。
    - API 未覆盖、版本不同或行为不确定：读 **source-verification.md**。
-3. 回到固定版本源码，确认完整包名、模块、重载、参数、默认值、opt-in、宿主和生命周期。
+3. 回到当前维护快照或目标项目实际源码，确认完整包名、模块、重载、参数、默认值、opt-in、宿主和生命周期。
 4. 只在需要时用文档、Demo 或 Example 补充用途和组合证据；它们不能代替源码声明。
 5. 写最小调用，并在目标项目可用时编译。
 6. 分开报告 source-verified、compile-verified、预览和设备验证；没有编译就不能声称已编译通过。
@@ -180,14 +180,28 @@ Claude Code 等使用 .claude/skills/ 的宿主也遵循同一原则：把两个
 - 需要新建、重构或审查页面时，说明页面目标和现有宿主，使用 **miuix-guidelines**。
 - 同时涉及页面结构和具体调用时，先确定页面骨架，再核对最终实际调用的 Miuix API。
 
-例如：
+普通用户不需要先知道 Miuix 的组件名，可以直接描述想要的结果，例如：
 
 ```text
-确认 Miuix v0.9.4 中 FloatingNavigationBar 的真实包名、参数、模块和 Insets 行为，并给出目标项目可编译的最小调用。
+我想做一个普通的设置页面，顶部有标题，下面有很多选项，先帮我把页面骨架理顺。
 ```
 
 ```text
-重构这个 Miuix 页面：先确定 Scaffold、滚动内容、折叠顶栏和底部导航的 owner，再实现并检查 Insets 和状态归属。
+页面太挤了，底下还想放几个页面入口，帮我看看应该怎么组织。
+```
+
+```text
+我想加一个搜索框，输入以后在下面显示结果，但不知道该用什么。
+```
+
+```text
+我想让顶部的大标题跟着内容滚动时收起来，还要有一个可以选择值的设置项。
+```
+
+Skill 会先把这些描述转换成页面骨架、组件语义和需要核对的源码合同；只有在真正需要写调用时，才继续查精确 API。已知组件名时也可以直接提问：
+
+```text
+确认当前 Miuix 源码中 FloatingNavigationBar 的真实包名、参数、模块和 Insets 行为，并结合我的项目版本给出可编译的最小调用。
 ```
 
 ## Reference 的读取方式
@@ -204,9 +218,10 @@ Claude Code 等使用 .claude/skills/ 的宿主也遵循同一原则：把两个
 
 ## 证据范围
 
-- Miuix 版本：v0.9.4
-- 固定提交：39c40f99844227b853f0049a0933b1f3ae6c00ba
+- 当前源码审计快照：上游 `main`，提交 `d8efe1872c08c863a8b33e7044dd2a8b43038032`
+- 历史发布对照：`v0.9.4`，提交 `39c40f99844227b853f0049a0933b1f3ae6c00ba`
 - 上游仓库：[compose-miuix-ui/miuix](https://github.com/compose-miuix-ui/miuix)
-- 固定版本文档源：[Miuix v0.9.4 docs](https://github.com/compose-miuix-ui/miuix/tree/39c40f99844227b853f0049a0933b1f3ae6c00ba/docs)
+- 当前源码文档源：[Miuix main docs](https://github.com/compose-miuix-ui/miuix/tree/d8efe1872c08c863a8b33e7044dd2a8b43038032/docs)
+- 历史发布文档源：[Miuix v0.9.4 docs](https://github.com/compose-miuix-ui/miuix/tree/39c40f99844227b853f0049a0933b1f3ae6c00ba/docs)
 
 如果目标项目使用其他版本，先标记版本差异，再核对目标项目实际源码；不能直接把固定版本合同当成目标项目已验证 API。
