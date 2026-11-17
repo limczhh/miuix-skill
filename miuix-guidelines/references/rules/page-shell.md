@@ -1,0 +1,98 @@
+# Page Shell and Navigation Rules
+
+Mandatory when changing page hosts, navigation, bars, pagers, insets, scroll/refresh integration, blur, or adaptive layout. Apply the [scope, strength, and exceptions](design-system.md#scope-and-rule-strength) from the shared specification. Read only the sections matching the changed boundary.
+
+Contents: [hosts](#page-hosts-and-shared-wrappers) · [top bar](#standard-top-app-bar) · [routing](#routes-and-back) · [navigation](#navigation-and-adaptive-layout) · [tabs](#tabs-and-pagers) · [insets](#insets-and-content-padding) · [scroll](#scroll-refresh-and-haptics) · [blur](#blur-and-glass) · [validation](#validation).
+
+## Page hosts and shared wrappers
+
+- Keep one route owner and one primary content/vertical scroll owner for each page boundary. Nested shell/page `Scaffold`s are valid when the shell owns navigation/global layers and the page owns its app bar or popup lifetime; do not nest hosts just to obtain a background.
+- Standard secondary settings/list pages use a page-owned `Scaffold`, `TopAppBar`, back action, and one scroll owner. Use `SmallTopAppBar` for an intentionally pinned/custom-header composition. A small form may use `Column.verticalScroll`; repeated content uses a lazy container. The page name does not mandate cards, navigation chrome, or a list.
+- Place bars, floating actions/toolbars, and Snackbar in the intended host slots. Persistent navigation is shell-owned; a page action group is not destination navigation.
+- Reuse shared page wrappers for repeated bar, padding, refresh, backdrop, or loading behavior. Preserve their callable boundary and inspect callers before changing it. A custom-content slot receives the existing effective padding and scroll behavior instead of creating parallel owners.
+- A page that emits operation feedback supplies or receives a usable Snackbar host. A separate popup window may need its own visible feedback surface; a covered page host is not sufficient.
+- Keep feature content split by coherent section/interaction boundaries. Do not duplicate an entire page skeleton to add another settings section or visual variant.
+
+## Standard top app bar
+
+- Standard scrollable settings, list, and detail pages MUST use a page `Scaffold` with an adaptive, scroll-aware bar in its `topBar` slot: compact windows use a collapsing large-title `TopAppBar`; wide windows use a fixed compact-title presentation. A bare compact-window bar with no content connection is not a complete implementation of this profile.
+- Select bar form through the same available-window policy as navigation. A target with a verified non-expandable TopAppBar option may use it; a target without that API uses `SmallTopAppBar` for the wide fixed-title branch. The adaptive wrapper is application-owned, not an assumed public Miuix component.
+- Resolve one page `MiuixScrollBehavior` and share it between the bar and the selected content/refresh connection owner. Keep `LazyListState` for list position; do not create a second app-bar behavior inside a wrapper, list, or tab.
+- Standard app bars MUST participate in the shared backdrop-blur policy. On a supported runtime with blur enabled, record the intended content layer, sample it through a shared bar wrapper, and make the inner app-bar color transparent. When support/preference disables blur, use the opaque semantic surface fallback. Skipping the wrapper because a bare `TopAppBar` is easier is not a justified exception.
+- The recorded content and the sampling bar are separate siblings under the page host. The backdrop, blur-active state, bar color, and scroll behavior belong to the page wrapper; callers pass title/actions/content rather than reconstructing this setup in each section.
+- A secondary-page back action uses the existing navigator and localized back icon description. Root pages omit route-back when it has no meaning. Actions use the component slots; page-level tabs/search transition content use the same header boundary and material policy.
+- Use the shared haptic/overscroll chain and one app-bar nested-scroll connection on the list by default, including ordinary refresh pages. A supported existing wrapper-owned exception follows [scroll integration](#scroll-refresh-and-haptics).
+- Custom hero/header pages keep their deliberate title/scroll structure instead of being blindly replaced by the standard adaptive wrapper. Their pinned title retains the same blur/fallback policy and shares scroll state when presentation reacts to content. Do not add a hidden large title just to imitate collapse.
+- A non-scrolling setup/step screen, deliberate immersive content, existing Brownfield host contract, or supplied visual requirement may select a fixed/unblurred/absent bar under the shared exception contract. The page label alone does not justify an exception; name the actual behavior or constraint.
+
+Use [Top bar compositions](../top-bar-compositions.md) for the integrated placement example. Its code illustrates these rules and does not define a competing bare-bar recipe.
+
+## Routes and back
+
+- Use typed routes with the target navigation system. Keep route arguments serializable/restorable; do not transfer required data through temporary global variables.
+- Route/back-stack mutations go through the existing navigator. Prevent duplicate consecutive pushes for an already-current destination and keep a valid root unless the flow explicitly replaces it.
+- The app-bar back action and system back follow the same page ownership. Handle a popup/search/local flow at its intended boundary before popping the route; preserve component-owned dismissal behavior.
+- If a top-level tab flow defines back-to-first-tab behavior, keep that policy in the shell and use the same pager state. Do not install competing back handlers in every tab.
+- Onboarding completion persists completion state and replaces/removes the setup route as appropriate, so back does not return to a completed setup flow. A deliberately step-controlled setup pager disables swipe navigation and uses explicit next/back actions.
+- Keep navigation transitions and predictive/system back in the existing host. Do not create another Activity merely because a Compose page is expensive.
+
+## Navigation and adaptive layout
+
+- Bottom bars, floating bars, and rails render the same selected destination and callbacks. Resizing or switching navigation style must preserve page, state, and back stack.
+- Place `NavigationBar` / `FloatingNavigationBar` in the owning shell's bottom slot; put a rail in its side layout. The content receives the resulting space/inset handoff.
+- Standard bottom and floating navigation bars use the shared blur/fallback policy too, with their shell-owned backdrop. A rail or an explicitly different product variant follows its matching component/material policy rather than borrowing a bottom-bar mask.
+- The floating-navigation recipe uses `12.dp` horizontal outer padding. Use the component's item spacing; DO NOT insert an extra Spacer when it already supplies the desired gap. Only a target without built-in spacing needs the profile's `12.dp` item gap. Keep component-owned bottom spacing and inset policy separate.
+- Resolve compact/wide policy from the current available window size in one shared function used by both bars and shell. The profile baseline is wide at width ≥ `840.dp`, or width ≥ `600.dp` with height/width < `1.2`; guard invalid/zero width. Resizing re-evaluates the policy. An established project policy or product constraint can override these thresholds through the shared exception contract; orientation alone is not a substitute.
+- A centered-width content policy must preserve a usable scroll/input region. Keep navigation/selection outside presentation branches; do not clone state when switching bar and rail.
+- Do not reuse shell navigation spacing as page gutters. Glass navigation has no fixed page-wide margin formula here: choose verified component Defaults and the shell's actual inset contract.
+
+## Tabs and pagers
+
+- A `TabRow` and its `HorizontalPager` use one pager/selection owner. Place page-level tabs in the top bar's bottom slot or the intended fixed header boundary.
+- The standard tab strip follows the `12.dp` horizontal gutter and `12.dp` bottom gap. A strip within blurred chrome uses a compatible transparent background rather than painting over the material.
+- Each tab keeps its own list position, loading, filters, and data identity. A shared top bar uses one behavior, while content-scrolled/selection-dependent presentation must reflect the active page.
+- Coordinate rapid tab clicks, swipes, cancellation, and programmatic movement in one owner. A cancelled older navigation job must not reset the state of a newer one.
+- Retain adjacent pages only when it benefits the flow and fits the cost. Precomposition does not authorize duplicate scans, network requests, or always-running offscreen animations.
+
+## Insets and content padding
+
+- Name the shell-to-page padding handoff and consume the intended combined result once at the primary content boundary. Separate system insets, bar/slot dimensions, and decorative breathing room.
+- An ordinary standalone scroll page uses host top/bottom padding plus `16.dp` bottom breathing room; grouped content owns its horizontal gutter. Do not add a second arbitrary top spacer when `SmallTitle` already owns label spacing.
+- Merge host, page, and system-safe padding per edge through a shared application helper used by the actual content. For overlapping clearance requirements, take the greatest required clearance rather than blindly summing them; add only independent occupied space and explicitly named decorative extras. Do not add the standalone `16.dp` again when the shell already supplies the required breathing room.
+- Account for system bars, display cutouts, and caption bars in the shared contract. If a sibling rail already reserves/consumes the start side, pass that fact to descendants and omit only the already-owned start clearance, respecting LTR/RTL. End, top, and bottom safe areas remain independently applicable.
+- A lightweight shared padding helper and a full window-inset/provider architecture are both valid. Require correct edge ownership and real call-site use, not a particular Example helper/class or an entire shell rewrite.
+- A refresh header's `contentPadding` positions the header; it does not replace list content padding. Pass the appropriate top offset to the wrapper and the effective padding to the list. Keep any additional bottom breathing room in one named policy, not both wrappers.
+- Do not hardcode status-bar or navigation-bar heights. Check horizontal cutouts/navigation insets in landscape and caption bars in windowed mode; top/bottom-only padding is not proof that every window edge is safe.
+- Give IME padding to the boundary that actually owns keyboard avoidance. Before using `defaultWindowInsetsPadding = false`, inspect which edges/types the target component handles and transfer that responsibility explicitly.
+- A custom hero/header may consume top padding differently from an ordinary list. Keep its title, measured height, minimum viewport height, and list content coordinated; do not pin long content to exactly one viewport if that prevents scrolling.
+
+## Scroll, refresh, and haptics
+
+- An ordinary collapsing-bar list uses the same `MiuixScrollBehavior` as its app bar. The shared modifier chain is conditional scroll-end haptics, overscroll, then the one app-bar nested-scroll connection for a list-owned integration.
+- For standard refresh pages, keep the app-bar connection in the shared list-scroll helper and omit it from the enclosing `PullToRefresh`. Ordinary and refreshing content then share one list-owned motion path. A target-supported existing wrapper-integrated contract may instead pass the behavior to PullToRefresh and disable it on the inner list; treat this as an explicit compatibility choice, not a second simultaneous connection.
+- Do not attach the same app-bar connection through both paths. Preserve a working existing topology unless a defect or requested migration requires changing it.
+- Keep business `isRefreshing`, refresh-indicator state, list position, title-collapse state, and visual overscroll displacement separate. `onRefresh` starts work through the data owner, and completion/failure resets logical loading in all paths.
+- Refresh must not launch duplicate work while a load is already active. Localize pull/release/loading/completion labels through the existing refresh component contract.
+- Haptics belong to the actual boundary/action: scroll-end behavior follows its enable policy; drag start/reorder uses the shared drag feedback. Do not add a second page-wide haptic source for the same gesture.
+- When the resolved target exposes both a damped-offset callback and a supported app-bar visual-overscroll channel, connect them through spring/reset frames for the selected rebound-driven presentation. Keep that displacement separate from real list movement and business state.
+- A target lacking that app-bar channel, including the inspected `v0.9.4` release contract, still uses ordinary nested-scroll title linkage. Do not invent the newer field, reflect into private state, emulate it with a second controller, or upgrade dependencies solely to satisfy this visual profile. Missing optional rebound-following capability is a documented version boundary, not a reason to break the ordinary page path.
+- Explicit overscroll and a theme-provided scrollable overscroll effect are separate mechanisms. Select the target-supported combination deliberately; disable the duplicate visual mechanism when the verified integration calls for it rather than stacking two rebound effects by habit.
+
+Use [Gesture dynamics](../gesture-dynamics.md) to inspect participants and choose a source-supported topology. Verify target APIs through `miuix-components` before changing modifier order or overscroll mechanisms.
+
+## Blur and Glass
+
+- Resolve actual runtime support and the user preference at one shared boundary. Keep a usable opaque fallback; do not infer capability from an invented low-end-device category.
+- For a blurred bar, the content records the backdrop and the bar samples it. Use a transparent bar color only while the matching backdrop/effect is active; use the semantic surface color otherwise.
+- Render the blur as a dedicated background sibling beneath bar content, for example a `matchParentSize` background layer inside the shared wrapper. It must not determine bar size or apply blur to title/actions themselves. The foreground renders normally above it; inactive blur leaves the opaque fallback intact.
+- The ordinary bar blur recipe uses radius `25f` and a theme `surface` blend with alpha `0.8f`. The floating-bar variant uses `surfaceContainer` at alpha `0.6f` and a mask matching the component corner Defaults. Keep these choices in the shared recipe, not per-screen copies.
+- Shell and page may own separate backdrop layers for their own bars. Do not record a sampling surface into itself or blindly share unrelated lifetime boundaries.
+- Ordinary backdrop blur and the optional Glass component family are separate compositions. Do not require Glass APIs for an ordinary blurred bar.
+- If Glass is chosen, keep its recorded content, sampling surfaces, opaque fallback, and popup host/scrim correctly separated. `Scaffold`-hosted Glass popups and root-box anchored popups have different placement contracts; verify the actual family.
+- Glass content recording supplies an opaque base; a null/absent backdrop represents the deliberate supported fallback, not a missing sampling setup. Custom progressive blur, material presets, and strokes are selected only after the baseline sampling/fallback path works.
+- A pinned-title Glass composition may use one sampling/band layer behind one visible `SmallTopAppBar` in the same host slot. Both share the intended backdrop boundary; only the interaction owner receives the scroll connection. This is an application composition, not a second public app-bar component.
+- Keep theme changes, disabled blur, unsupported runtime, and bar translucency synchronized. A floating highlight or title transition follows the actual resolved material/theme, not a stale scroll or system-dark value.
+
+## Validation
+
+Check the affected route/back path, rapid pager input, compact/side navigation, system/IME/cutout edges, theme and blur fallback. For scroll/refresh changes, exercise drag below/above threshold, cancellation, refresh completion, fling, and rebound. Source inspection and compilation do not prove these runtime behaviors; report the evidence actually obtained.

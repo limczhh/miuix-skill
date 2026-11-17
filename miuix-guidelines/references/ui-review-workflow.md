@@ -1,151 +1,51 @@
 # UI Review and Improvement Workflow
 
-Use this workflow as the primary reference when the user asks to improve, polish, modernize, restructure, or fix an existing Miuix UI, especially when code and a screenshot must be reconciled. The goal is a small, evidence-backed improvement that preserves behavior and can be verified. This workflow maps the existing structure itself; it does not require loading every page, setup, design, or Example reference.
+Use for existing-page diagnosis, polish, or redesign. This file defines investigation and evidence steps; the [mandatory topic rules](rules/design-system.md#required-topic-rules) define conformance. A review-only request produces findings, not code edits unless the user also requests implementation.
 
-## Contents
+## Establish the target
 
-- [Establish the Target](#establish-the-target)
-- [Map the Existing UI](#map-the-existing-ui)
-- [Classify the Problem](#classify-the-problem)
-- [Gather the Right Evidence](#gather-the-right-evidence)
-- [Choose and Implement the Fix](#choose-and-implement-the-fix)
-- [Validate the Result](#validate-the-result)
-- [Accessibility and Platform Checks](#accessibility-and-platform-checks)
-- [Adaptive and Inset Matrix](#adaptive-and-inset-matrix)
-- [Minimum Evidence by Risk](#minimum-evidence-by-risk)
-- [Report the Outcome](#report-the-outcome)
+Read the user's goal and constraints, current source/callers, and any available screenshot/render together. Identify the resolved Miuix version/source, platform, and page boundary. Classify Greenfield/Brownfield/Mixed using the entrypoint; an existing undocumented page remains Brownfield.
 
-## Establish the Target
+Record unknown facts rather than substituting an Example app. Ask only when a missing choice changes the visual direction materially, while continuing independent inspection.
 
-1. Read the user's stated goal and constraints before proposing visual changes.
-2. Inspect the current implementation. If a screenshot, mockup, preview, or device capture is available, inspect it together with the code; neither view alone explains both appearance and behavior.
-3. Confirm that the target project uses the current-audit API snapshot or record its published version/commit. This Skill's companion catalog is pinned to `d8efe1872c08c863a8b33e7044dd2a8b43038032`; if the project uses another version, flag the mismatch instead of treating current-main contracts as target-correct.
-4. Preserve intentional project conventions unless they cause the reported problem or the user asks to replace them.
-5. Classify the work as Greenfield, Brownfield, or Mixed. A code change in an existing page follows [Brownfield evolution](brownfield-evolution.md), even when the requested result is visually large.
+## Map and classify
 
-An existing page without a written design system is still Brownfield. Use the profile as the target for the selected visual correction, but treat the current route, host, state, inset, and interaction chain as the starting evidence. Do not convert “没有规范” into permission to rebuild the page from zero.
+Map theme, route, hosts/slots, primary content, insets/adaptive policy, section structure, state/callbacks, custom visuals, shared wrappers, and actual gesture participants. Use the [ownership worksheet](page-structure.md#ownership-worksheet) when needed.
 
-Ask a question only when a missing choice would materially change the visual direction. Continue read-only inspection while that choice is unresolved.
-
-## Map the Existing UI
-
-Trace the page from the outside in:
-
-1. Application theme and `ThemeController` inputs.
-2. Route/navigation owner and page boundary.
-3. Page host: `Scaffold`, bars, popup host, and supplied content padding.
-4. Primary scroll/content container, adaptive-width logic, system/IME insets, and navigation layout.
-5. Section and surface hierarchy: page → section → Card/container → row/component, without assuming that every page uses this exact content hierarchy.
-6. State owner and callbacks for selected, enabled, expanded, loading, error, and dismissal states.
-7. Custom modifiers, colors, text styles, shapes, effects, and magic dimensions.
-8. Shared page helpers, CompositionLocals, feature switches, and the complete nested-scroll/overscroll/pager chain when interaction is involved.
-
-Do not change geometry until the actual view hierarchy and coordinate/inset model are understood.
-
-## Classify the Problem
-
-Assign each observed problem to one or more categories before editing:
-
-| Category | Typical evidence | First place to investigate |
+| Finding concerns | Normative source | Useful investigation guide |
 |---|---|---|
-| Structure and hierarchy | Weak grouping, too many containers, unclear primary action | [Page structure and ownership](page-structure.md) |
-| Component selection | Hand-built control, Material component, wrong Overlay/Window variant | The component-selection catalog |
-| Spacing and shape | Uneven rhythm, clipping, arbitrary radii | Profile metrics, component Defaults, existing project spacing, Example composition |
-| Color and typography | Poor contrast, literal colors, inconsistent scale | [Design language and Defaults](design-language.md), theme source, component defaults |
-| State and interaction | Wrong state owner, disabled row still clickable, broken dismissal | The affected component's contract or host guide |
-| Insets and adaptation | Content under bars, IME overlap, broken wide layout | Scaffold contract, page shell, target platform behavior |
-| Brownfield migration | New wrapper replaces working infrastructure, split state, scattered version checks | [Brownfield evolution](brownfield-evolution.md) |
-| Gesture dynamics | Refresh, rebound, top-bar, tab, or pager gestures consume each other | [Gesture dynamics](gesture-dynamics.md) |
-| Accessibility | Missing descriptions, tiny targets, unreadable scaled text | Component semantics, target accessibility requirements, rendered checks |
+| Host, inset, navigation, bar material/scroll | [Page shell](rules/page-shell.md) | Page structure, top bar, navigation |
+| Color, typography, geometry, grouping, language, accessibility | [Design system](rules/design-system.md) | Design language |
+| Dependencies, editing, search, popup, drag | [Settings and overlays](rules/settings-and-overlays.md) | Content and overlays |
+| Persistence, async/lifecycle, lists/icons, feedback, external actions | [State and performance](rules/state-and-performance.md) | Brownfield evolution |
+| Multi-part gestures | [Scroll requirements](rules/page-shell.md#scroll-refresh-and-haptics) | Gesture dynamics |
+| Exact parameter, host flag, Default, or version | `miuix-components` source contract | Its narrow contract/source-verification route |
 
-Prioritize structural and behavioral problems before decorative polish; surface-level tuning cannot repair a wrong host, hierarchy, or state model.
+Prioritize ownership/behavior defects before decoration. Classify a finding as a profile violation, justified project exception, API mismatch, or unverified visual/runtime observation using the [exception contract](rules/design-system.md#exceptions-and-conformance).
 
-## Gather the Right Evidence
+## Gather evidence and implement when requested
 
-For each classified problem, load only the evidence that answers that problem:
+1. Read only the rules and guide sections for the classified problem.
+2. Verify the concrete API calls in the target through `miuix-components`. An Example can illustrate a composition, but not replace a declaration or define profile defaults.
+3. For a code change, follow [Brownfield evolution](brownfield-evolution.md) to choose the changed seam and preserve/replace/add map.
+4. Apply one coherent correction and review the diff for unrelated behavior/scope changes.
+5. Use the applicable normative validation sections rather than maintaining another UI-requirement checklist here.
 
-1. Start with the first reference named by the problem category. Do not load all catalogs.
-2. If the issue is an exact call, hand only that symbol to the `miuix-components` Skill; use its Verified API Contracts reference when covered.
-3. If the contract is absent or the target version differs, use the `miuix-components` Skill's Source Verification reference for the matching declaration and only the relevant docs/demo/source path.
-4. Use [Integrated usage patterns](usage-patterns.md) when the repair depends on integrated grouping, state flow, or adaptive composition that the component evidence cannot answer.
+## Match claims to evidence
 
-Record whether each finding is a source contract, an Example pattern, an existing project convention, or a user-directed visual choice. Do not present one category as another.
-
-For a change to an existing page, read Brownfield evolution before proposing a new Scaffold, provider, adapter, or shared helper. For a mixed scroll/refresh/overscroll problem, read Gesture dynamics instead of relying on the basic collapsing-bar snippet.
-
-## Choose and Implement the Fix
-
-1. State the intended page skeleton, ownership, hierarchy, and interaction in plain language.
-2. Select the smallest coherent set of changes that solves the highest-impact problems. In Brownfield mode, preserve the existing route, host, state, and inset boundaries unless the classified defect is in that boundary.
-3. Apply the profile's declared metrics and component combinations inside the selected scope; do not tune each section independently.
-4. Prefer the public Miuix component, its Defaults, and semantic theme tokens.
-5. Adapt the relevant Example pattern to the target architecture; do not copy Example navigation, blur, diagnostics, or helper infrastructure without need.
-6. Preserve state ownership, callbacks, and navigation behavior unless the task explicitly includes behavior changes.
-7. Avoid unrelated cleanup. If a broader redesign would materially change scope, explain the tradeoff before expanding it.
-
-Common failed approaches include arbitrary spacing until one screenshot looks right, wrapping every row in a Card, mixing Material tokens into Miuix, ignoring Scaffold padding, and importing an API from a different Miuix release or another navigation library.
-
-## Validate the Result
-
-Validate in layers appropriate to the change:
-
-1. Review the diff for accidental behavior or scope changes.
-2. Run format/static checks used by the target project.
-3. Compile the smallest affected target or variant.
-4. For visual changes, render or inspect a preview, screenshot, emulator, or device at the relevant state.
-5. Recheck light/dark or dynamic color, disabled/selected/error states, text scaling, insets, and compact/wide layouts when the change touches them.
-6. For gesture changes, exercise the complete interaction chain: ordinary scroll, threshold/cancel, refresh completion, rebound, and any visual consumer of the damped offset.
-
-Compilation proves API and type compatibility, not visual correctness. If no render or device evidence is available, report visual confirmation as pending rather than inferred.
-
-## Accessibility and Platform Checks
-
-When the change affects interactive controls, text, navigation, or effects, add the checks that apply to the target platforms:
-
-- Preserve component semantics and labels. Give meaningful icons a localized `contentDescription`; keep decorative icons out of the accessibility traversal, and do not replace a component with a raw clickable glyph when the component already owns role/state semantics.
-- Check touch and pointer targets, focus order, keyboard activation, hover/press feedback, and the enabled/disabled announcement. Verify custom slots because their semantics and `enabled` state are not inferred automatically.
-- Test long localized strings, RTL layout/direction, text scaling or platform dynamic type, and IME/focus behavior. Do not use a screenshot at one font scale or locale as proof that the layout is robust.
-- Recheck contrast and state communication in light, dark, and dynamic color modes. Error, selected, disabled, loading, and focus states must remain distinguishable without color alone.
-- Make errors and loading states available as visible text and/or semantics when they need to be announced; do not make a tooltip the only channel for an error, status, or required action.
-- For dialogs, menus, and popups, verify that focus enters the active surface, keyboard/pointer dismissal works, and focus returns to the trigger when the surface closes. If a custom wrapper changes semantics, inspect its merged and cleared semantics tree rather than assuming the child component's labels survive.
-- Validate only the platforms and window classes the target supports, but record unsupported or unverified behavior explicitly. Blur, predictive back, separate windows, pointer input, and adaptive navigation commonly need runtime evidence beyond compilation.
-
-## Adaptive and Inset Matrix
-
-Check the rows that apply to the target instead of treating one device screenshot as proof:
-
-| Condition | Check |
+| Change/risk | Evidence needed for the corresponding claim |
 |---|---|
-| Compact/wide or resized window | Navigation state remains hoisted and singular; content reflows without duplicating bars or route stacks |
-| System bars and Scaffold padding | Content, app bars, floating controls, and scroll indicators consume the owning insets exactly once |
-| IME and focused field | The focused field and error/supporting text remain visible; dismissal and back behavior do not lose the draft |
-| Orientation, fold, or pane change | Width constraints, popup anchoring, and dialog/window choice remain valid after the host changes size |
-| Long strings, large font, or RTL | Text wraps or truncates intentionally, controls keep usable targets, and directional icons/spacing follow layout direction |
-| Scroll, refresh, rebound, or pager | Each gesture participant has one documented owner; no duplicate connection or split visual/business state appears |
+| API or parameter compatibility | Target source plus affected-target compilation |
+| Page structure/state flow | Compilation and relevant render/interaction inspection, or explicit pending visual evidence |
+| Visual polish | Before/after render, screenshot, or preview in the affected states |
+| Insets, popup/window, IME, blur, adaptive layout, or gesture | Runtime/emulator/device interaction on supported targets |
+| Version migration | Matching source/version diff, affected-target compilation, and relevant regression checks |
+| Accessibility or responsive behavior | Semantics/interaction inspection and affected font-scale/RTL/window/IME conditions |
+| External consumer application | Consumer/runtime result, separate from the visible toggle and local save |
+| Performance improvement | Relevant runtime measurements; source refactor alone is insufficient |
 
-## Minimum Evidence by Risk
+The applicable rules identify what to inspect: [visual/accessibility](rules/design-system.md#accessibility-and-content-resilience), [page-shell](rules/page-shell.md#validation), [settings/overlay](rules/settings-and-overlays.md#validation), and [state/operations](rules/state-and-performance.md#validation). If a check cannot be performed, describe its evidence as pending.
 
-Match the validation claim to the risk of the requested change:
+## Report findings or changes
 
-| Request or risk | Minimum evidence before claiming done |
-|---|---|
-| API or parameter change | Pinned source/doc evidence and compilation of the affected target |
-| Page structure or state-flow change | Compilation plus preview/render, or an explicit statement that visual confirmation is pending |
-| Visual polish | Before/after render, screenshot, or preview at the relevant states |
-| Insets, dialog/window, back/gesture, blur, or adaptive behavior | Runtime/emulator/device evidence on the supported target platform |
-| Nested-scroll, refresh, overscroll, or pager dynamics | Affected-target compilation plus runtime/device checks for the interaction states; source inspection alone is not enough |
-| Version migration | Exact tag/commit diff, affected-target compilation, and a regression checklist for changed APIs |
-| Accessibility or responsive behavior | Semantics/interaction inspection plus relevant font-scale, RTL, window-size, and IME checks |
-
-If a minimum evidence item is unavailable, report it as pending rather than upgrading a source or compilation result into a visual or device claim.
-
-## Report the Outcome
-
-Lead with what changed and why it solves the user's problem. Include:
-
-- The page hierarchy or component decisions that changed.
-- The review-specific findings: problem category, repair basis, and any Miuix docs, Example file, source contract, or Defaults that supported non-obvious decisions.
-- The exact visual/static/device validation completed, plus any unverified visual state or device behavior that remains.
-- For common code-delivery facts, follow the single authoritative [Code Delivery Contract](../SKILL.md#code-delivery-contract) instead of repeating its checklist here.
-
-For a review-only request, order findings by user impact and point to exact target files/components. Do not implement unless the request includes a change.
+Order review findings by user impact and point to exact target files/components. For implementation, explain the change and relevant rule/exception basis, verification performed, and unresolved evidence. Use the entrypoint's [Code Delivery Contract](../SKILL.md#code-delivery-contract); profile conformance, API verification, compilation, visual/device results, and performance measurements are different claims.

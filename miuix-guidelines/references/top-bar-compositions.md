@@ -1,70 +1,80 @@
-# Top Bar Compositions
+# Top Bar Composition Guide
 
-Use when a page needs a pinned title or a large title that responds to the primary content scroll.
+Use this guide to implement the [standard top-app-bar rules](rules/page-shell.md#standard-top-app-bar). The normal scrollable-page composition integrates material and motion together. It is not a menu of equally preferred bare, blurred, and disconnected bars.
 
-Do not use this guide as a full page template. If the page already has a shared shell or scroll helper, first read [Brownfield evolution](brownfield-evolution.md). If pull-to-refresh, explicit overscroll, a pager, or rebound-driven visuals participate, use [Gesture dynamics](gesture-dynamics.md) before changing modifiers.
+For an existing host/helper, start with [Brownfield evolution](brownfield-evolution.md). For refresh, pager, or rebound interactions, use [Gesture dynamics](gesture-dynamics.md) to select the connection owner.
 
-The page host owns the app-bar slot. The primary content owns the vertical movement. A shared MiuixScrollBehavior is the bridge only for the basic collapsing-bar case; it is not proof that a multi-part gesture chain is valid.
+## Standard standalone scroll page
 
-Before implementation, send only the concrete Miuix symbols used by the chosen shape to miuix-components for source verification. After implementation, compile the affected target when available and separately report inset, scroll, accessibility, and device/render evidence.
+The relationship is:
 
-## Pinned top bar and one scroll owner
-
-Use this shape when the title should remain visible while the page scrolls. `SmallTopAppBar` is the pinned app-bar form.
-
-```kotlin
-Scaffold(
-    topBar = {
-        SmallTopAppBar(
-            title = "Page",
-        )
-    },
-) { innerPadding ->
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(innerPadding),
-        contentPadding = innerPadding,
-    ) {
-        // Page content owns the vertical scroll.
-    }
-}
+```text
+page owner: window policy + scroll behavior + backdrop policy + effective bar color
+└── Scaffold
+    ├── topBar: blur background + adaptive foreground bar(same behavior)
+    └── content: recorded backdrop layer → scroll owner(same behavior, shared safe padding)
 ```
 
-Use a `Column` with `verticalScroll` instead when the content is a small, naturally linear form. Do not put a `LazyColumn` inside that `Column` just to make one subsection scroll.
-
-If the page has no bar, no bottom/floating slot, and no host-owned transient layer, a plain content root may be more appropriate than `Scaffold`.
-
-## Collapsing top bar
-
-Use this shape when a large title should collapse into the app-bar area as the primary content scrolls. The same `MiuixScrollBehavior` instance belongs to both the app bar and the scroll container.
+This placement example uses application-owned `rememberBlurBackdrop`, `BlurredBar`, `AdaptiveTopAppBar`, `pageContentPadding`, and `pageScrollModifiers` helpers. They implement the normative material, window, inset, and scroll recipes; they are not public Miuix APIs. The blur wrapper draws a separate background below the foreground bar. Reuse matching target helpers or implement that shared boundary once, then verify actual Miuix symbols separately.
 
 ```kotlin
+val backdrop = rememberBlurBackdrop()
+val blurActive = backdrop != null
+val barColor = if (blurActive) Color.Transparent else MiuixTheme.colorScheme.surface
 val scrollBehavior = MiuixScrollBehavior()
+val listState = rememberLazyListState()
 
 Scaffold(
     topBar = {
-        TopAppBar(
-            title = "Page",
-            largeTitle = "Large page title",
-            scrollBehavior = scrollBehavior,
-        )
+        BlurredBar(backdrop, blurActive) {
+            AdaptiveTopAppBar(
+                title = title,
+                color = barColor,
+                scrollBehavior = scrollBehavior,
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = MiuixIcons.Back,
+                            contentDescription = localizedBackDescription,
+                        )
+                    }
+                },
+            )
+        }
     },
-) { innerPadding ->
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .consumeWindowInsets(innerPadding),
-        contentPadding = innerPadding,
+) { padding ->
+    val contentPadding = pageContentPadding(padding, extraBottom = 16.dp)
+    Box(
+        modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier,
     ) {
-        // Page content.
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+                .pageScrollModifiers(
+                    enableScrollEndHaptic = true,
+                    showTopAppBar = true,
+                    topAppBarScrollBehavior = scrollBehavior,
+                ),
+            contentPadding = contentPadding,
+        ) {
+            // Semantic page content.
+        }
     }
 }
 ```
 
-The `nestedScrollConnection` is part of the behavior contract, not an optional visual tweak. Do not create one behavior for `TopAppBar` and another for `LazyColumn`. Keep `LazyListState` for list position and `TopAppBarState`/`ScrollBehavior` for app-bar motion; they are related through nested scroll, not interchangeable.
+The example is the standalone case from [inset rules](rules/page-shell.md#insets-and-content-padding). The helper merges current safe areas; a shell-hosted page additionally supplies its outer handoff and reserved-start policy. Standard refresh content retains list connection ownership. The adaptive helper chooses a collapsing compact-window title or fixed wide-window title through the shared size policy and target-supported API. No unsupported rebound field is assumed.
 
-Use `SmallTopAppBar` instead when the title must remain pinned. Do not add collapsing behavior to a page whose hierarchy does not benefit from a large-title transition.
+## Variants to resolve deliberately
 
-If the page also has pull-to-refresh, explicit overscroll, a pager, or a visual band/tab response to rebound, stop treating this as the basic collapsing-bar recipe. Read [Gesture dynamics](gesture-dynamics.md) and choose one nested-scroll topology whose target source contract is verified before adding modifiers. The basic snippet does not prove that multiple gesture participants can be attached independently.
+| Situation | Composition decision | Normative owner |
+|---|---|---|
+| Custom hero/header needs a pinned small title | Keep one visible `SmallTopAppBar` in the same material boundary; map any content reaction to the page behavior | [Standard top app bar](rules/page-shell.md#standard-top-app-bar) |
+| Step-controlled or non-scrolling page | Select the fixed-header behavior appropriate to the flow and record the exception basis | [Exceptions](rules/design-system.md#exceptions-and-conformance) |
+| Page-level tabs | Place the tab strip in the header boundary and coordinate it with the active pager page | [Tabs and pagers](rules/page-shell.md#tabs-and-pagers) |
+| Expanded search | Resolve which input/result surface replaces the normal header presentation | [Search](rules/settings-and-overlays.md#search) |
+| Pull-to-refresh | Use list ownership by default; inspect an existing wrapper-owned compatibility path before migration | [Scroll integration](rules/page-shell.md#scroll-refresh-and-haptics) |
+| Explicit Glass requirement | Use the selected Glass family's host/sampling composition | [Glass guide](glass-compositions.md) |
+
+Exact overloads/imports and component state behavior go to `miuix-components`; the snippet is placement evidence, not a compilation result. Use the [page-shell validation boundary](rules/page-shell.md#validation) for runtime checks.

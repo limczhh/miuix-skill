@@ -1,15 +1,15 @@
 ---
 name: miuix-guidelines
-description: "Use when designing, composing, reviewing, refactoring, or incrementally evolving a Miuix Compose page, including vague requests such as ‘做个普通页面’、‘像系统设置一样’ or ‘页面太乱了’, when the task involves page skeleton, Scaffold/app-bar/navigation composition, ownership, hierarchy, spacing, state placement, insets, adaptive behavior, visual consistency, or scroll/refresh gesture coordination. Do not trigger for a standalone exact Miuix API lookup or compile-error diagnosis unless page composition is also involved."
+description: "Use when designing, composing, reviewing, refactoring, or incrementally evolving a Miuix Compose page, including vague requests such as ‘做个普通页面’、‘像系统设置一样’ or ‘页面太乱了’, when the task involves page skeleton, Scaffold/app-bar/navigation composition, ownership, hierarchy, spacing, settings interactions, UI state/loading/feedback, insets, adaptive behavior, visual consistency, or scroll/refresh gesture coordination. Do not trigger for a standalone exact Miuix API lookup or compile-error diagnosis unless page composition is also involved."
 ---
 
 # Miuix UI Guidelines
 
 ## Scope
 
-This Skill defines one concrete Miuix design specification derived from the HyperLyric consumer implementation. It governs page structure, ownership, composition, hierarchy, spacing, and review; it is intentionally a chosen design language, not a claim that Miuix has only one valid visual style or that every page must use one fixed component recipe.
+This Skill defines a Miuix design specification. It governs page structure, ownership, composition, visual hierarchy, settings and popup interactions, UI-facing state/data flow, feedback, and review; it is intentionally a chosen design language, not a claim that Miuix has only one valid visual style or that every page must use one fixed component recipe.
 
-Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS visual language. The companion library's current source-audit snapshot is upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`; exact signatures, imports, defaults, and version-sensitive behavior belong to `miuix-components`. This Skill codifies the selected HyperLyric-derived usage profile; it does not require the optional Glass family or any one visual variant when the product does not choose it.
+Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS visual language. The companion library's current source-audit snapshot is upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`; exact signatures, imports, defaults, and version-sensitive behavior belong to `miuix-components`. Standard pages use the shared blurred adaptive bar: collapsing large title in compact windows, fixed compact title in wide windows, and opaque fallback when blur is inactive. Target API limits bound optional effects; the Glass component family remains separate and optional.
 
 ## Joint decision boundary
 
@@ -24,15 +24,13 @@ Use the two Skills as a handoff, not as two competing page/component guides:
 
 Keep the evidence labels separate: `catalog-verified` describes the maintained pinned snapshot, `target-source-verified` describes the target project's resolved source, and `compile-verified` requires a successful target compilation.
 
-## Design profile contract
+## Guidance and mandatory rules
 
-Apply the profile in three layers:
+This entrypoint selects the workflow and relevant guides. [Design system rules](references/rules/design-system.md) defines shared visual rules, strength, exceptions, and the [required topic routing](references/rules/design-system.md#required-topic-rules) to page-shell, settings/overlay, and state/performance rules.
 
-1. **Structural baseline:** one application theme, one route owner, one host for each real shell/page boundary, one primary content/scroll owner per page, and one named inset handoff to the final content boundary. Deviate only when the target architecture or product behavior gives a concrete reason.
-2. **Visual baseline:** prefer Miuix component defaults, semantic theme roles, meaningful grouping, and the component that owns the interaction semantics. This is the default visual language, not an API requirement.
-3. **Profile metrics:** in Greenfield work, use the spacing and hierarchy values in [Design language and Defaults](references/design-language.md) as the default rules of this design specification. In Brownfield work, preserve an established target convention only when it is a real project-level rule rather than an isolated literal. These are profile rules, not hidden Miuix library constants.
+Before implementing or reviewing a page, MUST read the shared scope, exceptions, and topic table, then the visual and topic sections applicable to the changed boundary. Read those rules alongside the selected workflow guide; choosing one primary guide does not waive topic routing. Do not preload unrelated rule sections. Pure conceptual explanations can use the relevant guide without a conformance review.
 
-The profile fixes responsibilities more strongly than it fixes components. It may require that a bottom-navigation owner live in the shell, while still allowing the implementation to choose `NavigationBar`, `FloatingNavigationBar`, a rail, or no navigation chrome according to the product and available width.
+UI conformance requirements live only in `references/rules/`. Other references provide workflow steps, decision aids, diagnostics, and examples that link to those rules. Their instructions about how to investigate or deliver work do not define another UI specification. Exact API/version facts live in `miuix-components`.
 
 ## Natural-language intake
 
@@ -44,21 +42,20 @@ Users normally describe the result they want rather than the page architecture o
 | “从零做一个页面/第一次搭建” | [Greenfield page](references/greenfield-page.md) | Is there truly no existing page contract, and can the profile become the page's starting design system? |
 | “已有页面优化/统一间距/改得更像这套规范” | [UI review workflow](references/ui-review-workflow.md), then [Brownfield evolution](references/brownfield-evolution.md) | Which current structure and behavior must survive, and which visual boundaries should migrate toward the profile? |
 | “滚动、下拉刷新、回弹、折叠顶栏手势打架” | [Gesture dynamics](references/gesture-dynamics.md) | Which component owns each nested-scroll connection, and which visual state needs an explicit overscroll bridge? |
-| “像系统设置一样” | [Page structure and ownership](references/page-structure.md), then [Design language and Defaults](references/design-language.md) | Which grouping and hierarchy are wanted? Do not silently turn this into a mandatory `SmallTitle` + `Card` + Preference template |
+| “像系统设置一样” | [Page structure and ownership](references/page-structure.md), then [Design language and Defaults](references/design-language.md) | Which semantic groups and preference interactions fill the standard page shell? |
 | “顶部大标题滚动时收起来” | [Top bar compositions](references/top-bar-compositions.md) | Which page host owns the top bar, which one scrolls, and where does the shared scroll behavior connect? |
 | “底下放几个入口/做个底栏” | [Page structure and ownership](references/page-structure.md) | Is it persistent shell navigation or a page action group, and which owner holds the selected destination/back stack? |
-| “想做毛玻璃页面/玻璃底栏” | [Glass compositions](references/glass-compositions.md) | Is Glass an explicit visual requirement, where is the recorded `Backdrop` boundary, and which host owns the bars and overlays? Hand exact Glass calls to `miuix-components` |
+| “顶栏要模糊/底栏要毛玻璃” | [Top bar compositions](references/top-bar-compositions.md) or [Navigation](references/navigation-compositions.md) | Which shared ordinary-blur wrapper, recorded content layer, runtime/preference policy, and fallback does the bar use? |
+| “明确使用 Glass 组件/Glass 弹层” | [Glass compositions](references/glass-compositions.md) | Which Glass family and recorded backdrop boundary fit the host/lifetime? Hand exact Glass calls to `miuix-components` |
 | “加个弹窗/下拉选择” | [Page structure and ownership](references/page-structure.md), then the component host contract | Does the surface belong to this page `Scaffold` or need an independent window lifetime? |
 | “加个搜索框” | [Page structure and ownership](references/page-structure.md) | Does search expand in the page host, own result content, or filter an existing scroll owner? Hand the exact `SearchBar`/`InputField` call to `miuix-components` only after this is known |
+| “设置联动不对/弹窗编辑后怎么保存” | [Brownfield evolution](references/brownfield-evolution.md), with the applicable [settings rules](references/rules/settings-and-overlays.md) | Which value is a draft, which owner persists it, and which dependency/commit contract must remain valid? |
+| “页面加载卡顿/刷新失败没有提示/导出结果不对” | [UI review workflow](references/ui-review-workflow.md), with the applicable [state and operation rules](references/rules/state-and-performance.md) | Is the defect in entry cost, request identity, data snapshot, feedback visibility, or the external operation's actual outcome? |
 | “页面太乱/不像 Miuix” | [UI review workflow](references/ui-review-workflow.md) | Is the defect structural, behavioral, inset-related, or merely visual? Fix ownership and hierarchy before tuning spacing or color |
 
 Do not start with a questionnaire. Inspect the existing page and host when available. If no project context exists, make the smallest reasonable structural assumption, state it, and ask only one question when the answer would change the shell, primary scroll owner, or surface lifetime. Record the user's intent separately from the assumptions made by the Skill.
 
 When project files are available, the existing implementation takes precedence over the user's page label: a request that merely says “做个普通页面” can still be Brownfield or Mixed if the target already has a shell, helper, route, or state contract.
-
-## Workflow modes
-
-- Choose Greenfield, Brownfield, or Mixed first. Add Gesture dynamics, a narrow composition route, Existing-page review, or Isolated visual decision only when the task contains that secondary concern. The operating-mode table below defines how the profile applies in each case.
 
 ## Select the operating mode
 
@@ -68,7 +65,7 @@ Use the modes differently; they are not three names for the same workflow:
 
 | Mode | Starting truth | How this design profile applies | First prohibition |
 |---|---|---|---|
-| Greenfield | There is no usable page contract, or replacement is explicitly authorized | The profile is the starting design system. Apply its skeleton, `12.dp` grouped-card metrics, page-padding rules, and selected composition recipes before choosing local alternatives | Do not invent a second visual system from habit or copy an unrelated Example page wholesale |
+| Greenfield | There is no usable page contract, or replacement is explicitly authorized | The profile is the starting design system. Apply the normative design system and selected composition recipes before choosing local alternatives | Do not invent a second visual system from habit or copy an unrelated Example page wholesale |
 | Brownfield | The existing page, host, state, and behavior are real contracts, even if the page has no documented design system | The profile is the target for the requested visual delta. Audit the current page, preserve working boundaries, and align one coherent scope at a time; absence of documentation does not make the page Greenfield | Do not rebuild the shell or normalize every literal `dp` value merely because the page is visually inconsistent |
 | Mixed | An old shell contains a genuinely new page/feature boundary | Keep the shell Brownfield. Apply the profile to the new boundary and connect it through the existing route, inset, state, and host contracts | Do not replace old shell ownership just to make the new feature easier to compose |
 
@@ -78,8 +75,8 @@ The presence of a new Miuix component does not make a task Greenfield. In Brownf
 
 1. Classify the task as Greenfield, Brownfield, or Mixed before choosing a page recipe; then resolve the existing application context before writing or changing a page.
 2. Establish the page skeleton before choosing components: shell/page host ownership, primary content/scroll owner, inset handoff, and transient layers.
-3. Choose components by semantic role and user intent. A settings page, list page, form page, detail page, and custom-content page are all ordinary pages; no page type implies a mandatory component.
-4. Apply the declared profile metrics and composition rules in Greenfield work. In Brownfield work, preserve the target project's established design convention only when the existing implementation shows that it is intentional and coherent.
+3. Within the applicable standard page shell, choose body components by semantic role and user intent. A page label alone does not decide whether content is a preference, form, entity list, or custom drawing.
+4. Apply the visual requirements, declared profile metrics, and composition rules in Greenfield work and the selected Brownfield migration scope. Preserve an established target convention only with the evidence required by the design-system rules.
 5. Preserve the target project's behavior, accessibility, adaptive layout, and state ownership while applying the visual guidance.
 6. If implementation needs an exact Miuix symbol, ask `miuix-components` for that narrow contract; do not preload its entire component catalog.
 7. Treat every code block in a composition reference as a placement shape, not API proof. Before implementation, verify each Miuix symbol through the companion Skill's source-first workflow.
@@ -93,10 +90,10 @@ For a Greenfield page, shell, or explicitly authorized shell replacement, comple
 2. **Context:** identify the existing theme, route host, page boundary, platform/source set, and target project's relevant constraints.
 3. **Skeleton:** name the route owner, navigation-chrome owner, shell/page host boundaries, primary content/scroll owner, inset handoff, host slots, transient layer, and persistent state owner.
 4. **Profile:** apply the visual baseline after the structural boundary is known: use this profile's declared metrics and combinations by default, preserve an established Brownfield convention when it is intentional, then use Miuix component Defaults and semantic roles for component-owned details.
-5. **Semantics:** choose components by the role they express inside that skeleton. A page type does not select its components automatically.
+5. **Semantics:** choose body components by the role they express inside the selected standard shell or justified variant.
 6. **API handoff:** send only the concrete Miuix symbols the implementation will call to `miuix-components` for source verification.
 7. **Composition:** write the smallest page composition that satisfies the skeleton and preserves the target project's behavior.
-8. **Validation:** compile the affected target when available, then separately report preview/render/device and accessibility evidence.
+8. **Validation:** check applicable profile rules and justify deviations; compile the affected target when available, then separately report preview/render/device and accessibility evidence.
 
 Use this compact record before page code when the task is non-trivial:
 
@@ -116,19 +113,9 @@ If a context item is unavailable, mark it as unknown or pending inspection; do n
 
 For Brownfield work, this record is a delta record rather than a replacement blueprint: fill in the existing owners first, then mark each boundary as preserve, replace, or add. Only the boundaries marked replace or add may change in the first implementation pass.
 
-## Structural invariants
-
-- Keep one application-owned `MiuixTheme` around the UI subtree.
-- Keep one owner for the route/back stack rendered by a shell; navigation chrome presents that state but does not create another routing state.
-- Keep one primary content/scroll owner per page boundary unless nested scrolling expresses an intentional relationship.
-- Consume each host's Scaffold/window/system inset contract through a named shell-to-page handoff and one final page content boundary; do not repeat the same inset on every child.
-- Keep Overlay surfaces under their intended page `Scaffold`; use Window surfaces when they must be independent of that page host.
-- On a Glass page, keep the recorded backdrop layer and Glass surfaces distinct; for `GlassDialog`/`GlassBottomSheet`/`GlassDropdownPreference`, also keep the `Scaffold` popup host and scrim out of the recorded layer, while `BoxScope` popup components stay beside their anchor in the same root box. Do not let a surface sample itself.
-- Keep persistent/business state in the screen owner or model and transient presentation state near the host that renders it.
-
 ## Reference routing
 
-Start with exactly one primary reference. Read another only for a distinct question that the primary reference cannot answer.
+Choose one primary workflow or decision guide below. The mandatory [design-system rules](references/rules/design-system.md) are read alongside it for implementation and review. Add another guide only for a distinct unresolved question.
 
 | Task | Primary reference | Open another reference only when |
 |---|---|---|
@@ -139,26 +126,25 @@ Start with exactly one primary reference. Read another only for a distinct quest
 | Bottom navigation, adaptive rail, or host-owned floating action | [Navigation and action compositions](references/navigation-compositions.md) | Route ownership or adaptive policy is still unresolved |
 | Explicit Glass shell or backdrop-based page | [Glass compositions](references/glass-compositions.md) | The Glass host/backdrop API still needs exact verification in `miuix-components` |
 | Grouped content, forms, details, dialogs, sheets, menus, or page-scoped overlays | [Content and overlay compositions](references/content-and-overlays.md) | The page boundary or gesture chain is still unresolved |
-| Ambiguous combination of several composition slots | [Page composition routes](references/page-compositions.md) | Select only the narrow guide for the unresolved slot |
+| Ambiguous combination of several composition slots | [Page structure and ownership](references/page-structure.md) | Use its decision table to select the narrow guide for the unresolved slot |
 | Review-only polish or visual/structural diagnosis of an existing UI | [UI review workflow](references/ui-review-workflow.md) | The diagnosis authorizes a code change, then route to Brownfield |
 | Define or apply this Skill's design language: profile metrics, grouping, semantic colors, defaults, loading, or failure presentation | [Design language and Defaults](references/design-language.md) | The page boundary or integrated pattern is unresolved |
-| Integrated hierarchy, state flow, or adaptive composition pattern | [Integrated usage patterns](references/usage-patterns.md) | A structural or visual decision is still unspecified |
 
 For exact Miuix API signatures, dependency declarations, component availability, or version claims, hand off only that narrow question to `miuix-components`.
 
 ### Progressive loading protocol
 
-1. Read the selected primary reference only. Do not load both Greenfield and Brownfield references by default.
-2. Read only the relevant heading or decision table.
-3. Follow a local link only when it resolves a concrete ownership, hierarchy, or composition gap.
-4. Stop once the page has a mapped skeleton, owner for each state/layer, relevant visual decision, and a validation plan.
+1. Choose the primary guide; do not load both Greenfield and Brownfield by default.
+2. For implementation or review, read the design-system scope, exceptions, and required-topic table; follow the matching topic rules and visual sections for the changed boundary.
+3. In the chosen guide, read only the relevant heading or decision table; follow another guide link only for an unresolved decision.
+4. Stop loading once the applicable rules, mapped skeleton, state/layer owners, visual choices, and validation plan are known.
 
 ## Reference contract
 
-Every narrow composition reference must be read as an executable decision guide, not as a component catalog. Before using it, confirm its `Use when` boundary; while using it, distinguish fixed ownership rules from selectable implementation options; after using it, complete its API handoff and validation boundary. `MUST`/`DO NOT` wording is reserved for ownership, lifecycle, gesture, inset, and source-verification failures that would create a concrete defect.
+Every narrow composition reference must be read as an executable decision guide, not as a component catalog. Before using it, confirm its `Use when` boundary; while using it, distinguish requirements from selectable implementation options; after using it, complete its API handoff and validation boundary. The [design-system rules](references/rules/design-system.md) own shared normative requirements. Guides explain how to apply them; code snippets illustrate placement and are not independent definitions of metrics or exceptions. Keep rule changes in the normative file and update affected examples and links.
 
 The profile's declared metrics and combinations are intentionally prescriptive for this Skill. Do not present them as Miuix API requirements, and do not use an isolated Example or consumer detail outside the declared profile as a universal rule.
 
 ## Code Delivery Contract
 
-The user's product and behavior requirements outrank these defaults. Treat the guidance as a consistent baseline, not as proof that one component or style is officially mandatory. When code is requested, state the interpreted request, surrounding theme/host assumptions, state ownership, inset boundary, and API verification handoff separately from visual or device validation. Do not describe a composition recipe as compile-verified unless the target project was compiled; report the companion API evidence label separately (`catalog-verified`, `target-source-verified`, or pending/blocked).
+The user's product and behavior requirements outrank this profile. Enforce its applicable requirements within the changed scope without presenting them as official library mandates. When code is requested, state the interpreted request, surrounding theme/host assumptions, state ownership, inset boundary, and API verification handoff separately from visual or device validation. Report non-obvious justified deviations and unresolved profile requirements; a routine conforming change needs no ceremonial checklist. Do not describe a composition recipe as compile-verified unless the target project was compiled; report the companion API evidence label separately (`catalog-verified`, `target-source-verified`, or pending/blocked).

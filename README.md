@@ -39,12 +39,29 @@
 
 ### 页面规范流程
 
+`miuix-guidelines` 保留为一个 Skill，内部区分入口、指南和强制规范：`SKILL.md` 负责识别任务与路由；指南解释页面设计、组合和迁移决策；`references/rules/` 定义强制规范。实现或审查页面时，先读 [design-system.md 的适用范围、例外和主题路由](./miuix-guidelines/references/rules/design-system.md#required-topic-rules)，再按本次任务读取相应条款；新页面执行全部适用规则，已有页面在本次修改范围内执行。
+
+| 强制规范 | 覆盖范围 |
+|---|---|
+| [design-system.md](./miuix-guidelines/references/rules/design-system.md) | 规则强度和例外、组件与 Defaults、主题和系统外观、语义色、文字、形状、分组、图标和标签、本地化、无障碍 |
+| [page-shell.md](./miuix-guidelines/references/rules/page-shell.md) | 页面和公共包装、路由与返回、导航栏/侧栏、Tab/Pager、Insets/IME、滚动/刷新/触感、模糊与 Glass |
+| [settings-and-overlays.md](./miuix-guidelines/references/rules/settings-and-overlays.md) | 依赖设置、行与开关独立操作、偏好契约、输入校验、搜索、弹层生命周期、对话框、底部面板、选择与排序 |
+| [state-and-performance.md](./miuix-guidelines/references/rules/state-and-performance.md) | 状态和生命周期、持久化和外部消费者、异步与加载、列表和图标缓存、反馈和错误、动画、权限和外链、导入导出 |
+
+普通可滚动页面按 [TopBar 强制规范](./miuix-guidelines/references/rules/page-shell.md#standard-top-app-bar) 采用共享模糊背景层和自适应顶栏：窄窗大标题随滚动收起，宽窗固定紧凑标题，模糊关闭或不可用时不透明降级。顶栏与底栏/侧栏共用实际窗口尺寸策略；特殊头图页面保留有依据的结构。普通模糊与可选的 Glass 组件家族分别路由。
+
+标准刷新页由列表统一持有顶栏滚动连接。公共边距按各边所需安全距离合并，并明确侧栏已占用的起始侧，不要求复制完整的 Example Insets 架构。目标版本没有的回弹字段不通过反射、额外控制器或强制升级补齐；普通滚动联动与回弹视觉能力分别核验。弹层保留到退出结束，关闭中的按下态与新打开会话的草稿分别处理；搜索恢复查询和稳定展开状态。
+
+规范以本套设计系统自身的条款表述。项目代码用于核对实际写法，示例用于解释组合；二者都不意味着把专用 helper、业务名词、偶发写法或某个版本的 API 当成通用要求。
+
+`references/rules/` 是 UI 强制条款的唯一维护位置。其余 reference 保留流程、决策方法、诊断和示例，通过链接应用规范；API 默认值与版本事实由 `miuix-components` 维护。重复的路由索引和综合规则摘录不再另设文件。
+
 1. 先确认已有主题、路由 owner、页面边界、页面 host、平台和 source set。
 2. 先填写页面骨架：路由/导航 owner、shell/page host、主内容或滚动 owner、Insets 交接与最终 consumer、host slots、瞬态层和持久状态 owner。
 3. 再按语义选择组件；页面是设置页、列表页还是表单页，不会自动决定组件。
 4. 只把最终确实要调用的 Miuix 符号交给 **miuix-components** 核对。
 5. 根据已核对的 API 写组合代码，保留目标项目已有的行为和状态归属。
-6. 编译后再分别检查预览、渲染、设备、自适应、Insets、无障碍和状态变化。
+6. 检查适用规范是否满足，说明有理由的偏离与尚未解决项；编译后再分别检查预览、渲染、设备、自适应、Insets、无障碍和状态变化。规范符合情况、API 核验、编译和视觉验证分别报告。
 
 两者组合时，边界是：
 
@@ -68,8 +85,14 @@ miuix-skill/
 │   ├── SKILL.md
 │   └── references/
 └── miuix-guidelines/
-    ├── SKILL.md
+    ├── SKILL.md                       # 任务识别和流程路由
     └── references/
+        ├── design-language.md         # 设计决策指南（其余指南同级）
+        └── rules/
+            ├── design-system.md       # 共享规范、视觉规则和主题路由
+            ├── page-shell.md          # 页面、导航、Insets 和手势
+            ├── settings-and-overlays.md # 设置、搜索、输入和弹层
+            └── state-and-performance.md # 状态、异步、性能和平台操作
 ```
 
 每个 `miuix-*` 子目录都是一个独立 Skill 根目录，使用环境需要在该目录的根部直接看到 **SKILL.md**。`.codex-plugin/` 和 `.agents/plugins/` 只负责把两个 Skill 作为一个可安装包分发，不是新的 Skill。
@@ -159,10 +182,10 @@ Skill 会先把这些描述转换成页面骨架、组件语义和需要核对�
 
 ## Reference 的读取方式
 
-两个入口的 SKILL.md 都只负责路由和工作约束。实际使用时：
+两个入口的 SKILL.md 都负责路由和工作约束；guideline 的强制规范集中在 `references/rules/`。实际使用时：
 
 1. 先读取当前触发的 Skill 入口。
-2. 选择一个最相关的 Primary Reference。
+2. 选择一个最相关的 Primary Reference；实现或审查页面时，同时读取 `references/rules/design-system.md` 的适用范围、例外和主题路由，继续读取本次任务涉及的视觉与主题规范章节。
 3. 只读取该文档中解决当前问题的标题、表格或合同卡片。
 4. 只有当前问题仍缺少证据时，才继续打开下一个 Reference。
 5. 组件 API、页面组合、Example 证据和目标项目编译结果始终分开记录。

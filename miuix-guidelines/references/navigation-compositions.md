@@ -1,98 +1,36 @@
-# Navigation and Action Compositions
+# Navigation and Action Composition Guide
 
-Use when the task changes persistent bottom navigation, compact/wide navigation chrome, or a host-owned floating action/action group.
+Use this guide to choose the placement of persistent navigation or host-owned actions. Mandatory state, material, spacing, and adaptive behavior live in [Navigation rules](rules/page-shell.md#navigation-and-adaptive-layout); [page-host rules](rules/page-shell.md#page-hosts-and-shared-wrappers) own slot responsibilities.
 
-Do not use this guide for a page-local action row that belongs inside the content, or for a gesture conflict involving navigation and scrolling. Keep route state in the shell/route owner and use [Gesture dynamics](gesture-dynamics.md) for competing gesture participants.
+## Destination or action?
 
-Navigation chrome changes presentation, not route ownership. The host slot supplies the page's effective inset boundary; do not manually overlay navigation over a scrolling list unless overlap is an intentional product requirement.
+| User intent | Composition shape | State/host to identify |
+|---|---|---|
+| Switch top-level destinations | `NavigationBar` in the shell bottom slot | Shell destination/pager owner |
+| Same navigation, visually detached from edge | `FloatingNavigationBar` in the same slot | Same owner and shell backdrop policy |
+| Side navigation for the chosen layout mode | `NavigationRail` in the shell side layout | Same selection, adaptive policy, content space handoff |
+| One page action | Host `floatingActionButton` slot | Page action callback |
+| Related page action group | Host `floatingToolbar` slot | Page action group and position policy |
+| Transient operation message | Host `snackbarHost` path | Active page/window feedback owner |
 
-Before implementation, verify the selected navigation/action declarations and slot contract through miuix-components. After implementation, check route restoration, selected-state continuity, compact/wide layout, and the final content inset separately from source or compilation evidence.
+The [standard bar material policy](rules/page-shell.md#blur-and-glass) applies to normal bottom/floating navigation. Existing component Defaults determine the actual bar shape and inset behavior after target verification.
 
-## Fixed bottom navigation
-
-Use `NavigationBar` when compact navigation is part of the persistent shell. Keep the selected destination and destination click callback in the route/screen owner, then present them in the bar. If the shell already owns a bottom bar, a page `Scaffold` may still own its top bar; pass the shell's effective padding into the page content instead of moving navigation into the page's scroll content.
-
-```kotlin
-Scaffold(
-    bottomBar = {
-        NavigationBar {
-            destinations.forEachIndexed { index, destination ->
-                NavigationBarItem(
-                    selected = selectedIndex == index,
-                    onClick = { onDestinationClick(index) },
-                    icon = destination.icon,
-                    label = destination.label,
-                )
-            }
-        }
-    },
-) { innerPadding ->
-    // The primary page content consumes innerPadding once.
-}
-```
-
-`NavigationBarItem` is called inside the `NavigationBar` content scope. Use it for two to five destinations as documented by the component. The bar displays route state; it must not maintain a separate page stack.
-
-## Floating bottom navigation
-
-Use `FloatingNavigationBar` when the same persistent bottom-navigation role should be visually separated from the window edge. It is still navigation chrome, so place it in the `Scaffold(bottomBar = ...)` belonging to the shell that owns navigation, not as an arbitrary `Box` overlay above the list.
-
-```kotlin
-Scaffold(
-    bottomBar = {
-        FloatingNavigationBar {
-            destinations.forEachIndexed { index, destination ->
-                FloatingNavigationBarItem(
-                    selected = selectedIndex == index,
-                    onClick = { onDestinationClick(index) },
-                    icon = destination.icon,
-                    label = destination.label,
-                )
-            }
-        }
-    },
-) { innerPadding ->
-    // Apply innerPadding to the primary content boundary.
-}
-```
-
-The component supplies its own floating bottom spacing. Keep `defaultWindowInsetsPadding = true` unless the surrounding shell has a deliberate caption-bar inset policy; disabling it transfers only that caption-bar inset responsibility, not the component's own floating spacing. Do not compensate with unrelated hard-coded bottom padding. The public customization parameter is spelled `horizontalOutSidePadding`.
-
-## Profile navigation metrics
-
-When applying this design specification's HyperLyric-derived shell recipes, use these values only for the matching navigation composition:
-
-- A `FloatingNavigationBar` wrapper uses `12.dp` horizontal outer padding.
-- Adjacent `FloatingNavigationBarItem` elements use a `12.dp` gap when the component does not provide the desired spacing through its own layout.
-- A `GlassNavigationBar` shell uses `24.dp` horizontal outer padding and `16.dp` top padding.
-- The Glass shell's bottom spacing is `maxOf(20.dp, navigationBarsBottom + 4.dp)` so the bar remains above the system navigation area.
-- The Glass shell owns that formula and passes `defaultWindowInsetsPadding = false` only when it is also taking responsibility for the corresponding inset boundary.
-
-These are shell metrics, not page-content metrics. Do not reuse `24.dp` as the general page gutter or add the Glass bottom formula to an ordinary `NavigationBar`.
-
-## Adaptive bottom navigation and rail
-
-Use one navigation state and one layout policy when switching between compact and wide navigation chrome:
+## Shell placement
 
 ```text
-route/screen owner
-├── selected destination and navigation callbacks
-└── one compact/wide policy
-    ├── compact: NavigationBar or FloatingNavigationBar in Scaffold.bottomBar
-    └── wide: NavigationRail in the shell's side slot
+shell: selected destination and navigation callbacks
+└── layout policy
+    ├── compact: Scaffold.bottomBar → blur wrapper/floating mask → navigation
+    └── side: NavigationRail + available content region
+        └── active page, using the shell padding handoff
 ```
 
-The active page, selected destination, and business state must survive the branch. The branch changes chrome placement, not navigation ownership. Keep the page's primary content and its inset boundary consistent across both forms; only the shell layout should change unless the available width requires an intentional content reflow.
+A style or layout switch changes chrome placement. Use the [adaptive rules](rules/page-shell.md#navigation-and-adaptive-layout) to assess state continuity and the [inset rules](rules/page-shell.md#insets-and-content-padding) to assess the page handoff. Their exact dimensions are defined there, not repeated in this guide.
 
-## Floating action and toolbar
+The bar and navigation share the same actual-window decision; landscape alone does not select a rail. For floating navigation, inspect built-in item spacing before adding content children: a Spacer becomes another arranged child and can duplicate the bar's own gap. A sibling rail's reserved start side is part of the content handoff, not a second page gutter.
 
-Use the `Scaffold` slots for actions that float relative to page content:
+## API handoff and delivery
 
-| Intent | Slot/component direction | Placement rule |
-|---|---|---|
-| One primary action | `floatingActionButton` with `FloatingActionButton` | Let the host position it; do not pin it inside the last list item |
-| A related group of actions | `floatingToolbar` with `FloatingToolbar` | Keep the group in the host and select the appropriate toolbar position |
-| A destination switcher | `bottomBar` with `NavigationBar` or `FloatingNavigationBar` | Do not model navigation as a floating action |
-| A page-scoped message | `snackbarHost`/Snackbar path | Keep transient message state with the page host |
+After choosing the shape, verify only the selected bar/item scopes, floating slot parameters, corner Defaults, and inset flags through `miuix-components`. Public parameter spelling and default values belong in that API contract, not this guide.
 
-Do not use a floating toolbar as a substitute for bottom navigation, and do not make a single primary action into a toolbar just because both can float.
+For pager-backed navigation, use [Tabs and pagers](rules/page-shell.md#tabs-and-pagers). For competing gestures, use [Gesture dynamics](gesture-dynamics.md). Report route/selection, resized layout, inset, blur-fallback, and rendering evidence using the [page-shell validation boundary](rules/page-shell.md#validation).
