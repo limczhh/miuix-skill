@@ -2,7 +2,7 @@
 
 Use this reference when an existing Compose/Miuix project already has a route, page Scaffold, shared page utility, CompositionLocal, state flow, overlay policy, or gesture chain. The goal is to add or migrate behavior with the smallest coherent change while preserving the existing product contract.
 
-This is not a weaker version of the Greenfield rules. It has a different starting point: the current implementation is evidence and a compatibility boundary. A new Miuix component, a new visual effect, or a new API version does not by itself justify rebuilding the page skeleton.
+This is not a weaker version of the Greenfield rules. It has a different starting point: the current implementation is evidence and a compatibility boundary. A page can have no documented design system and still be Brownfield; existing code, behavior, and ownership do not become disposable merely because the visual rules were never written down. A new Miuix component, a new visual effect, or a new API version does not by itself justify rebuilding the page skeleton.
 
 ## Entry rule
 
@@ -44,6 +44,18 @@ When a target already has a page wrapper with this shape, treat it as an integra
 
 This is a verified consumer pattern, not a Miuix-required API. Preserve the callable boundary and inspect its callers before changing the internals.
 
+## Use the profile as a migration target
+
+For an existing page that lacks a documented design system, do not choose between “leave it unchanged” and “rebuild it as Greenfield.” Use the current page as the compatibility baseline and the design profile as the visual target:
+
+1. Inventory the current page's section structure, component combinations, spacing literals, content padding, host ownership, and state/gesture behavior.
+2. Classify each visual decision as already aligned with the profile, an intentional product choice, an accidental inconsistency, or unknown.
+3. Select one coherent migration scope: a section group, one page shell, one navigation family, or one shared helper. Do not normalize unrelated pages in the same pass.
+4. Apply the profile's declared rules inside that scope. For example, convert a grouped section to `SmallTitle` followed by a Card with `12.dp` horizontal inset and `12.dp` bottom gap, while preserving the page's route, state, and scroll owner.
+5. Validate the changed scope against neighboring pages before expanding the migration. If the user requests full-page alignment, make the scope explicit and migrate in ordered passes rather than silently replacing infrastructure.
+
+The absence of a spacing token file is not permission to invent new values, and it is not evidence that every existing value is wrong. The profile supplies the target rule; the current implementation determines the safe seam and the necessary migration size.
+
 ## Preserve, replace, add
 
 Write this table before a non-trivial change:
@@ -54,6 +66,7 @@ Write this table before a non-trivial change:
 | Page host and inset handoff | existing Scaffold/helper | preserve or replace | concrete defect or new host requirement |
 | Primary scroll owner | existing list/form/pager | preserve or replace | interaction requirement |
 | Gesture chain | existing connections and callbacks | preserve, adapt, or replace | source and runtime evidence |
+| Visual metrics and hierarchy | existing spacing, grouping, Defaults, and custom decoration | preserve, align, or replace | profile rule, user target, or demonstrated visual defect |
 | State | screen/model/provider | preserve | prevent state bifurcation |
 | New behavior | none or named seam | add | requested result |
 

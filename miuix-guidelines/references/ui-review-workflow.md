@@ -23,6 +23,8 @@ Use this workflow as the primary reference when the user asks to improve, polish
 4. Preserve intentional project conventions unless they cause the reported problem or the user asks to replace them.
 5. Classify the work as Greenfield, Brownfield, or Mixed. A code change in an existing page follows [Brownfield evolution](brownfield-evolution.md), even when the requested result is visually large.
 
+An existing page without a written design system is still Brownfield. Use the profile as the target for the selected visual correction, but treat the current route, host, state, inset, and interaction chain as the starting evidence. Do not convert “没有规范” into permission to rebuild the page from zero.
+
 Ask a question only when a missing choice would materially change the visual direction. Continue read-only inspection while that choice is unresolved.
 
 ## Map the Existing UI
@@ -48,7 +50,7 @@ Assign each observed problem to one or more categories before editing:
 |---|---|---|
 | Structure and hierarchy | Weak grouping, too many containers, unclear primary action | [Page structure and ownership](page-structure.md) |
 | Component selection | Hand-built control, Material component, wrong Overlay/Window variant | The component-selection catalog |
-| Spacing and shape | Uneven rhythm, clipping, arbitrary radii | Component Defaults, existing project spacing, Example composition |
+| Spacing and shape | Uneven rhythm, clipping, arbitrary radii | Profile metrics, component Defaults, existing project spacing, Example composition |
 | Color and typography | Poor contrast, literal colors, inconsistent scale | [Design language and Defaults](design-language.md), theme source, component defaults |
 | State and interaction | Wrong state owner, disabled row still clickable, broken dismissal | The affected component's contract or host guide |
 | Insets and adaptation | Content under bars, IME overlap, broken wide layout | Scaffold contract, page shell, target platform behavior |
@@ -65,7 +67,7 @@ For each classified problem, load only the evidence that answers that problem:
 1. Start with the first reference named by the problem category. Do not load all catalogs.
 2. If the issue is an exact call, hand only that symbol to the `miuix-components` Skill; use its Verified API Contracts reference when covered.
 3. If the contract is absent or the target version differs, use the `miuix-components` Skill's Source Verification reference for the matching declaration and only the relevant docs/demo/source path.
-4. Use [Example-derived usage patterns](usage-patterns.md) only when the repair depends on integrated grouping, state flow, or adaptive composition that the component evidence cannot answer.
+4. Use [Integrated usage patterns](usage-patterns.md) when the repair depends on integrated grouping, state flow, or adaptive composition that the component evidence cannot answer.
 
 Record whether each finding is a source contract, an Example pattern, an existing project convention, or a user-directed visual choice. Do not present one category as another.
 
@@ -75,10 +77,11 @@ For a change to an existing page, read Brownfield evolution before proposing a n
 
 1. State the intended page skeleton, ownership, hierarchy, and interaction in plain language.
 2. Select the smallest coherent set of changes that solves the highest-impact problems. In Brownfield mode, preserve the existing route, host, state, and inset boundaries unless the classified defect is in that boundary.
-3. Prefer the public Miuix component, its Defaults, and semantic theme tokens.
-4. Adapt the relevant Example pattern to the target architecture; do not copy Example navigation, blur, diagnostics, or helper infrastructure without need.
-5. Preserve state ownership, callbacks, and navigation behavior unless the task explicitly includes behavior changes.
-6. Avoid unrelated cleanup. If a broader redesign would materially change scope, explain the tradeoff before expanding it.
+3. Apply the profile's declared metrics and component combinations inside the selected scope; do not tune each section independently.
+4. Prefer the public Miuix component, its Defaults, and semantic theme tokens.
+5. Adapt the relevant Example pattern to the target architecture; do not copy Example navigation, blur, diagnostics, or helper infrastructure without need.
+6. Preserve state ownership, callbacks, and navigation behavior unless the task explicitly includes behavior changes.
+7. Avoid unrelated cleanup. If a broader redesign would materially change scope, explain the tradeoff before expanding it.
 
 Common failed approaches include arbitrary spacing until one screenshot looks right, wrapping every row in a Card, mixing Material tokens into Miuix, ignoring Scaffold padding, and importing an API from a different Miuix release or another navigation library.
 

@@ -58,6 +58,18 @@ Scaffold(
 
 The component supplies its own floating bottom spacing. Keep `defaultWindowInsetsPadding = true` unless the surrounding shell has a deliberate caption-bar inset policy; disabling it transfers only that caption-bar inset responsibility, not the component's own floating spacing. Do not compensate with unrelated hard-coded bottom padding. The public customization parameter is spelled `horizontalOutSidePadding`.
 
+## Profile navigation metrics
+
+When applying this design specification's HyperLyric-derived shell recipes, use these values only for the matching navigation composition:
+
+- A `FloatingNavigationBar` wrapper uses `12.dp` horizontal outer padding.
+- Adjacent `FloatingNavigationBarItem` elements use a `12.dp` gap when the component does not provide the desired spacing through its own layout.
+- A `GlassNavigationBar` shell uses `24.dp` horizontal outer padding and `16.dp` top padding.
+- The Glass shell's bottom spacing is `maxOf(20.dp, navigationBarsBottom + 4.dp)` so the bar remains above the system navigation area.
+- The Glass shell owns that formula and passes `defaultWindowInsetsPadding = false` only when it is also taking responsibility for the corresponding inset boundary.
+
+These are shell metrics, not page-content metrics. Do not reuse `24.dp` as the general page gutter or add the Glass bottom formula to an ordinary `NavigationBar`.
+
 ## Adaptive bottom navigation and rail
 
 Use one navigation state and one layout policy when switching between compact and wide navigation chrome:

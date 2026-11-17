@@ -23,14 +23,19 @@ LazyColumn(
         SmallTitle(text = "General")
     }
     item {
-        Card {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .padding(bottom = 12.dp)
+        ) {
             // Related rows or controls.
         }
     }
 }
 ```
 
-`Card` is a containment choice, not a page requirement. Do not wrap every independent row or every page in a card. Preference rows are appropriate when the content is a preference interaction; custom content is appropriate when the semantics are not preferences.
+For this design specification, the grouped Card uses `12.dp` external horizontal inset and `12.dp` bottom gap. `Card` is still a containment choice, not a page requirement: do not wrap every independent row or every page in a card. Preference rows are appropriate when the content is a preference interaction; custom content is appropriate when the semantics are not preferences.
 
 ## Form or detail content
 

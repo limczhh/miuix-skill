@@ -1,17 +1,17 @@
 # Design Language and Defaults
 
-Use this reference only for the visual baseline defined by this Skill: typography, semantic colors, grouping, component Defaults, visual hierarchy, and failure-state presentation. It does not define page ownership or require the Example workflow. This is one practical Miuix usage profile, not an official rule that every Miuix page or application must follow. The hierarchy guidance is a practical decision rule derived from Miuix source defaults and the first-party Example; exact token names, signatures, and Defaults contracts belong to the `miuix-components` Skill.
+Use this reference for the concrete visual rules defined by this Skill: profile metrics, typography, semantic colors, grouping, component Defaults, visual hierarchy, and failure-state presentation. It does not define page ownership; use [Page structure and ownership](page-structure.md) for that. This is the HyperLyric-derived design specification selected by this Skill, not an official rule that every Miuix page or application must follow. Exact token names, signatures, and component-owned Defaults contracts belong to the `miuix-components` Skill.
 
 Read only the section matching the visual question; do not load color lookup, error-state, and typography guidance for an unrelated styling decision.
 
-Contents: [decision order](#decision-order) · [surface and color](#surface-and-color-roles) · [typography](#typography-roles) · [component Defaults](#component-defaults) · [page composition defaults](#page-composition-defaults) · [hierarchy](#hierarchy-and-grouping) · [errors and loading](#error-and-failure-states) · [state and async](#state-and-async-ownership) · [customization](#when-customization-is-justified)
+Contents: [decision order](#decision-order) · [surface and color](#surface-and-color-roles) · [typography](#typography-roles) · [component Defaults](#component-defaults) · [page metrics and card composition](#page-metrics-and-card-composition) · [hierarchy](#hierarchy-and-grouping) · [errors and loading](#error-and-failure-states) · [state and async](#state-and-async-ownership) · [customization](#when-customization-is-justified)
 
 ## Decision Order
 
 Make each visual decision in this order:
 
 1. Resolve the page/application skeleton and ownership with [Page structure and ownership](page-structure.md) when the task is page-level.
-2. Preserve an intentional convention already used by the target project.
+2. In Greenfield work, apply this profile's declared metrics and combinations. In Brownfield work, preserve an established target convention when it is intentional and coherent.
 3. Use the public Miuix component that owns the behavior and its default parameters.
 4. If customization is necessary, use that component's `*Defaults` object and `MiuixTheme` semantic tokens.
 5. Use Compose layout primitives such as `Row`, `Column`, `Box`, padding, and size constraints to arrange Miuix components.
@@ -28,7 +28,7 @@ Keep these categories separate when explaining or reviewing a design:
 | Structural responsibility | Theme, route, host, scroll, inset, persistent state, and transient state each have a clear owner | Existing target architecture or a concrete product behavior |
 | Component semantics | Use the public component that owns the interaction and its stock Defaults | A different public component or application-owned component better expresses the role |
 | Visual hierarchy | Use semantic theme roles, Miuix text styles, meaningful grouping, and whitespace before custom decoration | A supplied visual target, brand rule, accessibility need, or proven visual defect |
-| Spacing fallback | Use the page-level values documented below only when the target has no spacing convention | Existing project tokens, host/component padding, or measured layout requirements |
+| Profile metrics | Use the page-level values and combinations documented below by default | An established Brownfield convention, a responsive constraint, or a concrete product requirement |
 
 Do not call a profile default a Miuix API requirement. Do not call a target-project convention a universal design rule.
 
@@ -77,26 +77,67 @@ Search the selected component's verified `*Defaults` contract before adding a ma
 - Omit optional visual parameters when the stock result is acceptable.
 - Call the component's color factory when changing one supported role, instead of recreating all state colors manually.
 - Reuse exported dimensions and margins when they express the same component contract.
-- Treat spacing found only in `example/shared/` as composition evidence, not as a library constant.
+- Treat spacing found in Miuix `example/shared/` as supporting composition evidence. The profile metrics below are the design rules to apply; neither source is a Miuix library constant.
 - Recheck source when a Defaults member is not shown in the component doc; do not infer its name from another component.
 
-## Page composition fallback values
+## Page metrics and card composition
 
-These are Skill-level fallback values for a grouped page when the target project has no established spacing system. They are not `Card`, `Scaffold`, or Preference library defaults:
+These are the default page metrics of this design specification. They are not optional suggestions for a new page, and they are not `Card`, `Scaffold`, or Preference library defaults. In Brownfield work, keep an established project convention only when the surrounding pages use it intentionally and consistently.
 
-- Use `12.dp` as the default horizontal outer inset for a grouped content container.
-- Use `12.dp` as the default gap after a grouped container before the next section.
-- When a page uses a `Scaffold` and has no existing bottom-spacing convention, add `16.dp` of bottom breathing room after the host's supplied content padding.
+### Grouped content cards
 
-Apply these values at the page-composition boundary, not again inside every component. Do not add them when the existing host, component `insideMargin`, or project spacing system already supplies the same space. Keep the values consistent within one page rather than tuning each section independently.
+For a section with a label and shared containment, use this composition by default:
+
+```kotlin
+SmallTitle(text = sectionTitle)
+Card(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 12.dp)
+        .padding(bottom = 12.dp)
+) {
+    // Related Preference rows or other content
+}
+```
+
+Rules:
+
+- The Card's external horizontal inset is `12.dp`.
+- The Card's external bottom gap is `12.dp`; this is the distance to the next section, not Card's internal padding.
+- Put `SmallTitle` directly before the Card. Do not add a second ad-hoc spacer between the title and its Card.
+- Keep related rows inside one Card. Do not create one Card per row only to obtain spacing.
+- Let Miuix components own their internal padding through their verified Defaults. Do not turn the external `12.dp` into a replacement for `insideMargin`.
+- Use another composition when the content is not a semantic group; this rule does not require every page to become a list of Cards.
+
+This pattern is repeated by the reference consumer's settings and section pages. The rule is the composition and its metric, not a requirement that the target project contain the same file names.
+
+### Scroll-page content padding
+
+For a standalone page-owned `Scaffold` with an ordinary scroll container, consume the host padding once and add the profile's `16.dp` bottom breathing room:
+
+```kotlin
+val contentPadding = PaddingValues(
+    top = scaffoldPadding.calculateTopPadding(),
+    start = 0.dp,
+    end = 0.dp,
+    bottom = scaffoldPadding.calculateBottomPadding() + 16.dp,
+)
+```
+
+- Apply this to the primary `LazyColumn` or equivalent scroll owner.
+- Do not repeat the same top or bottom inset on every Card or child.
+- When the page is inside a persistent shell with a bottom navigation bar, merge the shell-supplied `PaddingValues` through the page boundary once. Do not add the standalone-page `16.dp` a second time when the shell already supplies the required bottom space.
+- When using the Miuix PullToRefresh integration path, follow its verified content-padding and gesture contract. Do not blindly add the ordinary-page `16.dp` on top of the refresh wrapper's padding.
+
+The profile's stable page metrics are therefore `12.dp` for grouped Card horizontal/bottom spacing and `16.dp` for ordinary standalone scroll-page bottom breathing room. Values such as Glass navigation margins, dialog field gaps, or preview-specific spacing belong to their narrower composition references rather than this general page rule.
 
 ## Hierarchy and Grouping
 
 - Use [Page structure and ownership](page-structure.md) to give every page one clear structural shell. The shell is a responsibility boundary, not a requirement to use `Card`, `SmallTitle`, or Preference components on every page. Avoid nested Scaffolds or nested Cards unless they represent distinct behavior or containment.
-- For grouped settings content, prefer `SmallTitle` + `Card` when those components express the section label and containment; this is a content pattern, not a requirement for every page. Keep unrelated actions in separate groups.
+- For grouped settings content, use `SmallTitle` + `Card` as the default section composition when those components express the section label and containment. Keep unrelated actions in separate groups; use another composition when the content does not have those semantics.
 - In the pinned source, Card is a plain `Column` with `CardDefaults.InsideMargin = 0.dp`; it does not insert gaps or Dividers between children. Preference rows provide their own internal padding and disabled styling. Do not add row spacing or separators by habit—add a Divider only when the grouping remains ambiguous.
 - Place `SmallTitle` before its Card for a section label. Its own Defaults provide label padding; it is not a row inside the Card and there is no public `SectionHeader` component at this tag.
-- For grouped content without a target-project spacing convention, use the page composition defaults above: `12.dp` outer inset and `12.dp` section gap. These are composition values, not a claim about Miuix component internals.
+- For grouped content, use the page metrics above: `12.dp` outer horizontal inset and `12.dp` Card bottom gap. These are rules of this design specification, not claims about Miuix component internals.
 - Avoid nested Cards for visual decoration. Nest only when the inner Card has a distinct containment or interaction role that remains understandable in accessibility traversal.
 - Use the title for the setting or action and the summary for consequence, status, or context. Do not repeat the same wording in both.
 - Keep the primary action visually dominant and secondary/destructive actions distinguishable through supported component roles, placement, and wording.

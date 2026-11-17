@@ -1,6 +1,6 @@
-# Example-Derived Usage Patterns
+# Integrated Usage Patterns
 
-This is an optional Example-evidence reference, not the default page workflow. At the current source-audit snapshot (`main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`), the upstream best-practices guide points to the Example application as a real-world demonstration of how Miuix components and design principles are applied. Use it only when the task needs integrated hierarchy, state flow, adaptive composition, or the optional Glass/backdrop composition. Example code is never the API authority.
+This is the integrated pattern catalogue for the design specification. At the current source-audit snapshot (`main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`), the upstream best-practices guide points to the Example application as a real-world demonstration of how Miuix components and design principles are applied. Use the matching pattern when the task needs integrated hierarchy, state flow, adaptive composition, or the optional Glass/backdrop composition. Example code is never the API authority; the profile metrics in [Design language and Defaults](design-language.md) are the default design rules.
 
 ## Contents
 
@@ -49,7 +49,7 @@ Use this map after choosing components. Unless a path starts with another root, 
 2. Locate the closest Example page or component section for the content relationship, not for a mandatory page type or component recipe.
 3. Separate Miuix contracts, repeated composition patterns, Example-specific choices, and target-project conventions.
 4. Compare only the selected components with their isolated `docs/demo/` files.
-5. Adapt the pattern to the target project's state ownership, navigation, insets, and spacing, then verify uncertain names and parameters in the pinned source.
+5. Apply the profile metrics by default, then adapt only the state ownership, navigation, insets, and any established Brownfield convention that actually differs. Verify uncertain names and parameters in the pinned source.
 
 Do not copy a whole Example file into an application. The Example includes navigation infrastructure, blur helpers, diagnostics, and showcase-only effects that most projects do not need.
 
@@ -99,7 +99,7 @@ This is a content-composition example, not a different page skeleton. The same p
 - Use `summary` for consequences or context, not to repeat the title.
 - Show dependent settings conditionally, as the Example does with `AnimatedVisibility`, while keeping their state owned by the screen or application model.
 - Hide a dependent setting when it is irrelevant or unsupported; leave it visible but disabled when discoverability matters and the summary can explain the prerequisite. Use the `miuix-components` Preference reference for the exact row capabilities.
-- Treat the Example's repeated 12 dp group margins as a reference value, not a global Miuix constant. Preserve the target project's established spacing unless the user asks to change it, and use [Design language and Defaults](design-language.md) for semantic styling decisions.
+- Use the profile's grouped-content rule: `SmallTitle` followed by a `Card` with `12.dp` horizontal outer inset and `12.dp` bottom gap. This is a design-specification rule, not a Miuix library constant. In Brownfield work, preserve a clearly established target convention when the surrounding page system consistently uses another value.
 
 Use the integrated settings files only to inspect grouping, dependent visibility, state flow, and content-padding decisions. Do not copy their page shell or row composition without checking that the target content has the same semantics. Confirm all selected component APIs against the target project and pinned source.
 
