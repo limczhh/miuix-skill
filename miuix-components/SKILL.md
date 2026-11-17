@@ -37,7 +37,7 @@ After natural-language intake, classify the request before opening a reference:
 
 - **Library orientation:** the user asks what Miuix is, what modules or component families exist, or what dependency fits a capability. Read [Library overview](references/library-overview.md) first and return a map, not guessed code.
 - **Semantic selection:** the capability is known but the appropriate public family is unclear. Read [Component selection](references/component-selection.md), then stop at the smallest matching family.
-- **API contract:** the symbol is known and the user needs its real signature, import, module, default, or host rule. Read [Verified API contracts](references/api-contracts.md) when covered; otherwise use [Source verification](references/source-verification.md).
+- **API contract:** the symbol is known and the user needs its real signature, import, module, default, or host rule. Read the [Verified API contract index](references/api-contracts.md), then exactly one matching contract guide; otherwise use [Source verification](references/source-verification.md).
 - **Source investigation:** the symbol, source package, or version behavior is unfamiliar. Read [Library map](references/library-map.md) to locate the pinned source area, then verify the declaration.
 
 Do not start an orientation request with the API contract sheet, and do not answer an exact API request by scanning the whole library overview. The workflow should narrow the question before it increases evidence depth.
@@ -84,7 +84,12 @@ Start with exactly one primary reference. A link is a route, not an instruction 
 | What is Miuix, what modules or capability layers does it provide, or which dependency should start a task? | [Library overview](references/library-overview.md) | A semantic role or exact symbol still needs to be selected |
 | Survey an unfamiliar Miuix module or source area | [Library map](references/library-map.md) | The map routes to a public component, exact call, or source behavior that the task needs |
 | Identify a component family or public capability | [Component selection](references/component-selection.md) | The selected symbol needs an exact call or host contract |
-| Exact call for a covered API | [Verified API contracts](references/api-contracts.md) | The target version differs or the contract is incomplete |
+| Exact theme or Scaffold call | [Theme and page host contract](references/contracts/theme-and-host.md) | The target version differs or the host contract is incomplete |
+| Exact top-bar or scroll behavior call | [Top bars and scroll contract](references/contracts/top-bars-and-scroll.md) | The target version differs or gesture behavior is also involved |
+| Exact Card, SmallTitle, or navigation call | [Surface and navigation contract](references/contracts/surfaces-and-navigation.md) | The target version differs or page ownership is also involved |
+| Exact dialog/window call | [Overlay and Window contract](references/contracts/overlays.md) | The target version differs or the host/lifecycle contract is incomplete |
+| Exact preference, input, or button call | [Input and action contract](references/contracts/inputs-and-actions.md) | The target version differs or the symbol is not covered |
+| Find the right contract guide for an exact call | [Verified API contract index](references/api-contracts.md) | The symbol is not listed or the target version differs |
 | Exact call for an uncovered API, behavior, or version mismatch | [Source verification](references/source-verification.md) | A component catalog or matching evidence is needed to identify the symbol |
 | Dependency, theme, root host, or preview setup | [Project setup and theme](references/setup-and-theme.md) | A migration or uncovered declaration is part of the task |
 | Overlay, Window, dialog, sheet, or popup lifecycle | [Overlay and Window catalog](references/overlays-and-windows.md) | An exact signature or version claim remains |
@@ -102,6 +107,12 @@ Start with exactly one primary reference. A link is a route, not an instruction 
 2. Read only the matching heading, table, or contract card.
 3. Follow a local link only when the current claim is missing evidence; do not load related references by association.
 4. Before writing code, complete the source-first implementation loop. Stop loading references once the symbol has a verified declaration, module/import boundary, host requirement, and state/callback contract required by the task.
+
+## Reference contract
+
+The index is a router, not a second catalog. Once the symbol family is known, read one contract guide only. That guide is expected to contain the declaration, import/module boundary, defaults, minimal call shape, host/state contract, and the version/evidence boundary needed for that family.
+
+Do not add a new contract card because a symbol merely exists. Add or split one only when the API is high-frequency, structurally important, or repeatedly causes integration errors. Keep the maintained declaration in one contract guide; the pinned source remains authoritative.
 
 ## Handoff boundary
 

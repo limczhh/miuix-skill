@@ -1,6 +1,6 @@
 ---
 name: miuix-guidelines
-description: "Use when designing, composing, reviewing, or refactoring a Miuix Compose page, including vague requests such as ‘做个普通页面’、‘像系统设置一样’ or ‘页面太乱了’, when the task involves page skeleton, Scaffold/app-bar/navigation composition, ownership, hierarchy, spacing, state placement, insets, adaptive behavior, or visual consistency. Do not trigger for a standalone exact Miuix API lookup or compile-error diagnosis unless page composition is also involved."
+description: "Use when designing, composing, reviewing, refactoring, or incrementally evolving a Miuix Compose page, including vague requests such as ‘做个普通页面’、‘像系统设置一样’ or ‘页面太乱了’, when the task involves page skeleton, Scaffold/app-bar/navigation composition, ownership, hierarchy, spacing, state placement, insets, adaptive behavior, visual consistency, or scroll/refresh gesture coordination. Do not trigger for a standalone exact Miuix API lookup or compile-error diagnosis unless page composition is also involved."
 ---
 
 # Miuix UI Guidelines
@@ -28,35 +28,54 @@ Users normally describe the result they want rather than the page architecture o
 | User wording | First route | Structural question to resolve |
 |---|---|---|
 | “帮我做个普通页面/设置页” | [Page structure and ownership](references/page-structure.md) | What existing theme, route host, page boundary, primary content owner, and state owner already exist? |
+| “从零搭建页面/重做页面骨架” | [Greenfield page](references/greenfield-page.md) | Is there genuinely no existing host, route, inset, or state contract to preserve? |
+| “已有页面升级/替换组件/接入新效果” | [Brownfield evolution](references/brownfield-evolution.md) | Which existing scaffold, utility, route, state, and behavior are contracts that the change must preserve? |
+| “滚动、下拉刷新、回弹、折叠顶栏手势打架” | [Gesture dynamics](references/gesture-dynamics.md) | Which component owns each nested-scroll connection, and which visual state needs an explicit overscroll bridge? |
 | “像系统设置一样” | [Page structure and ownership](references/page-structure.md), then [Design language and Defaults](references/design-language.md) | Which grouping and hierarchy are wanted? Do not silently turn this into a mandatory `SmallTitle` + `Card` + Preference template |
-| “顶部大标题滚动时收起来” | [Page composition recipes](references/page-compositions.md) | Which page host owns the top bar, which one scrolls, and where does the shared scroll behavior connect? |
+| “顶部大标题滚动时收起来” | [Top bar compositions](references/top-bar-compositions.md) | Which page host owns the top bar, which one scrolls, and where does the shared scroll behavior connect? |
 | “底下放几个入口/做个底栏” | [Page structure and ownership](references/page-structure.md) | Is it persistent shell navigation or a page action group, and which owner holds the selected destination/back stack? |
-| “想做毛玻璃页面/玻璃底栏” | [Page composition recipes](references/page-compositions.md) | Is Glass an explicit visual requirement, where is the recorded `Backdrop` boundary, and which host owns the bars and overlays? Hand exact Glass calls to `miuix-components` |
+| “想做毛玻璃页面/玻璃底栏” | [Glass compositions](references/glass-compositions.md) | Is Glass an explicit visual requirement, where is the recorded `Backdrop` boundary, and which host owns the bars and overlays? Hand exact Glass calls to `miuix-components` |
 | “加个弹窗/下拉选择” | [Page structure and ownership](references/page-structure.md), then the component host contract | Does the surface belong to this page `Scaffold` or need an independent window lifetime? |
 | “加个搜索框” | [Page structure and ownership](references/page-structure.md) | Does search expand in the page host, own result content, or filter an existing scroll owner? Hand the exact `SearchBar`/`InputField` call to `miuix-components` only after this is known |
 | “页面太乱/不像 Miuix” | [UI review workflow](references/ui-review-workflow.md) | Is the defect structural, behavioral, inset-related, or merely visual? Fix ownership and hierarchy before tuning spacing or color |
 
 Do not start with a questionnaire. Inspect the existing page and host when available. If no project context exists, make the smallest reasonable structural assumption, state it, and ask only one question when the answer would change the shell, primary scroll owner, or surface lifetime. Record the user's intent separately from the assumptions made by the Skill.
 
+When project files are available, the existing implementation takes precedence over the user's page label: a request that merely says “做个普通页面” can still be Brownfield or Mixed if the target already has a shell, helper, route, or state contract.
+
 ## Workflow modes
 
-- **New page or shell:** normalize the user's wording, then map the existing context and page skeleton before choosing a visual recipe.
-- **Known composition:** use a page composition recipe only after the relevant owners and inset handoff are named.
+- **Greenfield page or shell:** use when the page really has no reusable host/route/inset contract, or the user explicitly requests a replacement skeleton. Read [Greenfield page](references/greenfield-page.md), then the narrower structure/composition reference it routes to.
+- **Brownfield evolution:** use when an existing project already has a page scaffold, route host, PageUtils-like helpers, state flow, or interaction behavior. Read [Brownfield evolution](references/brownfield-evolution.md) before changing ownership or introducing a new wrapper.
+- **Gesture dynamics integration:** use when scrolling, pull-to-refresh, overscroll, collapsing bars, pagers, or nested gestures interact. Read [Gesture dynamics](references/gesture-dynamics.md) in addition to the selected page mode only when that interaction is present.
+- **Known composition:** use [Page composition routes](references/page-compositions.md) only to select one narrow composition guide after the relevant owners and inset handoff are named.
 - **Existing-page review:** map the current implementation, classify the defect, and make the smallest change supported by the evidence.
 - **Isolated visual decision:** read only the design-language section that answers the typography, color, grouping, state, or fallback-spacing question; do not invent a page skeleton for a local styling request.
 
+## Select the operating mode
+
+Classify the task before loading a detailed reference:
+
+- **Greenfield** means there is no usable existing page contract, or the user explicitly authorizes replacing the shell. The strict ownership and inset record is the starting boundary.
+- **Brownfield** means an existing route, Scaffold, page utility, provider, state owner, or gesture chain already serves the page. Existing behavior is the baseline; the requested change is a delta.
+- **Mixed** means a new feature is being added inside an old shell. Use Brownfield for the shell and the smallest Greenfield-style map only for the new boundary.
+
+The presence of a new Miuix component does not make a task Greenfield. In Brownfield mode, do not run the Greenfield protocol as a reason to rebuild a working page. First trace the existing call chain, name what must remain stable, and choose the smallest seam that can host the change.
+
 ## Operating contract
 
-1. Resolve the existing application context before writing a page: theme, route host, page boundary, state owner, and platform/source set.
+1. Classify the task as Greenfield, Brownfield, or Mixed before choosing a page recipe; then resolve the existing application context before writing or changing a page.
 2. Establish the page skeleton before choosing components: shell/page host ownership, primary content/scroll owner, inset handoff, and transient layers.
 3. Choose components by semantic role and user intent. A settings page, list page, form page, detail page, and custom-content page are all ordinary pages; no page type implies a mandatory component.
 4. Preserve the target project's behavior, accessibility, adaptive layout, and state ownership while applying the visual guidance.
 5. If implementation needs an exact Miuix symbol, ask `miuix-components` for that narrow contract; do not preload its entire component catalog.
 6. Treat every code block in a composition reference as a placement shape, not API proof. Before implementation, verify each Miuix symbol through the companion Skill's pinned source-first workflow.
 
+7. When multiple gesture participants are present, inspect their actual nested-scroll contracts and version before changing modifier order or adding a bridge. Do not assume that a component with a ScrollBehavior parameter only observes state.
+
 ## Page-first delivery protocol
 
-For any new page, shell refactor, or page-level UI change, complete these decisions in order:
+For a Greenfield page, shell, or explicitly authorized shell replacement, complete these decisions in order. For a Brownfield change, inspect the existing map first and apply only the decisions needed by the changed boundary:
 
 1. **Intent:** restate the requested result in plain language and list only the assumptions that are not supplied by the user.
 2. **Context:** identify the existing theme, route host, page boundary, platform/source set, and target project's relevant constraints.
@@ -83,6 +102,8 @@ Visual profile choices: existing convention / Miuix defaults / fallback values
 
 If a context item is unavailable, mark it as unknown or pending inspection; do not invent a host, route, inset policy, or target-project convention. For a standalone API question with no page composition, stop this protocol and use `miuix-components` directly.
 
+For Brownfield work, this record is a delta record rather than a replacement blueprint: fill in the existing owners first, then mark each boundary as preserve, replace, or add. Only the boundaries marked replace or add may change in the first implementation pass.
+
 ## Structural invariants
 
 - Keep one application-owned `MiuixTheme` around the UI subtree.
@@ -99,10 +120,15 @@ Start with exactly one primary reference. Read another only for a distinct quest
 
 | Task | Primary reference | Open another reference only when |
 |---|---|---|
-| New page or redesign where ownership, skeleton, scrolling, insets, or transient layers are not yet mapped | [Page structure and ownership](references/page-structure.md) | A visual hierarchy or integrated composition question remains |
-| Known shell combination such as Scaffold + app bar/navigation/floating content | [Page composition recipes](references/page-compositions.md) | Ownership or visual hierarchy is still unresolved |
-| Explicit Glass shell or backdrop-based page | [Page composition recipes](references/page-compositions.md) | The Glass host/backdrop API still needs exact verification in `miuix-components` |
-| Existing UI review, polish, or restructure | [UI review workflow](references/ui-review-workflow.md) | The classified issue needs one specific design or composition section |
+| Truly new page or shell with no reusable contract | [Greenfield page](references/greenfield-page.md) | The routed structure/composition reference leaves a concrete question |
+| Existing page upgrade, component migration, new effect, or shared-page utility change | [Brownfield evolution](references/brownfield-evolution.md) | The change also involves the gesture chain or an exact Miuix symbol |
+| Scroll + pull-to-refresh + overscroll + collapsing bar/pager interaction | [Gesture dynamics](references/gesture-dynamics.md) | The page host or migration seam is still unresolved |
+| Pinned or collapsing top bar | [Top bar compositions](references/top-bar-compositions.md) | The page host or gesture chain is still unresolved |
+| Bottom navigation, adaptive rail, or host-owned floating action | [Navigation and action compositions](references/navigation-compositions.md) | Route ownership or adaptive policy is still unresolved |
+| Explicit Glass shell or backdrop-based page | [Glass compositions](references/glass-compositions.md) | The Glass host/backdrop API still needs exact verification in `miuix-components` |
+| Grouped content, forms, details, dialogs, sheets, menus, or page-scoped overlays | [Content and overlay compositions](references/content-and-overlays.md) | The page boundary or gesture chain is still unresolved |
+| Ambiguous combination of several composition slots | [Page composition routes](references/page-compositions.md) | Select only the narrow guide for the unresolved slot |
+| Review-only polish or visual/structural diagnosis of an existing UI | [UI review workflow](references/ui-review-workflow.md) | The diagnosis authorizes a code change, then route to Brownfield |
 | Define or apply this Skill's baseline visual language: typography, grouping, semantic colors, defaults, loading, or failure presentation | [Design language and Defaults](references/design-language.md) | The page boundary or integrated Example pattern is unresolved |
 | Integrated hierarchy, state flow, or adaptive composition evidence | [Example-derived usage patterns](references/usage-patterns.md) | A structural or visual decision is still unspecified |
 
@@ -110,10 +136,16 @@ For exact Miuix API signatures, dependency declarations, component availability,
 
 ### Progressive loading protocol
 
-1. Read the selected primary reference only.
+1. Read the selected primary reference only. Do not load both Greenfield and Brownfield references by default.
 2. Read only the relevant heading or decision table.
 3. Follow a local link only when it resolves a concrete ownership, hierarchy, or composition gap.
 4. Stop once the page has a mapped skeleton, owner for each state/layer, relevant visual decision, and a validation plan.
+
+## Reference contract
+
+Every narrow composition reference must be read as an executable decision guide, not as a component catalog. Before using it, confirm its `Use when` boundary; while using it, distinguish fixed ownership rules from selectable implementation options; after using it, complete its API handoff and validation boundary. `MUST`/`DO NOT` wording is reserved for ownership, lifecycle, gesture, inset, and source-verification failures that would create a concrete defect.
+
+Do not make a reference universal because one integrated Example or consumer uses it. Example and real-project code can justify a composition possibility; the target project's existing contract and the verified Miuix declaration still decide the implementation.
 
 ## Code Delivery Contract
 

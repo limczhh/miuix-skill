@@ -97,7 +97,7 @@ The page skeleton does not require a settings recipe, a Card, a top bar, or any 
 
 ## Choose a composition recipe
 
-Once ownership is mapped, use [Page composition recipes](page-compositions.md) when the page combines a `Scaffold` with an app bar, bottom navigation, floating action, primary scrolling content, or an overlay. A recipe supplies a known combination and placement; it does not override the ownership map or make its components mandatory.
+Once ownership is mapped, use [Page composition routes](page-compositions.md) only to select the narrow guide for a `Scaffold` + app bar, bottom navigation, floating action, primary scrolling content, or overlay combination. A guide supplies a known placement shape; it does not override the ownership map or make its components mandatory.
 
 ## Evidence boundary
 

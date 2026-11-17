@@ -48,7 +48,7 @@ Host contract:      ancestor / inset / lifecycle requirement
 Verification:       source-verified / compile-verified / pending
 ```
 
-`references/api-contracts.md` is a maintained, source-verified subset of common public calls. Treat it as a copyable index into this gate, not as a second API authority: the pinned declaration wins, and every target version change invalidates the contract until it is rechecked.
+`references/api-contracts.md` is the maintained index for the focused contract guides under `references/contracts/`. Treat the index and cards as a copyable route into this gate, not as a second API authority: the pinned declaration wins, and every target version change invalidates the relevant contract until it is rechecked.
 
 ## Snapshot scope
 

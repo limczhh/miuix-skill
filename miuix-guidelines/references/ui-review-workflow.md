@@ -21,6 +21,7 @@ Use this workflow as the primary reference when the user asks to improve, polish
 2. Inspect the current implementation. If a screenshot, mockup, preview, or device capture is available, inspect it together with the code; neither view alone explains both appearance and behavior.
 3. Confirm that the target project uses the current-audit API snapshot or record its published version/commit. This Skill's companion catalog is pinned to `d8efe1872c08c863a8b33e7044dd2a8b43038032`; if the project uses another version, flag the mismatch instead of treating current-main contracts as target-correct.
 4. Preserve intentional project conventions unless they cause the reported problem or the user asks to replace them.
+5. Classify the work as Greenfield, Brownfield, or Mixed. A code change in an existing page follows [Brownfield evolution](brownfield-evolution.md), even when the requested result is visually large.
 
 Ask a question only when a missing choice would materially change the visual direction. Continue read-only inspection while that choice is unresolved.
 
@@ -35,6 +36,7 @@ Trace the page from the outside in:
 5. Section and surface hierarchy: page → section → Card/container → row/component, without assuming that every page uses this exact content hierarchy.
 6. State owner and callbacks for selected, enabled, expanded, loading, error, and dismissal states.
 7. Custom modifiers, colors, text styles, shapes, effects, and magic dimensions.
+8. Shared page helpers, CompositionLocals, feature switches, and the complete nested-scroll/overscroll/pager chain when interaction is involved.
 
 Do not change geometry until the actual view hierarchy and coordinate/inset model are understood.
 
@@ -50,6 +52,8 @@ Assign each observed problem to one or more categories before editing:
 | Color and typography | Poor contrast, literal colors, inconsistent scale | [Design language and Defaults](design-language.md), theme source, component defaults |
 | State and interaction | Wrong state owner, disabled row still clickable, broken dismissal | The affected component's contract or host guide |
 | Insets and adaptation | Content under bars, IME overlap, broken wide layout | Scaffold contract, page shell, target platform behavior |
+| Brownfield migration | New wrapper replaces working infrastructure, split state, scattered version checks | [Brownfield evolution](brownfield-evolution.md) |
+| Gesture dynamics | Refresh, rebound, top-bar, tab, or pager gestures consume each other | [Gesture dynamics](gesture-dynamics.md) |
 | Accessibility | Missing descriptions, tiny targets, unreadable scaled text | Component semantics, target accessibility requirements, rendered checks |
 
 Prioritize structural and behavioral problems before decorative polish; surface-level tuning cannot repair a wrong host, hierarchy, or state model.
@@ -65,10 +69,12 @@ For each classified problem, load only the evidence that answers that problem:
 
 Record whether each finding is a source contract, an Example pattern, an existing project convention, or a user-directed visual choice. Do not present one category as another.
 
+For a change to an existing page, read Brownfield evolution before proposing a new Scaffold, provider, adapter, or shared helper. For a mixed scroll/refresh/overscroll problem, read Gesture dynamics instead of relying on the basic collapsing-bar snippet.
+
 ## Choose and Implement the Fix
 
 1. State the intended page skeleton, ownership, hierarchy, and interaction in plain language.
-2. Select the smallest coherent set of changes that solves the highest-impact problems.
+2. Select the smallest coherent set of changes that solves the highest-impact problems. In Brownfield mode, preserve the existing route, host, state, and inset boundaries unless the classified defect is in that boundary.
 3. Prefer the public Miuix component, its Defaults, and semantic theme tokens.
 4. Adapt the relevant Example pattern to the target architecture; do not copy Example navigation, blur, diagnostics, or helper infrastructure without need.
 5. Preserve state ownership, callbacks, and navigation behavior unless the task explicitly includes behavior changes.
@@ -85,6 +91,7 @@ Validate in layers appropriate to the change:
 3. Compile the smallest affected target or variant.
 4. For visual changes, render or inspect a preview, screenshot, emulator, or device at the relevant state.
 5. Recheck light/dark or dynamic color, disabled/selected/error states, text scaling, insets, and compact/wide layouts when the change touches them.
+6. For gesture changes, exercise the complete interaction chain: ordinary scroll, threshold/cancel, refresh completion, rebound, and any visual consumer of the damped offset.
 
 Compilation proves API and type compatibility, not visual correctness. If no render or device evidence is available, report visual confirmation as pending rather than inferred.
 
@@ -111,6 +118,7 @@ Check the rows that apply to the target instead of treating one device screensho
 | IME and focused field | The focused field and error/supporting text remain visible; dismissal and back behavior do not lose the draft |
 | Orientation, fold, or pane change | Width constraints, popup anchoring, and dialog/window choice remain valid after the host changes size |
 | Long strings, large font, or RTL | Text wraps or truncates intentionally, controls keep usable targets, and directional icons/spacing follow layout direction |
+| Scroll, refresh, rebound, or pager | Each gesture participant has one documented owner; no duplicate connection or split visual/business state appears |
 
 ## Minimum Evidence by Risk
 
@@ -122,6 +130,7 @@ Match the validation claim to the risk of the requested change:
 | Page structure or state-flow change | Compilation plus preview/render, or an explicit statement that visual confirmation is pending |
 | Visual polish | Before/after render, screenshot, or preview at the relevant states |
 | Insets, dialog/window, back/gesture, blur, or adaptive behavior | Runtime/emulator/device evidence on the supported target platform |
+| Nested-scroll, refresh, overscroll, or pager dynamics | Affected-target compilation plus runtime/device checks for the interaction states; source inspection alone is not enough |
 | Version migration | Exact tag/commit diff, affected-target compilation, and a regression checklist for changed APIs |
 | Accessibility or responsive behavior | Semantics/interaction inspection plus relevant font-scale, RTL, window-size, and IME checks |
 
