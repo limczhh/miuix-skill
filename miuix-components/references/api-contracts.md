@@ -10,6 +10,7 @@ The maintained snapshot is upstream main at commit d8efe1872c08c863a8b33e7044dd2
 |---|---|
 | Application theme or Scaffold host/insets | [Theme and page host](contracts/theme-and-host.md) |
 | TopAppBar, SmallTopAppBar, BlurTopAppBar, or collapsing behavior | [Top bars and scroll](contracts/top-bars-and-scroll.md) |
+| PullToRefresh, rememberPullToRefreshState, overScrollVertical, or overscroll visual bridge | [Scroll, pull-to-refresh, and overscroll](contracts/scroll-refresh-and-overscroll.md) |
 | Card, SmallTitle, NavigationBar, or FloatingNavigationBar | [Surfaces and navigation](contracts/surfaces-and-navigation.md) |
 | OverlayDialog or WindowDialog | [Overlays](contracts/overlays.md) |
 | SwitchPreference, ArrowPreference, TextField, Button, or TextButton | [Inputs and actions](contracts/inputs-and-actions.md) |

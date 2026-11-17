@@ -15,7 +15,7 @@ At the current source-audit snapshot:
 - TopAppBarState.overscrollOffset is a visual overscroll value in the current source. It contributes to visualContentOffset, but it is not the saved list position or the logical refresh state.
 - The current Miuix utility guide places the top-bar nested-scroll modifier after overScrollVertical. It keeps contentOffset as actual list movement and overscrollOffset as damped displacement; visualContentOffset combines them. It also warns not to pass the same behavior to an enclosing PullToRefresh when the list already owns the connection.
 
-These are source/version facts, not permission to attach every connection at every level. For exact signatures and a different Miuix version, hand the narrow symbols to miuix-components.
+These are source/version facts, not permission to attach every connection at every level. For exact signatures and a different Miuix version, read [Scroll, pull-to-refresh, and overscroll contracts](../../miuix-components/references/contracts/scroll-refresh-and-overscroll.md) and hand only any remaining symbol or version mismatch to miuix-components.
 
 For a source audit, start with miuix-ui/.../basic/PullToRefresh.kt, miuix-ui/.../utils/Overscroll.kt, miuix-ui/.../basic/TopAppBar.kt, then compare the integrated topology in example/shared/src/commonMain/kotlin/PullToRefreshPage.kt and example/shared/src/commonMain/kotlin/utils/PageUtils.kt.
 

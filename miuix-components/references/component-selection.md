@@ -128,7 +128,7 @@ At the current source-audit snapshot there is no public Miuix `SectionHeader`. `
 
 - `Scaffold` hosts `floatingToolbar` and `floatingToolbarPosition`; use the scaffold slot instead of manually overlaying a toolbar, and rely on its snackbar spacing for a bottom toolbar.
 - `InputField` accepts `color`; the `SearchBar` wrapper does not. Pass `Color.Transparent` only when another surface, such as a backdrop blur, intentionally owns the capsule background.
-- `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; keep one state owner for a refresh interaction instead of deriving a second refresh state.
+- `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; keep one state owner for a refresh interaction instead of deriving a second refresh state. For exact signatures and mixed top-bar/overscroll topology, read [Scroll, pull-to-refresh, and overscroll contracts](contracts/scroll-refresh-and-overscroll.md).
 - `NavigationRail` has a fixed-layout overload (`expanded = false/true`) and a separate expandable overload with required non-null `state`; `state = null` is not a valid current call shape.
 - `NavigationBarItem` and `FloatingNavigationBarItem` share `NavigationBarItemColors` through `NavigationBarDefaults.navigationBarItemColors()`; the new `colors` parameter appears before `badge`, so positional badge calls must be named.
 - `TabRow` and `TabRowWithContour` contain horizontal nested scroll/overscroll. For a pager containing vertical lists, use the dedicated `PagerGestureUtils` configuration instead of layering an ad-hoc nested-scroll interceptor.

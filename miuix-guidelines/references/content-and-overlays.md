@@ -57,6 +57,8 @@ Keep the overlay's show/dismiss state near the page host, pass an explicit `onDi
 
 `OverlayDialog` and the related Overlay families default to `renderInRootScaffold = true` in the pinned source. If the overlay belongs to a nested page host rather than the outer shell, set `renderInRootScaffold = false` and verify that the target declaration exposes the parameter.
 
+Keep the dialog call in composition while its `show` value changes to `false` so the component can run its own exit animation. Use `onDismissFinished` for state cleanup that must happen after the hide animation; an outer `if (!show) return` or removal of the dialog subtree cuts off that lifecycle. For input surfaces, inspect the target window's IME policy, `insideMargin`, and Android `windowSoftInputMode` together; `adjustResize` is a target-window decision, not a universal Miuix dialog parameter.
+
 ## Selection table
 
 | Need | Default composition | Avoid |

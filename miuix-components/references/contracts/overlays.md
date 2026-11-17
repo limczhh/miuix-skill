@@ -92,3 +92,5 @@ OverlayDialog(
 ```
 
 Use `OverlayDialog` for a surface owned by the current page/shell. Use `WindowDialog` when the surface must be independent of the page `Scaffold`. In both cases, `show` and the dismissal callback are two sides of the same state owner; do not rely on an implicit close behavior. The current `OverlayDialog` also exposes `dimColor` and a `surface` slot; `surface` receives the resolved dialog state through `DialogSurfaceScope` and is not a replacement for the popup host.
+
+The shared source implementation keeps the dialog composable alive while `show` becomes `false`, runs the hide animation, and invokes `onDismissFinished` after the animation completes. Do not remove the entire dialog call at the same time as setting `show = false` if the exit animation must remain visible; use `onDismissFinished` for cleanup that must wait for the animation. For input dialogs, inspect the target window's IME/inset policy and any required `insideMargin` compensation separately from this Miuix contract.
