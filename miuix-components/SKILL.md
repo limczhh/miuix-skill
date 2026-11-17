@@ -11,6 +11,19 @@ Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS v
 
 The maintained source-audit snapshot is upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` (`v0.9.4-80-gd8efe187`), which is newer than the latest `v0.9.4` release and is not itself a released version. The historical `v0.9.4` tag remains available only for migration and target-version comparison. If the target project uses a published or different commit, identify the mismatch before presenting version-sensitive code.
 
+## Joint decision boundary
+
+Use the two Skills as a handoff, not as two competing component catalogs:
+
+| Question | Owner | Handoff rule |
+|---|---|---|
+| Page skeleton, hierarchy, Insets, Scaffold ownership, composition, or gesture ownership | `miuix-guidelines` | Settle the page boundary and component relationship first |
+| Concrete component, parameter, import, module, Defaults, host, lifecycle, or version contract | `miuix-components` | Verify only the symbols the chosen composition will call |
+| Both page design and implementation are involved | `miuix-guidelines` → `miuix-components` → `miuix-guidelines` | Structure first, API contract second, composition review last |
+| Target declaration differs from the maintained catalog | `miuix-components` | Inspect the target's resolved source; a mismatch alone is not `API verification blocked` |
+
+Keep the evidence labels separate: `catalog-verified` describes this Skill's pinned snapshot, `target-source-verified` describes the target project's resolved source, and `compile-verified` requires a successful target compilation.
+
 ## Natural-language intake
 
 The user does not need to know a Miuix symbol. First translate ordinary wording into a capability and a missing discriminator; do not force the user to choose a component from the catalog.
@@ -22,7 +35,7 @@ The user does not need to know a Miuix symbol. First translate ordinary wording 
 | “设置项点开可以选几个值” | [Preference and menu guide](references/preferences-and-menus.md) | First distinguish a complete setting row from a standalone control, then plain dropdown items from richer spinner items; Overlay versus Window is a host/lifetime decision |
 | “做一个弹窗/下拉菜单” | [Overlay and Window catalog](references/overlays-and-windows.md) | Decide whether it belongs to the current `Scaffold` or an independent window; do not infer the variant from the word “弹窗” alone |
 | “顶部大标题跟着滚动收起来” | `miuix-guidelines` for placement, then [Component selection](references/component-selection.md) | `TopAppBar` uses a scroll behavior and the same `MiuixScrollBehavior` must connect to the primary scroll owner through its nested-scroll contract |
-| “下拉刷新和折叠顶栏/回弹一起用” | `miuix-guidelines` for gesture ownership, then [Scroll, pull-to-refresh, and overscroll contracts](references/contracts/scroll-refresh-and-overscroll.md) | Choose one source-verified owner for the app-bar connection; do not infer that PullToRefresh is a passive indicator or attach the same connection twice |
+| “下拉刷新和折叠顶栏/回弹一起用” | `miuix-guidelines` for gesture ownership, then [Scroll, pull-to-refresh, and overscroll contracts](references/contracts/scroll-refresh-and-overscroll.md) | Choose one verified owner for the app-bar connection from the target source; do not infer that PullToRefresh is a passive indicator or attach the same connection twice |
 | “想要毛玻璃/玻璃底栏/透明弹窗” | [Glass components](references/glass.md) | Decide whether the request is a composed `miuix-glass` surface or only a lower-level `miuix-blur` effect; verify `Backdrop`, fallback, and `Scaffold` popup-host boundaries |
 | “想要模糊/背景采样效果” | [Styling, icons, and effects](references/styling-icons-and-effects.md) | Route to `miuix-blur`/`miuix-material`, then check target platform and runtime support before promising the effect |
 | “桌面窗口要自定义标题栏” | [Desktop window guide](references/desktop-window.md) | This is `miuix-window` in `desktopMain`, not the common `miuix-ui` `WindowDialog` family |
@@ -45,36 +58,36 @@ Do not start an orientation request with the API contract sheet, and do not answ
 
 ## Operating contract
 
-- Treat the pinned Miuix source as the authority for public signatures, defaults, host behavior, and version contracts.
+- Treat the pinned Miuix source as the authority for maintained catalog facts. For target-compatible code, the target project's resolved source and dependency graph take precedence after they are inspected.
 - Never infer Miuix names or parameters from Material, Material 3, another Compose library, or a similarly named component.
 - Keep public API, documentation, Demo, Example, and target-project evidence distinct. Example code demonstrates integration; it is not a public API contract.
-- Report source inspection and compilation as separate facts. `source-verified` does not mean `compile-verified`.
+- Report catalog evidence, target-source evidence, and compilation as separate facts. Do not use an unqualified `source-verified` label in the final status.
 - Do not turn a component's existence or default into a requirement that every page use it.
 
-## Evidence levels
+## Verification labels
 
-Do not promote a lower-level route into a stronger claim:
+Use the strongest label actually supported by the evidence:
 
-| Evidence level | It can answer | It cannot answer by itself |
+| Label | Meaning | What it does not prove |
 |---|---|---|
-| **Verified API contract** | A covered declaration's package, module, parameters, defaults, and basic host/state contract | Whether the target project's dependency and source set compile it |
-| **Component catalog** | Which public family or capability matches a semantic role | The complete overload, import block, or version-sensitive behavior |
-| **Library map** | Which pinned source area and focused reference to inspect next | That every symbol in that area is public or importable |
-| **Docs/Demo/Example** | Intended use, isolated call shape, or integrated composition/state flow | A replacement for the pinned declaration or a universal page rule |
-| **Target-project evidence** | The version, dependency, source set, existing host, and compilation result that govern the actual task | A claim about the maintained main-branch snapshot when the target uses another version |
+| `catalog-verified` | The declaration or behavior was checked against the maintained pinned snapshot | Target-version compatibility or compilation |
+| `target-source-verified` | The target declaration was checked after resolving its published artifact, `includeBuild`, dependency substitution, source set, and relevant checkout state | Successful compilation or runtime behavior |
+| `compile-verified` | The affected target compiled with the claimed call | Visual, device, or runtime behavior |
+| `runtime-verified` | The relevant runtime or device behavior was exercised | Unrelated platforms, configurations, or versions |
+| `API verification blocked` | The target-sensitive declaration cannot be checked because the target source/version evidence is unavailable | Any version-sensitive implementation claim |
 
-When returning an API fact, name the strongest evidence actually checked. If the answer came only from a map, catalog, or Example, route to source verification before writing a version-sensitive call.
+When returning an API fact, name the strongest evidence actually checked. A target-version mismatch becomes `API verification blocked` only when the target source cannot be inspected; otherwise continue to `target-source-verified`.
 
 ## Source-first implementation loop
 
 When the task asks for Miuix code, the references are a route into evidence, not a substitute for the pinned source.
 
-1. Inspect the target project's Miuix version, platform/source set, dependency declaration, existing theme, and host before choosing a call. If the target project is unavailable, mark those parts as placeholders.
+1. Inspect the target project's declared Miuix coordinate, platform/source set, dependency substitution or `includeBuild`, resolved source checkout/commit, existing theme, and host before choosing a call. If the target project is unavailable, mark those parts as placeholders.
 2. Choose one reference route below to locate the component or source area.
 3. Acquire the declaration through [Source verification](references/source-verification.md#acquire-source-evidence), then verify the public package, module, overload, parameters, defaults, opt-in, and host/lifecycle behavior required by the task.
 4. Use docs and Demo for intended usage, and Example or real consumer code only for integrated composition. Do not promote any of them to API authority.
 5. Write the smallest call that matches the verified declaration. Do not fill an uncovered API or import by analogy.
-6. Compile the affected target when it is available. Report `source-verified; compilation pending` when compilation was not run.
+6. Compile the affected target when it is available. Report `target-source-verified; compilation pending` when the target source was checked but compilation was not run. If only the maintained snapshot was checked, report `catalog-verified; target compatibility pending`.
 
 ## Reference routing
 
@@ -108,7 +121,7 @@ Start with exactly one primary reference. A link is a route, not an instruction 
 1. Read the selected primary reference only.
 2. Read only the matching heading, table, or contract card.
 3. Follow a local link only when the current claim is missing evidence; do not load related references by association.
-4. Before writing code, complete the source-first implementation loop. Stop loading references once the symbol has a verified declaration, module/import boundary, host requirement, and state/callback contract required by the task.
+4. Before writing code, complete the source-first implementation loop. Stop once the required declaration, module/import boundary, host requirement, state/callback contract, and evidence label are known.
 
 ## Reference contract
 
@@ -116,12 +129,6 @@ The index is a router, not a second catalog. Once the symbol family is known, re
 
 Do not add a new contract card because a symbol merely exists. Add or split one only when the API is high-frequency, structurally important, or repeatedly causes integration errors. Keep the maintained declaration in one contract guide; the pinned source remains authoritative.
 
-## Handoff boundary
-
-If the task changes page ownership, page skeleton, information hierarchy, grouping, or visual review, hand that concern to `miuix-guidelines` instead of expanding this Skill into a page-design manual. If the task is both page design and implementation, let the guidelines Skill own composition and use this Skill only for the concrete library contracts that the implementation actually calls.
-
 ## Delivery contract
 
-For a library-orientation answer, report the interpreted capability, relevant layer, smallest likely module set, public family route, and unresolved version/platform questions. Do not present representative names from the overview as verified imports.
-
-When returning Miuix code, include the smallest integration-ready call, its required ancestor or host, the module/import boundary, and the state or dismissal contract. State whether the declaration was source-verified and whether the affected target compiled. Do not claim visual or device validation from source inspection alone.
+For orientation, report the capability, likely module layer, public family route, and unresolved target questions. For code, include the smallest call, host/state contract, module/import boundary, verification label, and compilation boundary. Do not claim visual or device validation from source inspection alone.

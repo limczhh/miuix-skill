@@ -21,7 +21,7 @@ If a request combines multiple rows, read the row that owns the interaction bein
 
 - Reuse the existing theme and route owner.
 - Use one host for each real shell/page boundary; do not add a Scaffold only for background or convenient padding.
-- Keep one primary content/scroll owner unless the nested relationship is intentional and source-verified.
+- Keep one primary content/scroll owner unless the nested relationship is intentional and the relevant target source contract is verified.
 - Apply the intentional shell/page padding handoff once at the final content boundary.
 - Keep persistent navigation, form, and business state outside visual component branches.
 - Treat every recipe as a starting shape. Product requirements and an existing project contract may justify another composition.

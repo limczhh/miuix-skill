@@ -25,17 +25,17 @@
 
 ### 组件库流程
 
-1. 先确认目标项目的 Miuix 版本、平台、source set、依赖、已有主题和宿主。
+1. 先确认目标项目声明的 Miuix 版本、实际解析到的 artifact 或 `includeBuild`/dependency substitution、平台、source set、依赖、已有主题和宿主。
 2. 按问题选择一个入口：
    - 想了解 Miuix 整体有什么、模块如何分工或该从哪个依赖开始：读 **library-overview.md**。
    - 不认识源码区域：读 **library-map.md**。
    - 不确定语义组件家族：读 **component-selection.md**。
    - 已知组件但需要准确调用：读 **api-contracts.md**。
    - API 未覆盖、版本不同或行为不确定：读 **source-verification.md**。
-3. 回到当前维护快照或目标项目实际源码，确认完整包名、模块、重载、参数、默认值、opt-in、宿主和生命周期。
+3. 回到当前维护快照或目标项目实际解析源码，确认完整包名、模块、重载、参数、默认值、opt-in、宿主和生命周期；不要把声明版本号当成实际源码版本。
 4. 只在需要时用文档、Demo 或 Example 补充用途和组合证据；它们不能代替源码声明。
 5. 写最小调用，并在目标项目可用时编译。
-6. 分开报告 source-verified、compile-verified、预览和设备验证；没有编译就不能声称已编译通过。
+6. 分开报告 `catalog-verified`、`target-source-verified`、`compile-verified`、预览和设备验证；目标版本不匹配但能访问目标源码时继续核对，只有目标源码/版本证据不可访问时才标记 `API verification blocked`。
 
 ### 页面规范流程
 
@@ -76,46 +76,31 @@ miuix-skill/
 
 ## 安装
 
-### Codex：从 Git Marketplace 安装（可选）
+仓库包含两个同级 Skill。安装后，宿主的 Skill 搜索目录应当直接包含：
 
-仓库提供了 Codex 兼容插件清单，并将两个同级 Skill 显式列入插件包。这里的 Marketplace 是由仓库维护的 Git 插件源，不是 OpenAI 公共插件目录；`marketplace add` 只是登记并跟踪 Git 源，不代表本仓库已经上传或发布到公共市场。必须先把这些清单提交并推送到 GitHub，远程安装才看得到它们。
+```text
+<skill-root>/miuix-components/SKILL.md
+<skill-root>/miuix-guidelines/SKILL.md
+```
+
+不要把整个仓库放成 `<skill-root>/miuix/`；这样会多出一层目录，除非宿主明确支持递归发现。
+
+### Codex 插件安装
+
+支持 `codex plugin` 时：
 
 ```bash
 codex plugin marketplace add limczhh/miuix-skill
 codex plugin add miuix-skills@miuix-skill
 ```
 
-更新插件来源：
+更新：
 
 ```bash
 codex plugin marketplace upgrade miuix-skill
 ```
 
-安装或更新后，按当前客户端提示重新载入插件或开始新会话。插件安装的是一个包，但 `miuix-components` 和 `miuix-guidelines` 仍然是两个独立、可分别触发的 Skill。清单位于 [.codex-plugin/plugin.json](.codex-plugin/plugin.json) 和 [.agents/plugins/marketplace.json](.agents/plugins/marketplace.json)；插件打包规则见 [OpenAI Plugins 文档](https://developers.openai.com/plugins/build/plugins)。
-
-本仓库目前没有提交到 OpenAI 公共插件目录。若要进入公共目录，还需要准备符合公共插件格式的发布包，提交审核并由发布流程上线；那是另一条分发路径，不是下面这条 Git Marketplace 命令的结果。
-
-如果当前环境没有可用的插件命令，使用下面的直接安装方式；不要把仓库根目录当作一个 Skill。
-
-### 直接安装（推荐用于只安装 Skill）
-
-下面这种路径不应作为可靠安装方式：
-
-```text
-~/.codex/skills/miuix/miuix-components/SKILL.md
-~/.codex/skills/miuix/miuix-guidelines/SKILL.md
-```
-
-因为 **SKILL.md** 在 **miuix** 的二级目录中，而 **miuix** 根部没有 **SKILL.md**。除非宿主明确实现了递归发现，否则系统不会把这两个目录当作已安装 Skill；本仓库不依赖这种行为。
-
-可靠的目标路径应当是：
-
-```text
-~/.codex/skills/miuix-components/SKILL.md
-~/.codex/skills/miuix-guidelines/SKILL.md
-```
-
-先把 Git 仓库存放在 Skill 搜索目录之外，作为更新源。PowerShell：
+不支持插件命令时，手动复制两个 Skill 子目录。PowerShell：
 
 ```powershell
 $sourceRoot = "$env:USERPROFILE\.codex\skill-sources"
@@ -124,53 +109,21 @@ $skillRoot = "$env:USERPROFILE\.codex\skills"
 
 New-Item -ItemType Directory -Force -Path $sourceRoot | Out-Null
 git clone https://github.com/limczhh/miuix-skill.git $repoRoot
-```
-
-然后把两个 Skill 的内容分别复制到搜索目录：
-
-```powershell
 New-Item -ItemType Directory -Force -Path "$skillRoot\miuix-components" | Out-Null
 New-Item -ItemType Directory -Force -Path "$skillRoot\miuix-guidelines" | Out-Null
-
 Copy-Item -Path "$repoRoot\miuix-components\*" -Destination "$skillRoot\miuix-components" -Recurse -Force
 Copy-Item -Path "$repoRoot\miuix-guidelines\*" -Destination "$skillRoot\miuix-guidelines" -Recurse -Force
 ```
 
-macOS/Linux 可以直接执行：
+macOS/Linux：
 
 ```bash
+mkdir -p ~/.codex/skill-sources ~/.codex/skills
 git clone https://github.com/limczhh/miuix-skill.git ~/.codex/skill-sources/miuix-skill
-mkdir -p ~/.codex/skills/miuix-components ~/.codex/skills/miuix-guidelines
-cp -R ~/.codex/skill-sources/miuix-skill/miuix-components/. ~/.codex/skills/miuix-components/
-cp -R ~/.codex/skill-sources/miuix-skill/miuix-guidelines/. ~/.codex/skills/miuix-guidelines/
+cp -R ~/.codex/skill-sources/miuix-skill/miuix-components ~/.codex/skill-sources/miuix-skill/miuix-guidelines ~/.codex/skills/
 ```
 
-如果使用环境允许目录链接，也可以把两个子目录分别链接到 ~/.codex/skills/；链接的目标仍必须是 miuix-components 和 miuix-guidelines，不能链接仓库根目录。
-
-更新时在源码仓库执行：
-
-```bash
-git -C ~/.codex/skill-sources/miuix-skill pull --ff-only
-```
-
-复制安装需要重新执行上面的复制命令；目录链接则只需更新源码仓库。
-
-### 项目内安装
-
-项目内安装使用相同的目录层级：
-
-```text
-<project>/.codex/skills/miuix-components/SKILL.md
-<project>/.codex/skills/miuix-guidelines/SKILL.md
-```
-
-不要使用：
-
-```text
-<project>/.codex/skills/miuix/miuix-components/SKILL.md
-```
-
-Claude Code 等使用 .claude/skills/ 的宿主也遵循同一原则：把两个 Skill 子目录分别放到 .claude/skills/miuix-components/ 和 .claude/skills/miuix-guidelines/，不要把仓库根目录当作单个 Skill。
+更新手动安装：在源码仓库执行 `git pull --ff-only`，再重新复制两个子目录。项目内安装也遵循同一目录规则：将它们放到 `<project>/.codex/skills/` 或 `<project>/.claude/skills/` 下。
 
 ## 使用和触发
 

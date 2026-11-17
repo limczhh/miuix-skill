@@ -1,6 +1,6 @@
 # Scroll, Pull-to-Refresh, and Overscroll Contracts
 
-This is a focused, source-verified API contract guide for the maintained Miuix snapshot: upstream main at commit d8efe1872c08c863a8b33e7044dd2a8b43038032 (v0.9.4-80-gd8efe187, not a release tag). The audited declarations and utility guide match the current local checkout for these files.
+This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: upstream main at commit d8efe1872c08c863a8b33e7044dd2a8b43038032 (v0.9.4-80-gd8efe187, not a release tag). The audited declarations and utility guide match the current local checkout for these files.
 
 Use when the task needs PullToRefresh, rememberPullToRefreshState, overScrollVertical, TopAppBarState.overscrollOffset, or a nested-scroll chain that combines refresh, overscroll, and a collapsing bar.
 
@@ -10,7 +10,7 @@ Before copying a call:
 
 - Check the target project's resolved Miuix version, source set, and dependency substitution.
 - Treat the declaration, state ownership, nested-scroll topology, and visual callback as one contract.
-- `source-verified` means the pinned declaration was checked; `compile-verified` requires compiling the affected target.
+- `catalog-verified` means the pinned declaration was checked; `target-source-verified` requires checking the target's resolved source; `compile-verified` requires compiling the affected target.
 
 ## Public declarations
 

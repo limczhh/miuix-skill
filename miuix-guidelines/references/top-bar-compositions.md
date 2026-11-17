@@ -67,4 +67,4 @@ The `nestedScrollConnection` is part of the behavior contract, not an optional v
 
 Use `SmallTopAppBar` instead when the title must remain pinned. Do not add collapsing behavior to a page whose hierarchy does not benefit from a large-title transition.
 
-If the page also has pull-to-refresh, explicit overscroll, a pager, or a visual band/tab response to rebound, stop treating this as the basic collapsing-bar recipe. Read [Gesture dynamics](gesture-dynamics.md) and choose one source-verified nested-scroll topology before adding modifiers. The basic snippet does not prove that multiple gesture participants can be attached independently.
+If the page also has pull-to-refresh, explicit overscroll, a pager, or a visual band/tab response to rebound, stop treating this as the basic collapsing-bar recipe. Read [Gesture dynamics](gesture-dynamics.md) and choose one nested-scroll topology whose target source contract is verified before adding modifiers. The basic snippet does not prove that multiple gesture participants can be attached independently.

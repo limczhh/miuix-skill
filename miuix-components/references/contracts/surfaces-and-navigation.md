@@ -1,6 +1,6 @@
 # Surface and Navigation Contracts
 
-This is a focused, source-verified API contract guide for the maintained Miuix snapshot: upstream main at commit d8efe1872c08c863a8b33e7044dd2a8b43038032 (v0.9.4-80-gd8efe187, not a release tag).
+This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: upstream main at commit d8efe1872c08c863a8b33e7044dd2a8b43038032 (v0.9.4-80-gd8efe187, not a release tag).
 
 Use when the task needs Card, SmallTitle, NavigationBar, or FloatingNavigationBar.
 
@@ -11,7 +11,7 @@ Before copying a call:
 - Check the target project's resolved Miuix version, source set, and dependency substitution.
 - Treat the declaration, package/import, module, defaults, state/callback direction, and host requirement as one contract.
 - An omitted parameter is not permission to invent an overload or transfer a Material parameter.
-- source-verified means the pinned declaration was checked; compile-verified requires compiling the affected target.
+- `catalog-verified` means the pinned declaration was checked; `target-source-verified` requires checking the target's resolved source; `compile-verified` requires compiling the affected target.
 
 The exact source path is part of each contract below. If the target version differs, re-run the source-verification gate before presenting version-sensitive code.
 ## Card and section title

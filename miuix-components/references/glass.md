@@ -2,7 +2,7 @@
 
 Use this reference only when the user explicitly asks for glass, frosted, translucent, backdrop-sampled, or liquid-surface UI, or when the target already uses `miuix-glass`. It describes the optional Glass family; it does not replace the ordinary `miuix-ui` component route and does not make glass mandatory for a Miuix page.
 
-The current source evidence is Miuix `main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`. Exact declarations below are source-verified against that checkout; a published target version still has to be checked separately.
+The current catalog evidence is Miuix `main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`. Exact declarations below are catalog-verified against that checkout; a published or substituted target source still has to be checked separately.
 
 ## Module boundary
 
@@ -85,7 +85,7 @@ Box(
 }
 ```
 
-This is a source-verified call shape, not a requirement to replace a higher-level Glass component with a custom modifier.
+This is a catalog-verified call shape, not a requirement to replace a higher-level Glass component with a custom modifier.
 
 ## BoxScope popup boundary
 
@@ -95,7 +95,7 @@ The `BoxScope` popup family does not register with `MiuixPopupHost`. It renders 
 
 ## Verified shell call shapes
 
-The following calls are source-verified shapes for the current snapshot. They still require the target dependency, imports, and compilation check.
+The following calls are catalog-verified shapes for the current snapshot. They still require the target dependency, imports, and compilation check.
 
 ### Glass top bar + recorded scrolling content
 

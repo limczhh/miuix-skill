@@ -1,6 +1,6 @@
 # Source Verification
 
-Use this reference when an exact API, behavior, dependency, or version claim needs pinned Miuix evidence. It can be the primary reference for an uncovered API or a version mismatch. It defines how abbreviated paths in this Skill map to the public Miuix repository and pins the current catalog evidence to the upstream `main` snapshot listed below.
+Use this reference when an exact API, behavior, dependency, or version claim needs pinned Miuix evidence. It can be the primary reference for an uncovered API or a target-version mismatch. It defines how abbreviated paths in this Skill map to the public Miuix repository, distinguishes maintained catalog evidence from target-project evidence, and pins the current catalog to the upstream `main` snapshot listed below.
 
 Read only the evidence workflow, API gate, path table, or supporting-internals entry required by the claim. Do not load the Example-app inventory during an ordinary API check.
 
@@ -10,12 +10,12 @@ Contents: [acquire source evidence](#acquire-source-evidence) · [evidence workf
 
 Use the strongest source available for the claim, while keeping target-project compatibility separate from the maintained library snapshot:
 
-1. Inspect the target project's declared Miuix dependency, source set, and available source attachment first. This determines what can actually compile in that project.
+1. Inspect the target project's declared Miuix dependency, source set, dependency substitution or `includeBuild`, resolved source checkout/commit, and available source attachment first. This determines what can actually compile in that project.
 2. For maintained current-library facts, use a local Miuix checkout only after confirming it is exactly the current audit commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`. For a historical release question, use the requested tag instead.
 3. If no verified local checkout is available, open the pinned raw source URL from [Path Convention](#path-convention).
 4. Do not use the rolling documentation site, an untagged branch, a search-result snippet, or remembered Compose/Material APIs as a substitute for the pinned declaration.
 
-The target project can override the maintained snapshot whenever its declared version or commit differs. In that case, record the target declaration and do not present the current-main contract as a target-version contract.
+The target project can override the maintained snapshot whenever its declared version, resolved artifact, dependency substitution, or commit differs. In that case, record both the maintained catalog and the target's resolved source; do not present the catalog contract as target-source-verified until the target declaration is checked.
 
 ## Evidence Resolution Workflow
 
@@ -25,30 +25,31 @@ The target project can override the maintained snapshot whenever its declared ve
 4. For current catalog work, keep all evidence on commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` / upstream `main`. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters. If the user explicitly requests the `v0.9.3 → v0.9.4` migration, follow the single migration reference and use the historical tag only for that task.
 5. Return to the [Delivery Contract](../SKILL.md#delivery-contract) before presenting implementation or validation claims.
 
-If the pinned web source cannot be reached, do not silently substitute memory, the rolling documentation site, or an unpinned snippet. State that API verification is blocked, or ask the user to provide the relevant tagged file, before making a version-sensitive claim.
+If the pinned catalog source cannot be reached, do not silently substitute memory, the rolling documentation site, or an unpinned snippet. Use an already verified local checkout when available; otherwise state that catalog verification is unavailable. If the target-sensitive source is also unavailable, state `API verification blocked` before making a version-sensitive claim.
 
 ## API verification gate
 
 Use this gate whenever delivered code contains a Miuix symbol, dependency, or version-sensitive call. It is a correctness gate, not a component catalog:
 
-1. **Pin the target.** Confirm the project's Miuix version or commit, platform, and source set. Do not call a current-main declaration verified for a different target version.
-2. **Locate the declaration.** In the pinned source, confirm the public package/module, symbol name, overload, full parameter list, parameter order, required/optional parameters, defaults, and any experimental or platform opt-in.
+1. **Pin the target.** Confirm the project's declared Miuix coordinate, platform, source set, dependency substitution or `includeBuild`, resolved source commit, and whether that checkout is dirty. Do not call a catalog declaration target-source-verified for a different resolved source.
+2. **Locate the declaration.** For target code, use the resolved target source identified in step 1; for maintained catalog facts, use the pinned source. Confirm the public package/module, symbol name, overload, full parameter list, parameter order, required/optional parameters, defaults, and any experimental or platform opt-in.
 3. **Match intended usage when needed.** Use the matching Markdown doc for intent or the demo for an isolated call only when that claim matters. Use Example code only to understand integrated composition; never use Example code as the API contract.
 4. **Check behavior assumptions.** Confirm state/callback direction, required ancestor or host, insets, lifecycle, and disabled/dismissal behavior when they affect the call.
-5. **Compile the affected target.** Run the target project's relevant source-set/module compilation after the change when the project is available. A source check without compilation is `source-verified`, not `compile-verified`.
-6. **Report the boundary.** If compilation cannot run, state `source-verified; compilation pending` and do not describe the code as fully verified. If the pinned source or target version cannot be checked, state `API verification blocked` and stop the version-sensitive claim.
+5. **Compile the affected target.** Run the target project's relevant source-set/module compilation after the change when the project is available. A target source check without compilation is `target-source-verified`, not `compile-verified`; a check of only the maintained snapshot is `catalog-verified`.
+6. **Report the boundary.** If the target source was checked but compilation cannot run, state `target-source-verified; compilation pending`. If only the maintained snapshot was checked, state `catalog-verified; target compatibility pending`. State `API verification blocked` only when the target-sensitive source/version evidence cannot be checked.
 
 Use this compact record when the API risk is non-trivial:
 
 ```text
-Miuix target:       version / platform / source set
-Declaration:        pinned source path + symbol
+Catalog:            pinned commit + symbol
+Miuix target:       declared coordinate / resolved source / platform / source set
+Declaration:        target or catalog source path + symbol
 Call contract:      import / overload / required state and callbacks
 Host contract:      ancestor / inset / lifecycle requirement
-Verification:       source-verified / compile-verified / pending
+Verification:       catalog-verified / target-source-verified / compile-verified / blocked
 ```
 
-`references/api-contracts.md` is the maintained index for the focused contract guides under `references/contracts/`. Treat the index and cards as a copyable route into this gate, not as a second API authority: the pinned declaration wins, and every target version change invalidates the relevant contract until it is rechecked.
+`references/api-contracts.md` is the maintained index for the focused contract guides under `references/contracts/`. Treat the index and cards as a copyable route into this gate, not as a second API authority: the pinned declaration wins for the catalog, the resolved target declaration wins for target code, and every target source change invalidates the relevant contract until it is rechecked.
 
 ## Snapshot scope
 

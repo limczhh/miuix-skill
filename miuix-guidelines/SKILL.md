@@ -11,6 +11,19 @@ This Skill defines one concrete Miuix design specification derived from the Hype
 
 Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS visual language. The companion library's current source-audit snapshot is upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`; exact signatures, imports, defaults, and version-sensitive behavior belong to `miuix-components`. This Skill codifies the selected HyperLyric-derived usage profile; it does not require the optional Glass family or any one visual variant when the product does not choose it.
 
+## Joint decision boundary
+
+Use the two Skills as a handoff, not as two competing page/component guides:
+
+| Question | Owner | Handoff rule |
+|---|---|---|
+| Page skeleton, hierarchy, Insets, Scaffold ownership, composition, or gesture ownership | `miuix-guidelines` | Settle the page boundary and component relationship first |
+| Concrete component, parameter, import, module, Defaults, host, lifecycle, or version contract | `miuix-components` | Verify only the symbols the chosen composition will call |
+| Both page design and implementation are involved | `miuix-guidelines` → `miuix-components` → `miuix-guidelines` | Structure first, API contract second, composition review last |
+| Target declaration differs from the maintained catalog | `miuix-components` | Inspect the target's resolved source; a mismatch alone is not `API verification blocked` |
+
+Keep the evidence labels separate: `catalog-verified` describes the maintained pinned snapshot, `target-source-verified` describes the target project's resolved source, and `compile-verified` requires a successful target compilation.
+
 ## Design profile contract
 
 Apply the profile in three layers:
@@ -27,11 +40,9 @@ Users normally describe the result they want rather than the page architecture o
 
 | User wording | First route | Structural question to resolve |
 |---|---|---|
-| “帮我做个普通页面/设置页” | [Page structure and ownership](references/page-structure.md) | What existing theme, route host, page boundary, primary content owner, and state owner already exist? |
+| “帮我做个普通页面/设置页” | [Page structure and ownership](references/page-structure.md) | What existing theme, route host, page boundary, primary content owner, and state owner already exist? Classify it as Greenfield, Brownfield, or Mixed after inspection. |
 | “从零做一个页面/第一次搭建” | [Greenfield page](references/greenfield-page.md) | Is there truly no existing page contract, and can the profile become the page's starting design system? |
 | “已有页面优化/统一间距/改得更像这套规范” | [UI review workflow](references/ui-review-workflow.md), then [Brownfield evolution](references/brownfield-evolution.md) | Which current structure and behavior must survive, and which visual boundaries should migrate toward the profile? |
-| “从零搭建页面/重做页面骨架” | [Greenfield page](references/greenfield-page.md) | Is there genuinely no existing host, route, inset, or state contract to preserve? |
-| “已有页面升级/替换组件/接入新效果” | [Brownfield evolution](references/brownfield-evolution.md) | Which existing scaffold, utility, route, state, and behavior are contracts that the change must preserve? |
 | “滚动、下拉刷新、回弹、折叠顶栏手势打架” | [Gesture dynamics](references/gesture-dynamics.md) | Which component owns each nested-scroll connection, and which visual state needs an explicit overscroll bridge? |
 | “像系统设置一样” | [Page structure and ownership](references/page-structure.md), then [Design language and Defaults](references/design-language.md) | Which grouping and hierarchy are wanted? Do not silently turn this into a mandatory `SmallTitle` + `Card` + Preference template |
 | “顶部大标题滚动时收起来” | [Top bar compositions](references/top-bar-compositions.md) | Which page host owns the top bar, which one scrolls, and where does the shared scroll behavior connect? |
@@ -47,20 +58,11 @@ When project files are available, the existing implementation takes precedence o
 
 ## Workflow modes
 
-- **Greenfield page or shell:** use when the page really has no reusable host/route/inset contract, or the user explicitly requests a replacement skeleton. Read [Greenfield page](references/greenfield-page.md), then the narrower structure/composition reference it routes to.
-- **Brownfield evolution:** use when an existing project already has a page scaffold, route host, PageUtils-like helpers, state flow, or interaction behavior. Read [Brownfield evolution](references/brownfield-evolution.md) before changing ownership or introducing a new wrapper.
-- **Gesture dynamics integration:** use when scrolling, pull-to-refresh, overscroll, collapsing bars, pagers, or nested gestures interact. Read [Gesture dynamics](references/gesture-dynamics.md) in addition to the selected page mode only when that interaction is present.
-- **Known composition:** use [Page composition routes](references/page-compositions.md) only to select one narrow composition guide after the relevant owners and inset handoff are named.
-- **Existing-page review:** map the current implementation, classify the defect, and make the smallest change supported by the evidence.
-- **Isolated visual decision:** read only the design-language section that answers the typography, color, grouping, state, or profile-spacing question; do not invent a page skeleton for a local styling request.
+- Choose Greenfield, Brownfield, or Mixed first. Add Gesture dynamics, a narrow composition route, Existing-page review, or Isolated visual decision only when the task contains that secondary concern. The operating-mode table below defines how the profile applies in each case.
 
 ## Select the operating mode
 
 Classify the task before loading a detailed reference:
-
-- **Greenfield** means there is no usable existing page contract, or the user explicitly authorizes replacing the shell. The strict ownership and inset record is the starting boundary.
-- **Brownfield** means an existing route, Scaffold, page utility, provider, state owner, or gesture chain already serves the page. Existing behavior is the baseline; the requested change is a delta.
-- **Mixed** means a new feature is being added inside an old shell. Use Brownfield for the shell and the smallest Greenfield-style map only for the new boundary.
 
 Use the modes differently; they are not three names for the same workflow:
 
@@ -80,8 +82,7 @@ The presence of a new Miuix component does not make a task Greenfield. In Brownf
 4. Apply the declared profile metrics and composition rules in Greenfield work. In Brownfield work, preserve the target project's established design convention only when the existing implementation shows that it is intentional and coherent.
 5. Preserve the target project's behavior, accessibility, adaptive layout, and state ownership while applying the visual guidance.
 6. If implementation needs an exact Miuix symbol, ask `miuix-components` for that narrow contract; do not preload its entire component catalog.
-7. Treat every code block in a composition reference as a placement shape, not API proof. Before implementation, verify each Miuix symbol through the companion Skill's pinned source-first workflow.
-
+7. Treat every code block in a composition reference as a placement shape, not API proof. Before implementation, verify each Miuix symbol through the companion Skill's source-first workflow.
 8. When multiple gesture participants are present, inspect their actual nested-scroll contracts and version before changing modifier order or adding a bridge. Do not assume that a component with a ScrollBehavior parameter only observes state.
 
 ## Page-first delivery protocol
@@ -160,4 +161,4 @@ The profile's declared metrics and combinations are intentionally prescriptive f
 
 ## Code Delivery Contract
 
-The user's product and behavior requirements outrank these defaults. Treat the guidance as a consistent baseline, not as proof that one component or style is officially mandatory. When code is requested, state the interpreted request, surrounding theme/host assumptions, state ownership, inset boundary, and API verification handoff separately from visual or device validation. Do not describe a composition recipe as compile-verified unless the target project was compiled.
+The user's product and behavior requirements outrank these defaults. Treat the guidance as a consistent baseline, not as proof that one component or style is officially mandatory. When code is requested, state the interpreted request, surrounding theme/host assumptions, state ownership, inset boundary, and API verification handoff separately from visual or device validation. Do not describe a composition recipe as compile-verified unless the target project was compiled; report the companion API evidence label separately (`catalog-verified`, `target-source-verified`, or pending/blocked).
