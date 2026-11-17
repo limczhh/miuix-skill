@@ -81,6 +81,21 @@ When the user asks about a component, first match it case-insensitively against 
 | Tooltip | `docs/components/basic/tooltip.md` | `docs/demo/TooltipDemo.kt` | `miuix-ui/.../basic/Tooltip.kt` |
 | Badge | `docs/components/basic/badge.md` | `docs/demo/BadgeDemo.kt` | `miuix-ui/.../basic/Badge.kt` |
 
+### Preference Components (miuix-preference)
+
+| Component | Doc | Demo | Source | Contract |
+|---|---|---|---|---|
+| SwitchPreference | `docs/components/extended/switchpreference.md` | `docs/demo/SwitchPreferenceDemo.kt` | `miuix-preference/.../preference/SwitchPreference.kt` | `contracts/preferences-and-menus.md` |
+| ArrowPreference | `docs/components/extended/arrowpreference.md` | `docs/demo/ArrowPreferenceDemo.kt` | `miuix-preference/.../preference/ArrowPreference.kt` | `contracts/preferences-and-menus.md` |
+| CheckboxPreference | `docs/components/extended/checkboxpreference.md` | `docs/demo/CheckboxPreferenceDemo.kt` | `miuix-preference/.../preference/CheckboxPreference.kt` | `contracts/preferences-and-menus.md` |
+| RadioButtonPreference | `docs/components/extended/radiobuttonpreference.md` | `docs/demo/RadioButtonPreferenceDemo.kt` | `miuix-preference/.../preference/RadioButtonPreference.kt` | `contracts/preferences-and-menus.md` |
+| SliderPreference / RangeSliderPreference | `docs/components/extended/sliderpreference.md` | — | `miuix-preference/.../preference/SliderPreference.kt` | `contracts/preferences-and-menus.md` |
+| OverlayDropdownPreference / WindowDropdownPreference | `docs/components/extended/overlaydropdownpreference.md` | `docs/demo/OverlayDropdownPreferenceDemo.kt` | `miuix-preference/.../preference/OverlayDropdownPreference.kt` | `contracts/preferences-and-menus.md` |
+| OverlaySpinnerPreference / WindowSpinnerPreference | `docs/components/extended/overlayspinnerpreference.md` | `docs/demo/OverlaySpinnerPreferenceDemo.kt` | `miuix-preference/.../preference/OverlaySpinnerPreference.kt` | `contracts/preferences-and-menus.md` |
+| OverlayDropdownMenu / WindowDropdownMenu | `docs/components/extended/overlaydropdownmenu.md` | `docs/demo/OverlayDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayDropdownMenu.kt` | `contracts/preferences-and-menus.md` |
+| OverlayIconDropdownMenu / WindowIconDropdownMenu | `docs/components/extended/overlayicondropdownmenu.md` | `docs/demo/OverlayIconDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayIconDropdownMenu.kt` | `contracts/preferences-and-menus.md` |
+| OverlayIconCascadingDropdownMenu / WindowIconCascadingDropdownMenu | `docs/components/extended/overlayiconcascadingdropdownmenu.md` | `docs/demo/OverlayIconCascadingDropdownMenuDemo.kt` | `miuix-preference/.../menu/OverlayIconCascadingDropdownMenu.kt` | `contracts/preferences-and-menus.md` |
+
 ### Glass Components (miuix-glass)
 
 | Component | Doc | Demo | Source |

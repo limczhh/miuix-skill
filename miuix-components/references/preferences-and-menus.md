@@ -1,6 +1,6 @@
 # Preference and Dropdown Menu Components
 
-Use this reference only to choose between Preference rows, basic controls, dropdown/spinner preferences, anchored menus, and the optional Glass dropdown row. It does not replace an exact API contract or a page skeleton.
+Use this reference to choose between Preference rows, basic controls, dropdown/spinner preferences, anchored menus, and the optional Glass dropdown row. For verified function signatures, parameter defaults, and data models, see [Preference and Dropdown Menu Contracts](contracts/preferences-and-menus.md).
 
 ## Choose the Family
 

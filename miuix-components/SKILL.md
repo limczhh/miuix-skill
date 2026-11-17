@@ -103,8 +103,9 @@ Start with exactly one primary reference. A link is a route, not an instruction 
 | Exact PullToRefresh, overscroll, or refresh/scroll bridge call | [Scroll, pull-to-refresh, and overscroll contract](references/contracts/scroll-refresh-and-overscroll.md) | The resolved beta01 source is customized or the page has competing gesture owners |
 | Exact CrossAxis pager configuration or BreadcrumbBar list state | [Pager and breadcrumb contract](references/contracts/pager-and-breadcrumb.md) | The task also needs saved-mode normalization |
 | Exact Card, SmallTitle, or navigation call | [Surface and navigation contract](references/contracts/surfaces-and-navigation.md) | The resolved beta01 source is customized or page ownership is also involved |
-| Exact dialog/window call | [Overlay and Window contract](references/contracts/overlays.md) | The resolved beta01 source is customized or the host/lifecycle contract is incomplete |
-| Exact preference, input, or button call | [Input and action contract](references/contracts/inputs-and-actions.md) | The resolved beta01 source is customized or the symbol is not covered |
+| Exact dialog, bottom sheet, popup, or snackbar call | [Overlay, window, and popup contract](references/contracts/overlays.md) | The resolved beta01 source is customized or the host/lifecycle contract is incomplete |
+| Exact preference row, dropdown, spinner, or menu call | [Preference and menu contract](references/contracts/preferences-and-menus.md) | The resolved beta01 source is customized or the symbol is not covered |
+| Exact basic control, button, input, slider, or search bar call | [Input, control, and action contract](references/contracts/inputs-and-actions.md) | The resolved beta01 source is customized or the symbol is not covered |
 | Find the right contract guide for an exact call | [Verified API contract index](references/api-contracts.md) | The symbol is not listed or the resolved beta01 source is customized |
 | Exact call for an uncovered beta01 API, behavior, or local override | [Source verification](references/source-verification.md) | A component catalog or matching evidence is needed to identify the symbol |
 | Dependency, theme, root host, or preview setup | [Project setup and theme](references/setup-and-theme.md) | A migration or uncovered declaration is part of the task |

@@ -16,7 +16,7 @@ Use this guide to choose content containment and transient-surface placement. Ma
 For example, a small group can appear as:
 
 ```kotlin
-item { SmallTitle(text = sectionTitle) }
+item { SmallTitle(text = "Feature Group") }
 item {
     Card(
         modifier = Modifier
@@ -24,7 +24,28 @@ item {
             .padding(horizontal = 12.dp)
             .padding(bottom = 12.dp),
     ) {
-        // Related, bounded rows.
+        SwitchPreference(
+            checked = featureEnabled,
+            onCheckedChange = { featureEnabled = it },
+            title = "Enable Feature",
+            summary = "Turn on core service",
+        )
+        AnimatedVisibility(visible = featureEnabled) {
+            Column {
+                OverlayDropdownPreference(
+                    items = listOf("Standard", "High", "Ultra"),
+                    selectedIndex = selectedQuality,
+                    onSelectedIndexChange = { selectedQuality = it },
+                    title = "Quality Mode",
+                )
+                SliderPreference(
+                    value = intensity,
+                    onValueChange = { intensity = it },
+                    title = "Intensity",
+                    valueText = "${(intensity * 100).toInt()}%",
+                )
+            }
+        }
     }
 }
 ```

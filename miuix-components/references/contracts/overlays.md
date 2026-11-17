@@ -1,35 +1,29 @@
-# Overlay and Window Dialog Contracts
+# Overlay, Window, Sheet, and Popup Contracts
 
-This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: release tag v0.9.5-beta01 at commit 6d2554a850b8960e2616c968263ff64beb5ffb03.
+This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: release tag `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03`.
 
-Use when the task needs the exact OverlayDialog or WindowDialog signature, host, dismissal, or lifecycle contract.
-
-Do not use when the task only needs to choose page-scoped versus independent-window presentation without writing a call.
+Use when the task needs exact signatures, imports, defaults, dismissal callbacks, or host requirements for `OverlayDialog`, `WindowDialog`, `OverlayBottomSheet`, `WindowBottomSheet`, `OverlayListPopup`, `WindowListPopup`, or `Snackbar`.
 
 Before copying a call:
+- Check the target project's declared Miuix dependency (`top.yukonga.miuix.kmp:miuix-ui:0.9.5-beta01`).
+- `Overlay*` components render through `MiuixPopupHost` (typically inside `Scaffold`). `renderInRootScaffold` determines whether the popup anchors to the outermost root Scaffold (full-screen) or current Scaffold.
+- `Window*` components render in an independent platform window/popup layer, bypassing `Scaffold`.
 
-- Check the target project's resolved Miuix version, source set, and dependency substitution.
-- Treat the declaration, package/import, module, defaults, state/callback direction, and host requirement as one contract.
-- An omitted parameter is not permission to invent an overload or transfer a Material parameter.
-- `catalog-verified` means the pinned declaration was checked; `target-source-verified` requires checking the target's resolved source; `compile-verified` requires compiling the affected target.
+---
 
-The exact source path is part of each contract below. Confirm beta01 resolution and inspect local overrides before presenting code; another release is outside this Skill's supported scope.
 ## Dialogs
 
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/overlay/OverlayDialog.kt`, `window/WindowDialog.kt`  
-**Documentation:** `docs/components/basic/overlaydialog.md`, `docs/components/basic/windowdialog.md`
-**Demo:** `docs/demo/src/commonMain/kotlin/OverlayDialogDemo.kt`, `WindowDialogDemo.kt`
-
-Miuix imports:
-
+**Imports:**
 ```kotlin
 import top.yukonga.miuix.kmp.overlay.OverlayDialog
-import top.yukonga.miuix.kmp.layout.DialogSurfaceScope
 import top.yukonga.miuix.kmp.window.WindowDialog
+import top.yukonga.miuix.kmp.layout.DialogSurfaceScope
+import top.yukonga.miuix.kmp.basic.DialogDefaults
 ```
 
-The two functions have nearly the same content contract. The important difference is the host: `OverlayDialog` renders through the page/root `Scaffold` popup host; `WindowDialog` creates an independent platform window.
+### OverlayDialog & WindowDialog
 
 ```kotlin
 @Composable
@@ -78,19 +72,196 @@ fun WindowDialog(
 )
 ```
 
-Minimal state and call shapes:
-
+Minimal call:
 ```kotlin
 var showDialog by remember { mutableStateOf(false) }
 
 OverlayDialog(
     show = showDialog,
+    title = "Notice",
+    summary = "Operation cannot be undone",
     onDismissRequest = { showDialog = false },
 ) {
-    // Dialog content.
+    // Dialog action buttons / content
 }
 ```
 
-Use `OverlayDialog` for a surface owned by the current page/shell. Use `WindowDialog` when the surface must be independent of the page `Scaffold`. In both cases, `show` and the dismissal callback are two sides of the same state owner; do not rely on an implicit close behavior. The current `OverlayDialog` also exposes `dimColor` and a `surface` slot; `surface` receives the resolved dialog state through `DialogSurfaceScope` and is not a replacement for the popup host.
+---
 
-The shared source implementation keeps the dialog composable alive while `show` becomes `false`, runs the hide animation, and invokes `onDismissFinished` after the animation completes. Do not remove the entire dialog call at the same time as setting `show = false` if the exit animation must remain visible; use `onDismissFinished` for cleanup that must wait for the animation. For input dialogs, inspect the target window's IME/inset policy and any required `insideMargin` compensation separately from this Miuix contract.
+## Bottom Sheets
+
+**Module:** `miuix-ui`  
+**Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/overlay/OverlayBottomSheet.kt`, `window/WindowBottomSheet.kt`  
+**Imports:**
+```kotlin
+import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import top.yukonga.miuix.kmp.window.WindowBottomSheet
+import top.yukonga.miuix.kmp.basic.BottomSheetDefaults
+import top.yukonga.miuix.kmp.layout.BottomSheetSurfaceScope
+```
+
+### OverlayBottomSheet & WindowBottomSheet
+
+```kotlin
+@Composable
+fun OverlayBottomSheet(
+    show: Boolean,
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    startAction: @Composable (() -> Unit)? = null,
+    endAction: @Composable (() -> Unit)? = null,
+    backgroundColor: Color = BottomSheetDefaults.backgroundColor(),
+    enableWindowDim: Boolean = true,
+    cornerRadius: Dp = BottomSheetDefaults.cornerRadius,
+    sheetMaxWidth: Dp = BottomSheetDefaults.maxWidth,
+    onDismissRequest: (() -> Unit)? = null,
+    onDismissFinished: (() -> Unit)? = null,
+    outsideMargin: DpSize = BottomSheetDefaults.outsideMargin,
+    insideMargin: DpSize = BottomSheetDefaults.insideMargin,
+    defaultWindowInsetsPadding: Boolean = true,
+    dragHandleColor: Color = BottomSheetDefaults.dragHandleColor(),
+    allowDismiss: Boolean = true,
+    enableNestedScroll: Boolean = true,
+    renderInRootScaffold: Boolean = true,
+    dimColor: Color = MiuixTheme.colorScheme.windowDimming,
+    surface: (@Composable BottomSheetSurfaceScope.() -> Modifier)? = null,
+    content: @Composable () -> Unit,
+)
+
+@Composable
+fun WindowBottomSheet(
+    show: Boolean,
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    startAction: @Composable (() -> Unit)? = null,
+    endAction: @Composable (() -> Unit)? = null,
+    backgroundColor: Color = BottomSheetDefaults.backgroundColor(),
+    enableWindowDim: Boolean = true,
+    cornerRadius: Dp = BottomSheetDefaults.cornerRadius,
+    sheetMaxWidth: Dp = BottomSheetDefaults.maxWidth,
+    onDismissRequest: (() -> Unit)? = null,
+    onDismissFinished: (() -> Unit)? = null,
+    outsideMargin: DpSize = BottomSheetDefaults.outsideMargin,
+    insideMargin: DpSize = BottomSheetDefaults.insideMargin,
+    defaultWindowInsetsPadding: Boolean = true,
+    dragHandleColor: Color = BottomSheetDefaults.dragHandleColor(),
+    allowDismiss: Boolean = true,
+    enableNestedScroll: Boolean = true,
+    content: @Composable () -> Unit,
+)
+```
+
+Minimal call:
+```kotlin
+var showSheet by remember { mutableStateOf(false) }
+
+OverlayBottomSheet(
+    show = showSheet,
+    title = "Select Option",
+    onDismissRequest = { showSheet = false },
+) {
+    // Sheet content
+}
+```
+
+---
+
+## List Popups
+
+**Module:** `miuix-ui`  
+**Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/overlay/OverlayListPopup.kt`, `window/WindowListPopup.kt`, `basic/ListPopup.kt`  
+**Imports:**
+```kotlin
+import top.yukonga.miuix.kmp.overlay.OverlayListPopup
+import top.yukonga.miuix.kmp.window.WindowListPopup
+import top.yukonga.miuix.kmp.basic.ListPopupColumn
+import top.yukonga.miuix.kmp.basic.ListPopupDefaults
+import top.yukonga.miuix.kmp.basic.PopupPositionProvider
+```
+
+```kotlin
+@Composable
+fun OverlayListPopup(
+    show: Boolean,
+    popupModifier: Modifier = Modifier,
+    popupPositionProvider: PopupPositionProvider = ListPopupDefaults.DropdownPositionProvider,
+    alignment: PopupPositionProvider.Align = PopupPositionProvider.Align.Start,
+    enableWindowDim: Boolean = true,
+    onDismissRequest: (() -> Unit)? = null,
+    onDismissFinished: (() -> Unit)? = null,
+    maxHeight: Dp? = null,
+    minWidth: Dp = ListPopupDefaults.MinWidth,
+    renderInRootScaffold: Boolean = true,
+    content: @Composable () -> Unit,
+)
+
+@Composable
+fun WindowListPopup(
+    show: Boolean,
+    popupModifier: Modifier = Modifier,
+    popupPositionProvider: PopupPositionProvider = ListPopupDefaults.DropdownPositionProvider,
+    alignment: PopupPositionProvider.Align = PopupPositionProvider.Align.Start,
+    enableWindowDim: Boolean = true,
+    onDismissRequest: (() -> Unit)? = null,
+    onDismissFinished: (() -> Unit)? = null,
+    maxHeight: Dp? = null,
+    minWidth: Dp = ListPopupDefaults.MinWidth,
+    content: @Composable () -> Unit,
+)
+```
+> [!TIP]
+> Use `ListPopupColumn` inside `content` to automatically size the popup width according to the widest child item.
+
+---
+
+## Snackbars
+
+**Module:** `miuix-ui`  
+**Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/Snackbar.kt`  
+**Imports:**
+```kotlin
+import top.yukonga.miuix.kmp.basic.Snackbar
+import top.yukonga.miuix.kmp.basic.SnackbarHost
+import top.yukonga.miuix.kmp.basic.SnackbarHostState
+import top.yukonga.miuix.kmp.basic.SnackbarDuration
+import top.yukonga.miuix.kmp.basic.SnackbarResult
+```
+
+```kotlin
+@Composable
+fun SnackbarHost(
+    state: SnackbarHostState,
+    modifier: Modifier = Modifier,
+    canSwipeToDismiss: Boolean = true,
+    content: @Composable (SnackbarData) -> Unit = { Snackbar(it) },
+)
+
+@Composable
+fun Snackbar(
+    data: SnackbarData,
+    modifier: Modifier = Modifier,
+    cornerRadius: Dp = SnackbarDefaults.CornerRadius,
+    colors: SnackbarColors = SnackbarDefaults.snackbarColors(),
+    insideMargin: PaddingValues = SnackbarDefaults.InsideMargin,
+)
+```
+
+Minimal call:
+```kotlin
+val snackbarHostState = remember { SnackbarHostState() }
+val scope = rememberCoroutineScope()
+
+// In Scaffold:
+Scaffold(
+    snackbarHost = { SnackbarHost(snackbarHostState) }
+) {
+    // Trigger snackbar:
+    Button(onClick = {
+        scope.launch {
+            snackbarHostState.showSnackbar("Saved successfully")
+        }
+    }) {
+        Text("Save")
+    }
+}
+```
