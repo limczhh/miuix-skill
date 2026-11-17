@@ -78,6 +78,11 @@ The manifest entry is placed on the `<uses-sdk>` element, not on a Glass composa
 
 Use this only for the `minSdk < 33` compatibility decision above; it does not make the Android blur implementation available on older releases.
 
+**AAR metadata and compileSdk constraints (`0.9.5-beta01`):**
+The published `0.9.5-beta01` Android AAR artifacts declare `minCompileSdk = 37.2` in `META-INF/com/android/build/gradle/aar-metadata.properties`. If the consuming Android project uses `compileSdk = 36` or standard `compileSdk = 37` without preview minor support, AGP will fail compilation with `The minCompileSdk (37.2) ... is greater than this module's compileSdkVersion`. To resolve this in pure Android projects:
+1. In `app/build.gradle.kts`: configure `compileSdkMinor = 2` inside the `android {}` block (when targeting SDK 37).
+2. Or in `gradle.properties`: add `android.suppressUnsupportedCompileSdk=37.2` to bypass the AGP check.
+
 ## MiuixTheme Setup
 
 Use `ThemeController` for runtime system dark mode and dynamic-color behavior. Do not choose `lightColorScheme()` merely for convenience, because that fixes the app to a light scheme; use a fixed `lightColorScheme()`/`darkColorScheme()` pair only for an intentional fixed palette, a light-only product, or deterministic preview/test content.

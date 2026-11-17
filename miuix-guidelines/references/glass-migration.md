@@ -28,7 +28,7 @@ These are migration candidates, not aliases or mandatory replacements. Verify ex
 | Wide fixed header / custom `SmallTopAppBar` composition | `GlassTopAppBar(expandable = false)` when its layout fits | Fixed-title intent and content inset. Keep a special hero header if its structure matters. |
 | `NavigationBar` / `FloatingNavigationBar` | `GlassNavigationBar` | One destination model, selection and route callbacks; convert item models and revise component-owned bottom spacing. |
 | Ordinary `NavigationRail` | `GlassNavigationRail` | Same destination owner, but a **different overlay/morph layout** and separate Glass rail state; revise content clearance and title overlap. |
-| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Same pager owner; callbacks become `selectedIndex` / `onSelect`. Segmented variant adds horizontal drag and requires non-null `Backdrop`. |
+| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Same pager owner; callbacks become `selectedIndex` / `onSelect`. Bind `selectedIndex` to `pagerState.targetPage` to prevent indicator rebound on touch release. Segmented variant self-downgrades to opaque resting track and bloom stroke when blur is disabled (pass an unrecorded dummy `Backdrop` or inherit top-bar context; no need to revert to ordinary tabs). |
 | `IconButton` | `GlassIconButton` | Same action/description. Inside `GlassTopAppBar`, inherit its material by default; outside it, supply the intended backdrop. Beta01 has no `enabled` parameter: retain an ordinary control or a verified semantic adapter when disabling is required; a no-op callback alone does not preserve disabled semantics. |
 | `FloatingActionButton` / `FloatingToolbar` | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Existing Scaffold slots, visibility/action ownership; new shape/material and `surfaceAlpha` parameters. |
 | `OverlayDialog` | Keep it with `glassDialogSurface`, or use `GlassDialog` | Existing show/draft/confirm/finished state and dialog geometry; Glass defaults include their own material/scrim. |
@@ -111,6 +111,28 @@ Here `isWideWindow` comes from the shared application width policy. For a real s
 
 Use explicit `isContentScrolled` when real list overlap/programmatic movement must drive floating state. The visual displacement bridge supplies elastic motion; it is not a replacement for actual list position. `progressiveBlur` is an optional band effect, independent of title blur. Glass owns its button material and band; remove the old ordinary bar background where the Glass bar replaces it. `expandable = false` avoids stacking a hidden large Glass title behind another visible small-title component.
 
+### Child controls, overscroll motion, and Pager state linkage
+
+When placing `GlassTabRow`, `GlassSegmentedTabRow`, or custom pill actions inside `GlassTopAppBar(bottomContent = ...)` or as a pinned header strip:
+
+1. **Overscroll rebound linkage**: Mirror `GlassTopAppBar`'s internal material float by taking the maximum of scrolled state and overscroll ramp:
+   ```kotlin
+   val ramp = GlassTopAppBarDefaults.collapseRamp(scrollBehavior)
+   val scrolledProgress by animateFloatAsState(
+       targetValue = if (listState.canScrollBackward) 1f else 0f,
+       animationSpec = GlassMotion.topBarButtonFloat(),
+   )
+   val surfaceAlpha by remember(scrolledProgress, scrollBehavior, ramp) {
+       derivedStateOf {
+           val elastic = if (scrollBehavior?.state?.overscrollOffset != 0f) ramp.value else 0f
+           maxOf(scrolledProgress, elastic)
+       }
+   }
+   ```
+   This ensures child glass controls spring and reveal their stroke and material dynamically during vertical pull-down overscroll, rather than remaining flat or snapping abruptly.
+
+2. **Pager state binding and indicator stability**: When binding `GlassSegmentedTabRow` to `HorizontalPager`, always bind `selectedIndex = pagerState.targetPage` rather than `pagerState.currentPage`. Because `GlassSegmentedTabRow` increments its internal `settleGeneration` counter to align the sliding indicator immediately upon pointer release, binding `currentPage` (which updates only after the pager finishes scrolling or crosses the halfway threshold) pulls the sliding indicator backward toward the previous page before re-animating forward.
+
 ## Keep ordinary and Glass navigation together
 
 Keep the destination data, selected route, list/pager state and callback outside presentation branches. Adapt the same destination model into the family-specific item type:
@@ -181,7 +203,7 @@ Distinguish **presentation family** from **effect capability**:
 
 - Ordinary/Glass selection belongs to the shell/shared presentation owner. Add a saved user option only when the product asks for one; otherwise a scoped fixed policy is enough.
 - Effect permission/support decides whether the selected family samples a backdrop. Nullable-backdrop components can retain their geometry with opaque fill. A low-level `glassPanel` defaults only to clipping when fallback is omitted, so custom panels must supply their readable fallback.
-- `GlassSegmentedTabRow` and low-level `Modifier.glass` require a non-null backdrop; use an explicit supported branch or another ordinary/Glass tab presentation when sampling is off. Never pass a fake null or treat `alpha = 0f` as disabling blur.
+- Distinguish low-level `Modifier.glass` from composed `GlassSegmentedTabRow`: `Modifier.glass` requires a non-null Backdrop and active runtime shader. `GlassSegmentedTabRow` requires a non-null `Backdrop` in its signature, but internally self-downgrades to its solid `restingTrackColor`, indicator, and bloom stroke when `runtimeShaderSupported` is false or backdrop is unrecorded. When disabling blur effects, pass a dummy `rememberLayerBackdrop()` (or inherit `LocalGlassTopAppBarContext`) to preserve the pill-segmented presentation without reverting to legacy underline tabs.
 - Keep one canonical selected route, pager, scroll behavior, form model, draft and loading owner. Keep family-specific visual state only where required, for example Glass rail expansion.
 - For an open popup, latch its chosen family/host for the current session through dismissal completion. A style change must not recreate the editor, discard its draft, or move it between Window and Overlay mid-animation. Apply the new policy at the next session, or explicitly close then switch after completion.
 - Remove superseded blur/press/layout copies once all callers have moved; keep the ordinary implementation only when it still serves the chosen fallback/coexistence branch. Avoid maintaining two entire page trees.

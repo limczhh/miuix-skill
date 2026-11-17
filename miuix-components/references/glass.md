@@ -182,7 +182,9 @@ GlassFloatingToolbar(backdrop = backdrop) {
 
 These calls belong in the existing `Scaffold` floating slots. Both default `backdrop` to null and use `surfaceAlpha` for material opacity. The toolbar's parameter spelling is `outSidePadding`; do not infer ordinary parameter names.
 
-`GlassTabRow` and `GlassSegmentedTabRow` take `tabs`, `selectedIndex`, `onSelect`, and `backdrop`. **Only GlassTabRow accepts a nullable backdrop**; the segmented variant requires `Backdrop`, including in a product with an effects-off branch. Branch to an appropriate alternate tab presentation when sampling is disabled. The segmented row supports horizontal drag and a morphing indicator; both remain caller-controlled selection surfaces, not pager state owners.
+`GlassTabRow` and `GlassSegmentedTabRow` take `tabs`, `selectedIndex`, `onSelect`, and `backdrop`. While `GlassTabRow` accepts a nullable `Backdrop?`, `GlassSegmentedTabRow` declares a non-null `Backdrop` in its signature. However, `GlassSegmentedTabRow` internally handles `resolvedBackdrop == null` (and `runtimeShaderSupported == false`) by gracefully rendering its opaque `restingTrackColor`, indicator, bloom stroke, and shadow without runtime shaders. When blur effects are disabled, pass a dummy `rememberLayerBackdrop()` (or rely on `LocalGlassTopAppBarContext`) to retain the HyperOS 4 pill segmented presentation; do not branch away to legacy underline tabs merely because sampling is off.
+
+When driving `GlassSegmentedTabRow` with a `HorizontalPager`, always bind `selectedIndex = pagerState.targetPage` (not `pagerState.currentPage`). The segmented row increments internal `settleGeneration` immediately upon pointer release; binding `currentPage` causes the indicator to jump or rebound toward the un-settled page during asynchronous scroll animations.
 
 ### Glass icon dropdown menu
 

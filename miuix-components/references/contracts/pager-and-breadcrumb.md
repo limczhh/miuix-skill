@@ -64,6 +64,10 @@ Tab-click navigation may use `pagerState.springAnimateToPage(index)` from the sa
 
 Ordinary `TabRow` / `TabRowWithContour` consume horizontal nested scroll and fling only while their row can move in that direction, respect RTL/reverse layout, and disable row scrolling with no scroll range. Check this row/pager handoff before adding a custom consume-all interceptor.
 
+When pairing `HorizontalPager` with `GlassSegmentedTabRow`:
+- Always bind `GlassSegmentedTabRow(selectedIndex = pagerState.targetPage, ...)` rather than `pagerState.currentPage`.
+- `GlassSegmentedTabRow` supports horizontal drag gestures and resets its indicator position via an internal `settleGeneration` counter immediately upon pointer release. Because `pagerState.currentPage` updates only after the pager finishes scrolling or crosses the halfway threshold, passing `currentPage` forces the indicator to snap backward toward the un-settled page on release before springing forward again.
+
 ## Breadcrumb
 
 **Module:** `miuix-ui`
