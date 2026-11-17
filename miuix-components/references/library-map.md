@@ -2,7 +2,7 @@
 
 Use this reference when the task names an unfamiliar source package, asks where a behavior is implemented, or requires a tour of the pinned source tree. For a general explanation of what Miuix provides or which module to use, start with the [Library overview](library-overview.md) instead. This is a source locator, not a component catalog or API contract. Read the row that matches the task, then follow its focused reference; do not read the whole map and every linked document by default.
 
-The map covers the current source areas in the eleven library modules included by Miuix `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`: `miuix-core`, `miuix-ui`, `miuix-preference`, `miuix-material`, `miuix-blur`, `miuix-glass`, `miuix-glass-icons`, `miuix-squircle`, `miuix-icons`, `miuix-nav`, and `miuix-window`. It is complete as a source-area index, not as a symbol catalog. A source directory is not automatically a public import boundary: confirm visibility, package, overload, platform source set, and opt-in requirements before writing code.
+The map covers the current source areas in the eleven library modules included by Miuix `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03`: `miuix-core`, `miuix-ui`, `miuix-preference`, `miuix-material`, `miuix-blur`, `miuix-glass`, `miuix-glass-icons`, `miuix-squircle`, `miuix-icons`, `miuix-nav`, and `miuix-window`. It is complete as a source-area index, not as a symbol catalog. A source directory is not automatically a public import boundary: confirm visibility, package, overload, platform source set, and opt-in requirements before writing code.
 
 ## How to use the map
 
@@ -49,11 +49,11 @@ Only the `Verified API Contracts` reference provides a maintained fast path for 
 | `miuix-nav/nav/transition` | Navigation transitions and transition effects | [miuix-nav guide](miuix-nav.md) | Catalogued |
 | `miuix-nav/nav/gesture` | Navigation gesture integration and gesture-driven transitions | [miuix-nav guide](miuix-nav.md) | Mapped; verify target behavior |
 | `miuix-blur/blur` | Blur modifiers and blur surfaces | [Styling, icons, and effects](styling-icons-and-effects.md) | Catalogued |
-| `miuix-blur/blur/highlight` | Highlight and blur-highlight support | [Styling, icons, and effects](styling-icons-and-effects.md) | Mapped; verify public boundary |
-| `miuix-blur/blur/sensor` | Sensor-backed blur behavior | [Styling, icons, and effects](styling-icons-and-effects.md) | Platform-sensitive; verify source and target |
 | `miuix-blur/blur/internal` | Blur implementation and platform plumbing | [Source verification](source-verification.md) | Internal; do not import directly |
 | `miuix-material/material` | Runtime shader handles, AGSL fragments, Glass material/style/shape/shadow definitions, and edge strokes | [Styling, icons, and effects](styling-icons-and-effects.md) | Catalogued for concepts; verify exact declaration |
 | `miuix-material/material/agsl` | Shared AGSL fragments used by material shaders | [Source verification](source-verification.md) | Mapped; usually lower-level than application code |
+| `miuix-material/material/sensor` | Device tilt state and platform sensor integration | [Styling, icons, and effects](styling-icons-and-effects.md) | Platform-sensitive; migrated from blur/sensor |
+| `miuix-material/material/internal` | Material shaders and edge-stroke implementation | [Source verification](source-verification.md) | Internal; do not import directly |
 | `miuix-glass/glass` | Glass surfaces/modifiers, bars, tabs, buttons, popup anchors and popups, dialogs, sheets, and Glass preferences | [Glass components](glass.md) | Catalogued; exact signature still comes from source |
 | `miuix-glass-icons/icon/glass` | Generated Glass icon vectors and weight variants | [Styling, icons, and effects](styling-icons-and-effects.md) | Catalogued; verify icon name and dependency |
 | `miuix-squircle/squircle` | Squircle shapes and modifiers | [Styling, icons, and effects](styling-icons-and-effects.md) | Catalogued |
@@ -73,8 +73,6 @@ Only the `Verified API Contracts` reference provides a maintained fast path for 
 | The symbol is not covered by the contract sheet | [Source verification](source-verification.md) | Source plus docs/Demo/Example evidence appropriate to the claim |
 | How should several known components form a page? | Hand the composition question to `miuix-guidelines` | Its page skeleton or composition recipe; return here only for exact calls |
 | Is this path public or internal? | [Source verification](source-verification.md) | Visibility, package, source set, and dependency evidence |
-| Does the answer change between a release and current main? | [Source verification](source-verification.md) | The changed declaration in the target source |
-| Is this specifically a `v0.9.3` → `v0.9.4` migration? | [Historical migration notes](release-v0.9.4.md) | The changed declaration in the historical tag |
 
 ## Stop rule
 

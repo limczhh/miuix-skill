@@ -22,7 +22,7 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 ## Icons
 
 - `miuix-ui` includes the seven basic Regular-weight icons: `ArrowRight`, `ArrowUpDown`, `Check`, `Close`, `Search`, `SearchCleanup`, and `Sidebar`.
-- Extended icons require an explicit `miuix-icons` dependency: `top.yukonga.miuix.kmp:miuix-icons:<version>` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:<version>` for Android-only projects.
+- Extended icons require `top.yukonga.miuix.kmp:miuix-icons:0.9.5-beta01` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-beta01` for Android-only projects.
 - Glass icons require the separate `miuix-glass-icons` dependency and are exposed through `MiuixIcons.Glass`. The source package is `top.yukonga.miuix.kmp.icon.glass`; import the requested extension from that package after confirming the icon name exists.
 - Verify every requested name in `docs/guide/icons.md` and its source file. Use `MiuixIcons.Name` for Regular; use `MiuixIcons.Light.Name`, `MiuixIcons.Normal.Name`, `MiuixIcons.Medium.Name`, or `MiuixIcons.Demibold.Name` only when that weight exists in the pinned source.
 - Prefer an existing semantic icon. Do not invent a Material icon name or add a custom vector before checking the basic and extended sets.
@@ -43,13 +43,29 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 - Add `miuix-blur` explicitly; it is not included by `miuix-ui`.
 - On Android, blur requires API 33. Gate shader-backed behavior with the public support check shown by the pinned guide and Example, and preserve a readable non-blurred surface when unsupported.
 - Treat Example blur backdrops and bar helpers as application-specific composition. Copy only the effect and fallback the product actually needs.
+- Import `isRuntimeShaderSupported`, `RuntimeShader`, `RuntimeShaderCache`, `DefaultRuntimeShaderCache` and `LocalRuntimeShaderCache` from `top.yukonga.miuix.kmp.material`; `DeviceTilt` and `rememberDeviceTilt` come from `material.sensor`. `Backdrop` recording/downscale values use `Float`, and `BlurDefaults.MaxBlurRadius` is `100f`.
 
 ### Glass and material boundary
 
-- `miuix-material` is the current home of `RuntimeShader`, `GlassStyle`, `GlassMaterial`, `GlassShape`, `GlassShadow`, `GlassDefaults`, and edge-stroke definitions. The removed `miuix-shader` module is not a valid current dependency or source path.
+- `miuix-material` supplies `RuntimeShader`, `GlassStyle`, `GlassMaterial`, `GlassShape`, `GlassShadow`, `GlassDefaults`, and edge-stroke definitions.
 - `miuix-glass` composes those definitions into `glassPanel`, `glass`, `glassShadow`, `glassSurface`, Glass app bars, navigation, tabs, buttons, popups, dialogs, sheets, and `GlassDropdownPreference`.
 - A Glass component that accepts `Backdrop?` samples recorded content; create it with `rememberLayerBackdrop` and apply `Modifier.layerBackdrop` to an opaque background layer that excludes the Glass surface. A `null` backdrop is an explicit opaque fallback, not an error.
 - `GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` use the Miuix `Scaffold` popup host. Keep them composed while they exit and keep the popup host/scrim out of the backdrop recording. `GlassPopup`, `GlassDropdownPopup`, `GlassTransformPopup`, `GlassSecondaryPopup`, and `GlassIconDropdownMenu` are `BoxScope` components and must share a root box with their anchor. Use [Glass components](glass.md) for the exact host and callback contract.
+
+For an ordinary blurred rim, select `EdgeStrokes`; Glass presets use `GlassEdgeStrokes`. Both use `EdgeStroke` / `EdgeLightSource`. Draw the stroke separately from backdrop effects, using the same shape:
+
+```kotlin
+import top.yukonga.miuix.kmp.blur.blur
+import top.yukonga.miuix.kmp.blur.drawBackdrop
+import top.yukonga.miuix.kmp.material.EdgeStrokes
+import top.yukonga.miuix.kmp.material.edgeStroke
+
+Modifier
+    .drawBackdrop(backdrop = backdrop, shape = { shape }, effects = { blur(20f) })
+    .edgeStroke(shape = shape, stroke = EdgeStrokes.MiddleLight)
+```
+
+`material.rememberTiltLight(base: EdgeLightSource, sensitivity: Float = 0.1f)` returns an `EdgeLightSource`. Use the theme-appropriate preset or verified custom light data; these optical values do not belong in per-page copies.
 
 ### Progressive blur
 

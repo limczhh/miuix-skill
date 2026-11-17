@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "miuix-skills",
-      "description": "Source-grounded Miuix Compose UI skills for exact library contracts and page composition.",
+      "description": "Miuix 0.9.5-beta01 skills for source-verified library contracts and page composition.",
       "source": {
         "source": "url",
         "url": "https://github.com/limczhh/miuix-skill.git",

@@ -50,7 +50,9 @@ In the current source-audit snapshot, `OverlayDialog` and `WindowDialog` both ac
 
 The public `maxWidth` parameter exposes `DialogDefaults.MaxWidth` as the default limit for both dialog wrappers. Use `DialogDefaults.MaxWidth` and `DialogDefaults.CornerRadius` when a product does not have a deliberate design value. Keep the dialog's content and dismissal state controlled by the caller; these parameters do not remove the need for a `Scaffold` ancestor for `OverlayDialog`.
 
-The default large-screen breakpoint is 840 dp wide and 480 dp high. Centered dialogs use the 32 dp `CornerRadius`; bottom-attached dialogs derive a radius from the screen corner and clamp it to 32..48 dp unless `cornerRadius` is supplied. In the current source, `OverlayDialog` additionally exposes `dimColor` and a `surface` slot for a custom `DialogSurfaceScope` modifier; verify the target version before using those newer parameters.
+The default large-screen breakpoint is 840 dp wide and 480 dp high. Centered dialogs use the 32 dp `CornerRadius`; bottom-attached dialogs derive a radius from the screen corner and clamp it to 32..48 dp unless `cornerRadius` is supplied.
+
+`OverlayDialog` / `OverlayBottomSheet` expose `dimColor` and typed `surface` slots. `DialogSurfaceScope` provides radius, animated scrim and scale; `BottomSheetSurfaceScope` provides radius, animated scrim and overscroll-extension status. Their Window counterparts do not expose these slots. Cascading list popups and icon cascading menus have separate Overlay/Window surface overloads taking `(Shape) -> Modifier`. Use the matching [Glass surface helper](glass.md#glass-overlays-and-setting-dropdowns) when adopting Glass without changing the host.
 
 ## Glass overlay boundary
 

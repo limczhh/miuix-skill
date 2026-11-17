@@ -1,6 +1,6 @@
 ---
 name: miuix-guidelines
-description: "Use when designing, composing, reviewing, refactoring, or incrementally evolving a Miuix Compose page, including vague requests such as ‘做个普通页面’、‘像系统设置一样’ or ‘页面太乱了’, when the task involves page skeleton, Scaffold/app-bar/navigation composition, ownership, hierarchy, spacing, settings interactions, UI state/loading/feedback, insets, adaptive behavior, visual consistency, or scroll/refresh gesture coordination. Do not trigger for a standalone exact Miuix API lookup or compile-error diagnosis unless page composition is also involved."
+description: "Use when designing, composing, reviewing, refactoring, or incrementally evolving a Miuix 0.9.5-beta01 Compose page, including vague requests such as ‘做个普通页面’、‘像系统设置一样’ or ‘页面太乱了’, when the task involves page skeleton, Scaffold/app-bar/navigation composition, ownership, hierarchy, spacing, settings interactions, UI state/loading/feedback, insets, adaptive behavior, visual consistency, or scroll/refresh gesture coordination. Do not trigger for a standalone exact Miuix API lookup or compile-error diagnosis unless page composition is also involved."
 ---
 
 # Miuix UI Guidelines
@@ -9,7 +9,7 @@ description: "Use when designing, composing, reviewing, refactoring, or incremen
 
 This Skill defines a Miuix design specification. It governs page structure, ownership, composition, visual hierarchy, settings and popup interactions, UI-facing state/data flow, feedback, and review; it is intentionally a chosen design language, not a claim that Miuix has only one valid visual style or that every page must use one fixed component recipe.
 
-Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS visual language. The companion library's current source-audit snapshot is upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`; exact signatures, imports, defaults, and version-sensitive behavior belong to `miuix-components`. Standard pages use the shared blurred adaptive bar: collapsing large title in compact windows, fixed compact title in wide windows, and opaque fallback when blur is inactive. Target API limits bound optional effects; the Glass component family remains separate and optional.
+Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS visual language. This Skill serves only `0.9.5-beta01`, pinned to release tag `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03`; exact signatures, imports, defaults, and version-sensitive behavior belong to `miuix-components`. Standard pages use the shared blurred adaptive bar: collapsing large title in compact windows, fixed compact title in wide windows, and opaque fallback when blur is inactive. Do not retain older Miuix API branches or introduce another version's recipe. Report a dependency mismatch and apply this baseline only when upgrading is authorized. Runtime/platform capability fallback remains required; the Glass family is optional.
 
 ## Joint decision boundary
 
@@ -20,7 +20,7 @@ Use the two Skills as a handoff, not as two competing page/component guides:
 | Page skeleton, hierarchy, Insets, Scaffold ownership, composition, or gesture ownership | `miuix-guidelines` | Settle the page boundary and component relationship first |
 | Concrete component, parameter, import, module, Defaults, host, lifecycle, or version contract | `miuix-components` | Verify only the symbols the chosen composition will call |
 | Both page design and implementation are involved | `miuix-guidelines` → `miuix-components` → `miuix-guidelines` | Structure first, API contract second, composition review last |
-| Target declaration differs from the maintained catalog | `miuix-components` | Inspect the target's resolved source; a mismatch alone is not `API verification blocked` |
+| Target resolution differs from beta01 | `miuix-components` | Report the unsupported version or local override; do not add an older-version composition branch |
 
 Keep the evidence labels separate: `catalog-verified` describes the maintained pinned snapshot, `target-source-verified` describes the target project's resolved source, and `compile-verified` requires a successful target compilation.
 
@@ -124,6 +124,7 @@ Choose one primary workflow or decision guide below. The mandatory [design-syste
 | Scroll + pull-to-refresh + overscroll + collapsing bar/pager interaction | [Gesture dynamics](references/gesture-dynamics.md) | The page host or migration seam is still unresolved |
 | Pinned or collapsing top bar | [Top bar compositions](references/top-bar-compositions.md) | The page host or gesture chain is still unresolved |
 | Bottom navigation, adaptive rail, or host-owned floating action | [Navigation and action compositions](references/navigation-compositions.md) | Route ownership or adaptive policy is still unresolved |
+| Replace ordinary components with Glass, adapt only a surface, or keep both families | [Glass migration and coexistence](references/glass-migration.md) | Exact beta01 APIs or dependency setup still need `miuix-components` |
 | Explicit Glass shell or backdrop-based page | [Glass compositions](references/glass-compositions.md) | The Glass host/backdrop API still needs exact verification in `miuix-components` |
 | Grouped content, forms, details, dialogs, sheets, menus, or page-scoped overlays | [Content and overlay compositions](references/content-and-overlays.md) | The page boundary or gesture chain is still unresolved |
 | Ambiguous combination of several composition slots | [Page structure and ownership](references/page-structure.md) | Use its decision table to select the narrow guide for the unresolved slot |

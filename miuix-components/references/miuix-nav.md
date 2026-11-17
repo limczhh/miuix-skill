@@ -1,12 +1,12 @@
 # `miuix-nav` Routing and Transitions
 
-Use this reference for route/back-stack architecture in the current source-audit snapshot (`main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`). `miuix-nav` is a self-contained Compose Multiplatform runtime; it replaces the old `miuix-navigation3-ui` module and does not use `androidx.navigation3` scene APIs. This is a whole-module migration: old `androidx.navigation3.*` imports, scene decorators, `NavDisplayTransitionEffects`, and the old transition-spec overloads have no compatibility alias.
+Use this reference for route/back-stack architecture in `v0.9.5-beta01` at `6d2554a850b8960e2616c968263ff64beb5ffb03`. `miuix-nav` is a self-contained Compose Multiplatform runtime with its own `NavKey`, back stack, display and transitions; use its declared APIs rather than Navigation3 scene APIs.
 
 Contents: [route model](#dependency-and-route-model) · [basic display](#minimal-navdisplay) · [state and lifecycle](#saveable-identity-and-lifecycle) · [transitions and gestures](#transitions-and-back-gestures) · [navigation chrome](#keep-routing-separate-from-navigation-chrome) · [v1 boundaries](#v1-boundaries) · [evidence](#evidence-paths)
 
 ## Dependency and route model
 
-Add `top.yukonga.miuix.kmp:miuix-nav:<version>` to `commonMain` or the matching platform source set. A persisted stack uses `kotlinx.serialization`, so annotate the complete route hierarchy and every concrete route key with `@Serializable`.
+Add `top.yukonga.miuix.kmp:miuix-nav:0.9.5-beta01` to `commonMain` or the matching platform source set. A persisted stack uses `kotlinx.serialization`, so annotate the complete route hierarchy and every concrete route key with `@Serializable`.
 
 The consumer project must also enable the Kotlin Serialization compiler plugin; the Miuix library's runtime dependency does not apply that compiler plugin to the application. Use the syntax that matches the target project's plugin management:
 
@@ -120,6 +120,8 @@ The built-in `NavDisplay` installs the shared navigation-event bridge. If a cust
 
 ## Keep routing separate from navigation chrome
 
+In beta01, `NavDisplay` clears focus when the top entry key changes, including while covered entries remain composed. Keep search/IME restoration attached to the active entry and review any older focus-clearing workaround before retaining a duplicate. A consumed pointer release also cancels swipe dismissal rather than completing a route pop.
+
 Use `NavigationBar` or `NavigationRail` for persistent destination chrome, and use `NavDisplay` for the route stack. Hoist the selected destination/back stack before compact/wide branching so resizing does not create two sources of truth. A nested `NavDisplay` is supported, but disable the outer route's swipe with `entry(swipeDismiss = NavSwipeDirection.None)` when the inner stack must own the gesture.
 
 ## v1 boundaries
@@ -135,4 +137,4 @@ The current runtime is deliberately a single flat stack. It does not provide dia
 - Entry state: `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/state/NavEntryViewModel.kt`
 - Integrated example: `example/shared/src/commonMain/kotlin/navigation/` and `AppContent.kt`
 
-The paths above are the evidence boundary for this guide. Open [Source verification](source-verification.md) only when the target version differs or a declaration in this guide is insufficient; do not substitute the deleted `docs/guide/navigation3.md` or infer APIs from another Navigation library.
+The paths above are the evidence boundary for this guide. Open [Source verification](source-verification.md) only when beta01 source is locally modified or a declaration in this guide is insufficient; do not infer APIs from another Navigation library.

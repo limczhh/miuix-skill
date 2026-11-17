@@ -49,7 +49,9 @@ A mature shared wrapper can implement either branch. The ordinary no-refresh bra
 
 Follow the producer callback to its state object and layout/draw consumer. Compare raw drag, damped rebound, real list position, and business loading state using the distinct channels required by the rules. A visual that follows finger movement but snaps on release often lacks spring/reset updates.
 
-If the target supports an app-bar overscroll channel, verify that exact state property in `miuix-components`. If it does not, stop at the ordinary supported nested-scroll integration and report the capability boundary. For example, the inspected `v0.9.4` release lacks the newer app-bar `overscrollOffset` channel. A bridge diagram does not authorize a private-field workaround, a second controller, or an unsolicited dependency upgrade.
+Use beta01's `overScrollVertical(onOffsetChanged = ...)` and `TopAppBarState.overscrollOffset` for the selected rebound-driven presentation. The callback includes spring frames and the zero reset. Verify one producer and the actual layout/draw consumer; do not introduce a private-field workaround or a second controller.
+
+For pager configuration, use the [Pager and breadcrumb contract](../../miuix-components/references/contracts/pager-and-breadcrumb.md). Check the active mode and `userScrollEnabled` together: the CrossAxis override supplies touch recognition, while Native/disabled mode must restore native scrolling. Normalize saved mode values separately from input configuration.
 
 ## Symptom-oriented investigation
 

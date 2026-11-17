@@ -1,6 +1,6 @@
 # Glass Composition Guide
 
-Use this guide only for an explicit Glass-family requirement. Ordinary blurred app bars follow [Top bar compositions](top-bar-compositions.md); they do not require Glass components. Mandatory recording, fallback, and host separation live in [Blur and Glass rules](rules/page-shell.md#blur-and-glass).
+Use this guide for a new Glass composition on the `0.9.5-beta01` baseline. For replacing existing components, a surface-only change, or keeping ordinary and Glass families, start with [Glass migration and coexistence](glass-migration.md). Ordinary blurred app bars follow [Top bar compositions](top-bar-compositions.md); they do not require Glass components. Mandatory recording, fallback, and host separation live in [Blur and Glass rules](rules/page-shell.md#blur-and-glass).
 
 ## Sampling relationship
 
@@ -15,18 +15,11 @@ page owner: one backdrop + one scroll behavior
 
 The selected Glass family determines whether a popup belongs to the Scaffold host or beside an anchor in a root `Box`. Verify that family through [Glass Components](../../miuix-components/references/glass.md); the [popup rules](rules/settings-and-overlays.md#popup-family-and-lifetime) own its application lifetime.
 
-## Pinned small-title composition
+## Fixed title and adaptive rail
 
-When the requested band/material and visible-title layout are separate concerns, a composite top slot can be evaluated:
+Use `GlassTopAppBar(expandable = !isWideWindow)` with the shared window policy when the layout fits. Its compact title can stay visible without composing a second `SmallTopAppBar`. A custom hero header can retain its intentional structure; identify its visible title and scroll/material owner.
 
-```text
-Scaffold.topBar
-└── Box
-    ├── sampling/band layer: GlassTopAppBar with no visible title
-    └── title/actions layer: SmallTopAppBar
-```
-
-This is an application composition option, not a public combined component. The [Glass rules](rules/page-shell.md#blur-and-glass) define its backdrop and connection boundaries. A normal `GlassTopAppBar` is the simpler fit when its title layout already meets the requirement.
+`GlassNavigationRail` belongs in a full-space overlay outside recording. Its state morphs a side panel into a top capsule; page clearance and title overlap follow that progress. This differs from a width-reserving ordinary rail Row. The [migration guide](glass-migration.md#keep-ordinary-and-glass-navigation-together) explains the state/selection handoff, including secondary destinations.
 
 ## API and evidence handoff
 

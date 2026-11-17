@@ -5,7 +5,15 @@
 - **miuix-components**：回答组件库“有什么、真实 API 怎么调用、需要什么模块和宿主”。
 - **miuix-guidelines**：回答页面“如何组织骨架、所有权、层级、Insets 和组件组合”。
 
-仓库根目录只是源码仓库和维护说明，不是第三个 Skill。当前维护的 Miuix 源码审计快照是上游 `main` 的提交 **d8efe1872c08c863a8b33e7044dd2a8b43038032**（位于 `v0.9.4` 之后、尚未对应新的发布版本）；`v0.9.4` 仅作为历史发布版本和迁移对照保留。
+仓库根目录只是源码仓库和维护说明，不是第三个 Skill。两个 Skill **仅服务 Miuix `0.9.5-beta01`**，固定标签 `v0.9.5-beta01`、提交 **6d2554a850b8960e2616c968263ff64beb5ffb03**。依赖示例使用完整 beta 版本号；不维护旧版本 API、兼容分支或历史迁移文档。目标依赖不符时说明范围差异，依赖升级仍按用户授权执行。
+
+## 当前版本与 Glass
+
+- [依赖、主题与平台设置](./miuix-components/references/setup-and-theme.md)：beta01 模块选择、Android API 24/33 边界、主题与宿主。
+- [Glass 替换与共存](./miuix-guidelines/references/glass-migration.md)：旧组件对应关系、仅替换 Overlay 表面、完整组件迁移、普通与 Glass 两套外观共享状态。
+- [Glass 组件与 API 边界](./miuix-components/references/glass.md)：新增侧栏、悬浮按钮/工具栏，以及采样、降级、宿主和参数差异。
+
+普通组件与 Glass 家族都使用 beta01。Glass 可选，运行时效果降级仍需保留；组件替换时遵循强制规范中的采样、交互、状态和宿主要求。文档只保留当前用法，过时内容直接修订或删除，避免追加成多版本百科。
 
 ## 两个 Skill
 
@@ -194,10 +202,8 @@ Skill 会先把这些描述转换成页面骨架、组件语义和需要核对�
 
 ## 证据范围
 
-- 当前源码审计快照：上游 `main`，提交 `d8efe1872c08c863a8b33e7044dd2a8b43038032`
-- 历史发布对照：`v0.9.4`，提交 `39c40f99844227b853f0049a0933b1f3ae6c00ba`
+- 当前开发基线：发布标签 `v0.9.5-beta01`，提交 `6d2554a850b8960e2616c968263ff64beb5ffb03`
 - 上游仓库：[compose-miuix-ui/miuix](https://github.com/compose-miuix-ui/miuix)
-- 当前源码文档源：[Miuix main docs](https://github.com/compose-miuix-ui/miuix/tree/d8efe1872c08c863a8b33e7044dd2a8b43038032/docs)
-- 历史发布文档源：[Miuix v0.9.4 docs](https://github.com/compose-miuix-ui/miuix/tree/39c40f99844227b853f0049a0933b1f3ae6c00ba/docs)
+- 当前源码文档源：[Miuix 0.9.5-beta01 docs](https://github.com/compose-miuix-ui/miuix/tree/6d2554a850b8960e2616c968263ff64beb5ffb03/docs)
 
-如果目标项目使用其他版本，先标记版本差异，再核对目标项目实际源码；不能直接把固定版本合同当成目标项目已验证 API。
+源码检查、目标编译、设备效果分别记录。确认目标实际解析到 beta01，并核对本地替换或修改；固定版本合同不能直接当成目标项目已验证 API。其他 Miuix 版本不在本仓库维护范围内。

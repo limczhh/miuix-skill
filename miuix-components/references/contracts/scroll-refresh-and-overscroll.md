@@ -1,6 +1,6 @@
 # Scroll, Pull-to-Refresh, and Overscroll Contracts
 
-This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: upstream main at commit d8efe1872c08c863a8b33e7044dd2a8b43038032 (v0.9.4-80-gd8efe187, not a release tag). The audited declarations and utility guide match the current local checkout for these files.
+This is a focused, catalog-verified API contract guide for release tag `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03`.
 
 Use when the task needs PullToRefresh, rememberPullToRefreshState, overScrollVertical, TopAppBarState.overscrollOffset, or a nested-scroll chain that combines refresh, overscroll, and a collapsing bar.
 
@@ -74,6 +74,8 @@ val visualContentOffset: Float
 ```
 
 `overscrollOffset` is a temporary damped displacement in pixels. It contributes to `visualContentOffset`; it does not replace `contentOffset`, title collapse state, list position, or refresh state.
+
+The explicit overscroll modifiers use `onOffsetChanged`; they do not accept a `nestedScrollToParent` flag. Inspect a custom dispatch chain before adding connections. `overScrollHorizontal` and `overScrollOutOfBound` expose the same callback boundary.
 
 ## State and callback contract
 

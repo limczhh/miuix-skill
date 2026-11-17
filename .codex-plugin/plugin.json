@@ -1,7 +1,7 @@
 {
   "name": "miuix-skills",
-  "version": "0.9.4",
-  "description": "Source-grounded Miuix Compose UI skills for exact library contracts and page composition.",
+  "version": "0.9.5-beta01",
+  "description": "Miuix 0.9.5-beta01 skills for source-verified library contracts and page composition.",
   "repository": "https://github.com/limczhh/miuix-skill",
   "keywords": [
     "android",

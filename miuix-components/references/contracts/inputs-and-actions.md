@@ -1,6 +1,6 @@
 # Preference, Input, and Button Contracts
 
-This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: upstream main at commit d8efe1872c08c863a8b33e7044dd2a8b43038032 (v0.9.4-80-gd8efe187, not a release tag).
+This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: release tag v0.9.5-beta01 at commit 6d2554a850b8960e2616c968263ff64beb5ffb03.
 
 Use when the task needs SwitchPreference, ArrowPreference, TextField, Button, or TextButton signatures.
 
@@ -13,7 +13,7 @@ Before copying a call:
 - An omitted parameter is not permission to invent an overload or transfer a Material parameter.
 - `catalog-verified` means the pinned declaration was checked; `target-source-verified` requires checking the target's resolved source; `compile-verified` requires compiling the affected target.
 
-The exact source path is part of each contract below. If the target version differs, re-run the source-verification gate before presenting version-sensitive code.
+The exact source path is part of each contract below. Confirm beta01 resolution and inspect local overrides before presenting code; another release is outside this Skill's supported scope.
 ## Preferences
 
 **Module:** `miuix-preference`  

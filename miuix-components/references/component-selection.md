@@ -49,7 +49,7 @@ When the user asks about a component, first match it case-insensitively against 
 | Component | Doc | Demo | Source |
 |-----------|-----|------|--------|
 | Surface | `docs/components/basic/surface.md` | `docs/demo/SurfaceDemo.kt` | `miuix-ui/.../basic/Surface.kt` |
-| TopAppBar / BlurTopAppBar | `docs/components/basic/topappbar.md` | `docs/demo/TopAppBarDemo.kt` | `miuix-ui/.../basic/TopAppBar.kt` |
+| TopAppBar / SmallTopAppBar | `docs/components/basic/topappbar.md` | `docs/demo/TopAppBarDemo.kt` | `miuix-ui/.../basic/TopAppBar.kt` |
 | NavigationBar | `docs/components/basic/navigationbar.md` | `docs/demo/NavigationBarDemo.kt` | `miuix-ui/.../basic/NavigationBar.kt` |
 | FloatingNavigationBar | `docs/components/basic/navigationbar.md` | `docs/demo/NavigationBarDemo.kt` | `miuix-ui/.../basic/NavigationBar.kt` |
 | NavigationRail | `docs/components/basic/navigationrail.md` | `docs/demo/NavigationRailDemo.kt` | `miuix-ui/.../basic/NavigationRail.kt` |
@@ -87,6 +87,8 @@ When the user asks about a component, first match it case-insensitively against 
 |---|---|---|---|
 | GlassTopAppBar | `docs/components/glass/glasstopappbar.md` | `docs/demo/GlassTopAppBarDemo.kt` | `miuix-glass/.../glass/GlassTopAppBar.kt` |
 | GlassNavigationBar | `docs/components/glass/glassnavigationbar.md` | `docs/demo/GlassNavigationBarDemo.kt` | `miuix-glass/.../glass/GlassNavigationBar.kt` |
+| GlassNavigationRail | `docs/components/glass/glassnavigationrail.md` | `docs/demo/GlassNavigationRailDemo.kt` | `miuix-glass/.../glass/GlassNavigationRail.kt` |
+| GlassFloatingActionButton / GlassFloatingToolbar | `docs/components/glass/glassfloatingactionbutton.md`, `glassfloatingtoolbar.md` | matching `docs/demo/` files | `miuix-glass/.../glass/GlassFloatingActionButton.kt`, `GlassFloatingToolbar.kt` |
 | GlassTabRow / GlassSegmentedTabRow | `docs/components/glass/glasstabrow.md` | `docs/demo/GlassTabRowDemo.kt` | `miuix-glass/.../glass/GlassTabRow.kt` |
 | GlassIconButton | `docs/components/glass/glassiconbutton.md` | `docs/demo/GlassIconButtonDemo.kt` | `miuix-glass/.../glass/GlassIconButton.kt` |
 | GlassPopup / GlassPopupItem | `docs/components/glass/glasspopup.md` | `docs/demo/GlassPopupDemo.kt` | `miuix-glass/.../glass/GlassPopup.kt` |
@@ -130,8 +132,9 @@ At the current source-audit snapshot there is no public Miuix `SectionHeader`. `
 - `InputField` accepts `color`; the `SearchBar` wrapper does not. Pass `Color.Transparent` only when another surface, such as a backdrop blur, intentionally owns the capsule background.
 - `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; keep one state owner for a refresh interaction instead of deriving a second refresh state. For exact signatures and mixed top-bar/overscroll topology, read [Scroll, pull-to-refresh, and overscroll contracts](contracts/scroll-refresh-and-overscroll.md).
 - `NavigationRail` has a fixed-layout overload (`expanded = false/true`) and a separate expandable overload with required non-null `state`; `state = null` is not a valid current call shape.
-- `NavigationBarItem` and `FloatingNavigationBarItem` share `NavigationBarItemColors` through `NavigationBarDefaults.navigationBarItemColors()`; the new `colors` parameter appears before `badge`, so positional badge calls must be named.
+- `NavigationBarItem` and `FloatingNavigationBarItem` share `NavigationBarItemColors` through `NavigationBarDefaults.navigationBarItemColors()`; `colors` appears before `badge`; use named arguments for these options.
 - `TabRow` and `TabRowWithContour` contain horizontal nested scroll/overscroll. For a pager containing vertical lists, use the dedicated `PagerGestureUtils` configuration instead of layering an ad-hoc nested-scroll interceptor.
-- Current `PagerInterceptionMode` has only `Native` and `CrossAxis`; do not copy the removed iOS-like/tap-halt modes from older Example or migration material. Cross-Axis requires the same `flingBehavior` on `Modifier.pagerGestureOverride` and `HorizontalPager`, `userScrollEnabled = false`, and `PagerGestureNestedScrollConnection`.
+- `PagerInterceptionMode` has only `Native` and `CrossAxis`. Cross-Axis requires the same `flingBehavior` on `Modifier.pagerGestureOverride` and `HorizontalPager`, `userScrollEnabled = false`, and `PagerGestureNestedScrollConnection`.
+- For an exact pager configuration or `BreadcrumbBar(listState = ...)`, use the [Pager and breadcrumb contract](contracts/pager-and-breadcrumb.md). The breadcrumb row uses its own `LazyListState`.
 - Glass components are an optional family, not aliases for the basic components. Read [Glass components](glass.md) for the `Backdrop` recording boundary. `GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` use the `Scaffold` popup host; the `GlassPopup`/`GlassTransformPopup`/`GlassIconDropdownMenu` family is composed in the caller's root `BoxScope`.
 - `LocalNavTransitionScope.current` is available only inside a `NavDisplay` entry; use its `isRunning` signal for coarse lifecycle decisions and deferred scope properties for frame-level effects.

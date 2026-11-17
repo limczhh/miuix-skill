@@ -1,8 +1,8 @@
 # Top Bar and Scroll Contracts
 
-This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: upstream main at commit d8efe1872c08c863a8b33e7044dd2a8b43038032 (v0.9.4-80-gd8efe187, not a release tag).
+This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: release tag v0.9.5-beta01 at commit 6d2554a850b8960e2616c968263ff64beb5ffb03.
 
-Use when the task needs TopAppBar, SmallTopAppBar, BlurTopAppBar, MiuixScrollBehavior, or rememberTopAppBarState.
+Use when the task needs TopAppBar, SmallTopAppBar, TopAppBarLayout, MiuixScrollBehavior, or rememberTopAppBarState.
 
 Do not use when the task only needs a page-level placement decision; use miuix-guidelines for that.
 
@@ -13,7 +13,7 @@ Before copying a call:
 - An omitted parameter is not permission to invent an overload or transfer a Material parameter.
 - `catalog-verified` means the pinned declaration was checked; `target-source-verified` requires checking the target's resolved source; `compile-verified` requires compiling the affected target.
 
-The exact source path is part of each contract below. If the target version differs, re-run the source-verification gate before presenting version-sensitive code.
+The exact source path is part of each contract below. Confirm beta01 resolution and inspect local overrides before presenting code; another release is outside this Skill's supported scope.
 ## Top app bar
 
 **Module:** `miuix-ui`  
@@ -25,19 +25,19 @@ Miuix imports:
 
 ```kotlin
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
-import top.yukonga.miuix.kmp.basic.BlurTopAppBar
 import top.yukonga.miuix.kmp.basic.SmallTopAppBar
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.rememberTopAppBarState
 ```
 
-`TopAppBar`, `BlurTopAppBar`, and `SmallTopAppBar` are separate public functions. The title is a `String`, the actions use `RowScope`, and `scrollBehavior` is nullable. `BlurTopAppBar` is the current-main variant whose large title blur radius is a required parameter; it is not an extra parameter on `TopAppBar`.
+`TopAppBar` and `SmallTopAppBar` take a `String` title and nullable `ScrollBehavior`; actions use `RowScope`. In beta01 `TopAppBar(expandable = false)` keeps a compact title visible even at rest. `SmallTopAppBar` remains a distinct pinned variant; do not assume identical initial title visibility.
 
 ```kotlin
 @Composable
 fun TopAppBar(
     title: String,
     modifier: Modifier = Modifier,
+    expandable: Boolean = true,
     color: Color = MiuixTheme.colorScheme.surface,
     titleColor: Color = MiuixTheme.colorScheme.onSurface,
     largeTitle: String = title,
@@ -72,27 +72,6 @@ fun SmallTopAppBar(
     bottomContent: @Composable () -> Unit = {},
 )
 
-@Composable
-fun BlurTopAppBar(
-    title: String,
-    largeTitleBlurRadius: Dp,
-    modifier: Modifier = Modifier,
-    color: Color = MiuixTheme.colorScheme.surface,
-    titleColor: Color = MiuixTheme.colorScheme.onSurface,
-    largeTitle: String = title,
-    largeTitleColor: Color = MiuixTheme.colorScheme.onSurface,
-    subtitle: String = "",
-    subtitleColor: Color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
-    navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = {},
-    scrollBehavior: ScrollBehavior? = null,
-    defaultWindowInsetsPadding: Boolean = true,
-    titlePadding: Dp = TopAppBarDefaults.TitlePadding,
-    navigationIconPadding: Dp = TopAppBarDefaults.NavigationIconPadding,
-    actionIconPadding: Dp = TopAppBarDefaults.ActionIconPadding,
-    titleAlpha: () -> Float = { 1f },
-    bottomContent: @Composable () -> Unit = {},
-)
 ```
 
 Minimal call:
@@ -106,7 +85,38 @@ TopAppBar(
 
 Use `SmallTopAppBar` when the bar must remain pinned. Do not pass a composable title or invent a separate `largeTitle` parameter for `SmallTopAppBar`.
 
-Use `BlurTopAppBar` only when the large-title blur is an intentional product effect. Its required `largeTitleBlurRadius` has no default, and the same nested-scroll connection rule applies when it receives `scrollBehavior`.
+For title-transition blur use the public low-level `TopAppBarLayout(titleBlurRadius = ...)` after verifying its full required arguments, or choose `GlassTopAppBar` for an intentional Glass treatment. This differs from backdrop blur behind an ordinary bar.
+
+## Low-level title layout
+
+`TopAppBarLayout` is public in beta01 and is the route for a custom title blur without adopting Glass. It is a layout API with required colors, slots, paddings and nullable `scrollBehavior`; `TopAppBar` remains the smaller ordinary-page entry point. Import `top.yukonga.miuix.kmp.basic.TopAppBarLayout`.
+
+```kotlin
+@Composable
+fun TopAppBarLayout(
+    title: String,
+    color: Color,
+    titleColor: Color,
+    largeTitleColor: Color,
+    subtitle: String,
+    subtitleColor: Color,
+    navigationIcon: @Composable () -> Unit,
+    actions: @Composable () -> Unit,
+    titlePadding: Dp,
+    navigationIconPadding: Dp,
+    actionIconPadding: Dp,
+    scrollBehavior: ScrollBehavior?,
+    modifier: Modifier = Modifier,
+    expandable: Boolean = true,
+    largeTitle: String = title,
+    titleBlurRadius: Dp = 0.dp,
+    defaultWindowInsetsPadding: Boolean = true,
+    titleAlpha: () -> Float = { 1f },
+    bottomContent: @Composable () -> Unit = {},
+)
+```
+
+Read `titleAlpha` in its deferred callback; it is not a saved title state or background opacity. `titleBlurRadius` affects titles during transition, not the sampled scene behind the bar.
 
 ## Collapsing top bar behavior
 

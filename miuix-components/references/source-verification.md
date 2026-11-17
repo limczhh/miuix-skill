@@ -1,6 +1,6 @@
 # Source Verification
 
-Use this reference when an exact API, behavior, dependency, or version claim needs pinned Miuix evidence. It can be the primary reference for an uncovered API or a target-version mismatch. It defines how abbreviated paths in this Skill map to the public Miuix repository, distinguishes maintained catalog evidence from target-project evidence, and pins the current catalog to the upstream `main` snapshot listed below.
+Use this reference when an exact API, behavior, dependency, or version claim needs pinned Miuix evidence. It can be the primary reference for an uncovered beta01 API or a local-source override. It defines how abbreviated paths in this Skill map to the public Miuix repository, distinguishes maintained catalog evidence from target-project evidence, and pins the current catalog to the published prerelease tag listed below.
 
 Read only the evidence workflow, API gate, path table, or supporting-internals entry required by the claim. Do not load the Example-app inventory during an ordinary API check.
 
@@ -11,18 +11,18 @@ Contents: [acquire source evidence](#acquire-source-evidence) · [evidence workf
 Use the strongest source available for the claim, while keeping target-project compatibility separate from the maintained library snapshot:
 
 1. Inspect the target project's declared Miuix dependency, source set, dependency substitution or `includeBuild`, resolved source checkout/commit, and available source attachment first. This determines what can actually compile in that project.
-2. For maintained current-library facts, use a local Miuix checkout only after confirming it is exactly the current audit commit `d8efe1872c08c863a8b33e7044dd2a8b43038032`. For a historical release question, use the requested tag instead.
+2. For maintained current-library facts, use a local Miuix checkout only after confirming it is exactly the current audit commit `6d2554a850b8960e2616c968263ff64beb5ffb03`. Read that commit with `git show` when the working checkout has moved; do not substitute another release.
 3. If no verified local checkout is available, open the pinned raw source URL from [Path Convention](#path-convention).
 4. Do not use the rolling documentation site, an untagged branch, a search-result snippet, or remembered Compose/Material APIs as a substitute for the pinned declaration.
 
-The target project can override the maintained snapshot whenever its declared version, resolved artifact, dependency substitution, or commit differs. In that case, record both the maintained catalog and the target's resolved source; do not present the catalog contract as target-source-verified until the target declaration is checked.
+This Skill supports only `0.9.5-beta01`. If the target resolves another version, report that scope mismatch rather than maintaining an alternate contract. A substituted or modified beta01 source must be inspected before implementation; record its deviations and keep them separate from the pinned catalog. Upgrading the target dependency requires task authorization.
 
 ## Evidence Resolution Workflow
 
 1. Start from the exact declaration or evidence path required by the task. Use a component catalog or Example evidence only when the task does not already identify the symbol or integration point.
 2. Expand abbreviated paths with the table below.
 3. Read only the evidence required by the claim: choose the relevant docs, demo, Example section, or pinned source path; do not load all evidence types by default. The pinned source is required for an API/behavior contract, while docs, demos, and Example code are optional evidence for the specific claim.
-4. For current catalog work, keep all evidence on commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` / upstream `main`. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters. If the user explicitly requests the `v0.9.3 → v0.9.4` migration, follow the single migration reference and use the historical tag only for that task.
+4. For current catalog work, keep all evidence on commit `6d2554a850b8960e2616c968263ff64beb5ffb03` / tag `v0.9.5-beta01`. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters.
 5. Return to the [Delivery Contract](../SKILL.md#delivery-contract) before presenting implementation or validation claims.
 
 If the pinned catalog source cannot be reached, do not silently substitute memory, the rolling documentation site, or an unpinned snippet. Use an already verified local checkout when available; otherwise state that catalog verification is unavailable. If the target-sensitive source is also unavailable, state `API verification blocked` before making a version-sensitive claim.
@@ -49,14 +49,13 @@ Host contract:      ancestor / inset / lifecycle requirement
 Verification:       catalog-verified / target-source-verified / compile-verified / blocked
 ```
 
-`references/api-contracts.md` is the maintained index for the focused contract guides under `references/contracts/`. Treat the index and cards as a copyable route into this gate, not as a second API authority: the pinned declaration wins for the catalog, the resolved target declaration wins for target code, and every target source change invalidates the relevant contract until it is rechecked.
+`references/api-contracts.md` is the maintained index for the focused contract guides under `references/contracts/`. Treat the index and cards as a copyable route into this gate, not as a second API authority: the pinned declaration defines this beta01 catalog; customized beta01 source must be checked separately, and every source change invalidates the relevant target claim until rechecked.
 
 ## Snapshot scope
 
 | Evidence role | Pinned snapshot |
 |---|---|
-| Current catalog and source-audit target | upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` (`v0.9.4-80-gd8efe187`, not a release tag) |
-| Historical release comparison | `v0.9.4` at commit `39c40f99844227b853f0049a0933b1f3ae6c00ba`, with `v0.9.3` comparison only through `references/release-v0.9.4.md` |
+| Current catalog and source-audit target | release tag `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03` (published prerelease) |
 
 This table describes the Skill's maintained evidence scope. It is not a substitute for checking a target project's actual dependency version.
 
@@ -66,10 +65,10 @@ All file paths in the tables below are relative to the Miuix repository root. Re
 
 | Source | URL pattern |
 |--------|------------|
-| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/d8efe1872c08c863a8b33e7044dd2a8b43038032/<file-path>` |
-| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/d8efe1872c08c863a8b33e7044dd2a8b43038032/<dir-path>` |
+| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/<file-path>` |
+| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/6d2554a850b8960e2616c968263ff64beb5ffb03/<dir-path>` |
 
-The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the pinned `docs/**/*.md` file during a version-sensitive task. The current Skill does not maintain standalone references for older Miuix versions.
+The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the pinned `docs/**/*.md` file during a version-sensitive task. Only the pinned beta01 contract is maintained; no historical-release references are bundled.
 
 | Abbreviation | Relative path |
 |---|---|
@@ -128,9 +127,9 @@ These files underpin multiple components. They're read-on-demand, not listed per
 | `miuix-ui/.../basic/ListPopup.kt` | `ListPopupContent`, `ListPopupColumn`, `rememberListPopupLayoutInfo` — internal list popup building blocks |
 | `miuix-ui/.../basic/PullToRefresh.kt` | `PullToRefreshState` threshold/progress state machine and real-gesture gating |
 | `miuix-ui/.../basic/TopAppBar.kt` | `SmallTopAppBar` pinned-state handling and `TopAppBarState.Saver` |
-| `miuix-blur/.../TextureEffect.kt` | Uniform and progressive texture-blur modifier overloads |
-| `miuix-blur/.../ProgressiveBlur.kt` | `ProgressiveBlur` descriptor and edge-fade presets |
-| `miuix-blur/.../BackdropEffects.kt` | Custom backdrop effect-block APIs, including progressive blur |
+| `miuix-blur/.../blur/TextureEffect.kt` | Uniform and progressive texture-blur modifier overloads |
+| `miuix-blur/.../blur/ProgressiveBlur.kt` | `ProgressiveBlur` descriptor and edge-fade presets |
+| `miuix-blur/.../blur/BackdropEffects.kt` | Custom backdrop effect-block APIs, including progressive blur |
 | `miuix-ui/.../utils/Overscroll.kt` | Modifier overscroll API, real-gesture gating, and stale-offset recovery |
 | `miuix-ui/.../utils/OverscrollFactory.kt` | Theme-level `MiuixOverscrollFactory` / `MiuixOverscrollEffect` behavior |
 | `miuix-ui/.../utils/PagerGestureUtils.kt` | Horizontal pager conflict modes, nested-list interception, and spring page navigation |

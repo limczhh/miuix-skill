@@ -2,15 +2,16 @@
 
 This file routes exact Miuix API questions to a narrow contract guide. It is not the contract itself and should not be loaded together with every contract guide.
 
-The maintained snapshot is upstream main at commit d8efe1872c08c863a8b33e7044dd2a8b43038032 (v0.9.4-80-gd8efe187, not a release tag). The pinned declaration remains subordinate to the target project's resolved dependency and compilation.
+The maintained snapshot is release tag v0.9.5-beta01 at commit 6d2554a850b8960e2616c968263ff64beb5ffb03. The pinned declaration remains subordinate to the target project's resolved dependency and compilation.
 
 ## Select one contract guide
 
 | Need | Read |
 |---|---|
 | Application theme or Scaffold host/insets | [Theme and page host](contracts/theme-and-host.md) |
-| TopAppBar, SmallTopAppBar, BlurTopAppBar, or collapsing behavior | [Top bars and scroll](contracts/top-bars-and-scroll.md) |
+| TopAppBar, SmallTopAppBar, TopAppBarLayout, or collapsing behavior | [Top bars and scroll](contracts/top-bars-and-scroll.md) |
 | PullToRefresh, rememberPullToRefreshState, overScrollVertical, or overscroll visual bridge | [Scroll, pull-to-refresh, and overscroll](contracts/scroll-refresh-and-overscroll.md) |
+| Pager gesture override, native fallback, or BreadcrumbBar list state | [Pager and breadcrumb](contracts/pager-and-breadcrumb.md) |
 | Card, SmallTitle, NavigationBar, or FloatingNavigationBar | [Surfaces and navigation](contracts/surfaces-and-navigation.md) |
 | OverlayDialog or WindowDialog | [Overlays](contracts/overlays.md) |
 | SwitchPreference, ArrowPreference, TextField, Button, or TextButton | [Inputs and actions](contracts/inputs-and-actions.md) |
@@ -21,7 +22,7 @@ The maintained snapshot is upstream main at commit d8efe1872c08c863a8b33e7044dd2
 - The declaration block records public parameter names, types, order, and defaults for the pinned snapshot.
 - The import block identifies the Miuix package; target dependency wiring and standard Compose imports still require checking.
 - Docs and Demo explain intent or isolated usage; Example and consumer code explain integration. None replaces the declaration.
-- On a Miuix version change, treat the contract as stale until the source path and declaration are rechecked.
+- Confirm beta01 resolution and recheck any local source override; another Miuix version is outside the supported scope.
 
 ## When the symbol is not listed
 

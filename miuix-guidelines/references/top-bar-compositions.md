@@ -45,7 +45,8 @@ Scaffold(
 ) { padding ->
     val contentPadding = pageContentPadding(padding, extraBottom = 16.dp)
     Box(
-        modifier = if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier,
+        modifier = (if (backdrop != null) Modifier.layerBackdrop(backdrop) else Modifier)
+            .background(MiuixTheme.colorScheme.surface),
     ) {
         LazyColumn(
             state = listState,
@@ -64,7 +65,7 @@ Scaffold(
 }
 ```
 
-The example is the standalone case from [inset rules](rules/page-shell.md#insets-and-content-padding). The helper merges current safe areas; a shell-hosted page additionally supplies its outer handoff and reserved-start policy. Standard refresh content retains list connection ownership. The adaptive helper chooses a collapsing compact-window title or fixed wide-window title through the shared size policy and target-supported API. No unsupported rebound field is assumed.
+The example is the standalone case from [inset rules](rules/page-shell.md#insets-and-content-padding). The helper merges current safe areas; a shell-hosted page additionally supplies its outer handoff and reserved-start policy. Standard refresh content retains list connection ownership. The adaptive helper calls `TopAppBar(expandable = !isWideWindow)` with the same behavior, and the list helper bridges damped `onOffsetChanged` to `state.overscrollOffset` for rebound-driven visuals. No version-compatibility branch, reflection or duplicate controller is needed.
 
 ## Variants to resolve deliberately
 

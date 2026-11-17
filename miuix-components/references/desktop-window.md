@@ -2,7 +2,7 @@
 
 Use this reference only for Miuix's Desktop JVM window frame, native caption bar, dragging, resize, or platform backdrop integration. Do not use it for `WindowDialog`, `WindowBottomSheet`, or `WindowListPopup` from `miuix-ui`; those are common Miuix popup components and remain in [Overlay and Window Components](overlays-and-windows.md).
 
-The current source evidence is Miuix `main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`.
+The current source evidence is Miuix `v0.9.5-beta01` at `6d2554a850b8960e2616c968263ff64beb5ffb03`.
 
 ## Module and platform boundary
 
@@ -12,13 +12,13 @@ The current source evidence is Miuix `main` at `d8efe1872c08c863a8b33e7044dd2a8b
 kotlin {
     sourceSets {
         desktopMain.dependencies {
-            implementation("top.yukonga.miuix.kmp:miuix-window:<version>")
+            implementation("top.yukonga.miuix.kmp:miuix-window:0.9.5-beta01")
         }
     }
 }
 ```
 
-The module depends on `miuix-core`, `miuix-squircle`, and `miuix-ui`, and uses JNA for native integrations. Read the upstream [Window & Title Bar guide](https://github.com/compose-miuix-ui/miuix/blob/d8efe1872c08c863a8b33e7044dd2a8b43038032/docs/guide/miuix-window.md) for Linux JVM module-open and release-packaging requirements.
+The module depends on `miuix-core`, `miuix-squircle`, and `miuix-ui`, and uses JNA for native integrations. Read the upstream [Window & Title Bar guide](https://github.com/compose-miuix-ui/miuix/blob/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/guide/miuix-window.md) for Linux JVM module-open and release-packaging requirements.
 
 ## Public family
 
@@ -88,7 +88,9 @@ fun MiuixCaptionBar(
 )
 
 @Composable
-fun WindowDraggableArea(modifier: Modifier = Modifier)
+fun WindowDraggableArea(
+    modifier: Modifier = Modifier,
+)
 ```
 
 `MiuixDialogWindow` follows the same public option set but uses Compose Desktop's dialog types and scope:

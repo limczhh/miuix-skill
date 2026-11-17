@@ -1,6 +1,6 @@
 ---
 name: miuix-components
-description: "Use when working in a Miuix project and a task needs factual library knowledge: mapping a vague UI need to a component family, surveying a source area, checking availability, exact public API signatures, imports, modules, defaults, host or lifecycle behavior, version differences, dependency setup, or source verification. Do not trigger for page composition or visual hierarchy when no library contract is needed."
+description: "Use when developing with Miuix 0.9.5-beta01 and a task needs factual library knowledge: mapping a vague UI need to a component family, surveying a source area, checking availability, exact public API signatures, imports, modules, defaults, host or lifecycle behavior, dependency setup, or source verification. Do not trigger for page composition or visual hierarchy when no library contract is needed."
 ---
 
 # Miuix Components
@@ -9,7 +9,7 @@ description: "Use when working in a Miuix project and a task needs factual libra
 
 Miuix is an independent Compose Multiplatform UI library with a Xiaomi/HyperOS visual language. This Skill has two related jobs: orient the agent inside the Miuix library, and verify the public contract needed by an implementation. It does not prescribe a page template, information hierarchy, or product-specific visual direction; use `miuix-guidelines` for those decisions when that Skill is available.
 
-The maintained source-audit snapshot is upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` (`v0.9.4-80-gd8efe187`), which is newer than the latest `v0.9.4` release and is not itself a released version. The historical `v0.9.4` tag remains available only for migration and target-version comparison. If the target project uses a published or different commit, identify the mismatch before presenting version-sensitive code.
+**This Skill supports only Miuix `0.9.5-beta01`**, release tag `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03`. Use the full beta coordinate in dependencies and examples. Do not maintain older-version contracts or compatibility branches. A project resolving another Miuix version is outside this Skill's supported scope: report the mismatch and apply this baseline only when a dependency upgrade is authorized. Dependency substitution/local changes still require inspection; they do not make this catalog target-source-verified.
 
 ## Joint decision boundary
 
@@ -20,7 +20,7 @@ Use the two Skills as a handoff, not as two competing component catalogs:
 | Page skeleton, hierarchy, Insets, Scaffold ownership, composition, or gesture ownership | `miuix-guidelines` | Settle the page boundary and component relationship first |
 | Concrete component, parameter, import, module, Defaults, host, lifecycle, or version contract | `miuix-components` | Verify only the symbols the chosen composition will call |
 | Both page design and implementation are involved | `miuix-guidelines` → `miuix-components` → `miuix-guidelines` | Structure first, API contract second, composition review last |
-| Target declaration differs from the maintained catalog | `miuix-components` | Inspect the target's resolved source; a mismatch alone is not `API verification blocked` |
+| Target resolution differs from beta01 | `miuix-components` | Report the unsupported version or local override; do not infer compatibility or switch this Skill to another release |
 
 Keep the evidence labels separate: `catalog-verified` describes this Skill's pinned snapshot, `target-source-verified` describes the target project's resolved source, and `compile-verified` requires a successful target compilation.
 
@@ -58,7 +58,7 @@ Do not start an orientation request with the API contract sheet, and do not answ
 
 ## Operating contract
 
-- Treat the pinned Miuix source as the authority for maintained catalog facts. For target-compatible code, the target project's resolved source and dependency graph take precedence after they are inspected.
+- Treat the pinned Miuix source as the authority for maintained catalog facts. Confirm beta01 resolution and inspect its actual dependency graph and local overrides before writing target code.
 - Never infer Miuix names or parameters from Material, Material 3, another Compose library, or a similarly named component.
 - Keep public API, documentation, Demo, Example, and target-project evidence distinct. Example code demonstrates integration; it is not a public API contract.
 - Report catalog evidence, target-source evidence, and compilation as separate facts. Do not use an unqualified `source-verified` label in the final status.
@@ -76,13 +76,13 @@ Use the strongest label actually supported by the evidence:
 | `runtime-verified` | The relevant runtime or device behavior was exercised | Unrelated platforms, configurations, or versions |
 | `API verification blocked` | The target-sensitive declaration cannot be checked because the target source/version evidence is unavailable | Any version-sensitive implementation claim |
 
-When returning an API fact, name the strongest evidence actually checked. A target-version mismatch becomes `API verification blocked` only when the target source cannot be inspected; otherwise continue to `target-source-verified`.
+When returning an API fact, name the strongest evidence actually checked. A version outside beta01 is a scope mismatch, not evidence that source access is blocked. Inspect local overrides of beta01 separately and state any deviation from the pinned contract.
 
 ## Source-first implementation loop
 
 When the task asks for Miuix code, the references are a route into evidence, not a substitute for the pinned source.
 
-1. Inspect the target project's declared Miuix coordinate, platform/source set, dependency substitution or `includeBuild`, resolved source checkout/commit, existing theme, and host before choosing a call. If the target project is unavailable, mark those parts as placeholders.
+1. Inspect the target project's declared Miuix coordinate, platform/source set, dependency substitution or `includeBuild`, resolved source checkout/commit, existing theme, and host before choosing a call. Confirm `0.9.5-beta01`; report an outside-scope version rather than adding compatibility code. If the target project is unavailable, assume this Skill's beta01 baseline and mark target resolution as pending.
 2. Choose one reference route below to locate the component or source area.
 3. Acquire the declaration through [Source verification](references/source-verification.md#acquire-source-evidence), then verify the public package, module, overload, parameters, defaults, opt-in, and host/lifecycle behavior required by the task.
 4. Use docs and Demo for intended usage, and Example or real consumer code only for integrated composition. Do not promote any of them to API authority.
@@ -98,23 +98,23 @@ Start with exactly one primary reference. A link is a route, not an instruction 
 | What is Miuix, what modules or capability layers does it provide, or which dependency should start a task? | [Library overview](references/library-overview.md) | A semantic role or exact symbol still needs to be selected |
 | Survey an unfamiliar Miuix module or source area | [Library map](references/library-map.md) | The map routes to a public component, exact call, or source behavior that the task needs |
 | Identify a component family or public capability | [Component selection](references/component-selection.md) | The selected symbol needs an exact call or host contract |
-| Exact theme or Scaffold call | [Theme and page host contract](references/contracts/theme-and-host.md) | The target version differs or the host contract is incomplete |
-| Exact top-bar or scroll behavior call | [Top bars and scroll contract](references/contracts/top-bars-and-scroll.md) | The target version differs or gesture behavior is also involved |
-| Exact PullToRefresh, overscroll, or refresh/scroll bridge call | [Scroll, pull-to-refresh, and overscroll contract](references/contracts/scroll-refresh-and-overscroll.md) | The target version differs or the page has competing gesture owners |
-| Exact Card, SmallTitle, or navigation call | [Surface and navigation contract](references/contracts/surfaces-and-navigation.md) | The target version differs or page ownership is also involved |
-| Exact dialog/window call | [Overlay and Window contract](references/contracts/overlays.md) | The target version differs or the host/lifecycle contract is incomplete |
-| Exact preference, input, or button call | [Input and action contract](references/contracts/inputs-and-actions.md) | The target version differs or the symbol is not covered |
-| Find the right contract guide for an exact call | [Verified API contract index](references/api-contracts.md) | The symbol is not listed or the target version differs |
-| Exact call for an uncovered API, behavior, or version mismatch | [Source verification](references/source-verification.md) | A component catalog or matching evidence is needed to identify the symbol |
+| Exact theme or Scaffold call | [Theme and page host contract](references/contracts/theme-and-host.md) | The resolved beta01 source is customized or the host contract is incomplete |
+| Exact top-bar or scroll behavior call | [Top bars and scroll contract](references/contracts/top-bars-and-scroll.md) | The resolved beta01 source is customized or gesture behavior is also involved |
+| Exact PullToRefresh, overscroll, or refresh/scroll bridge call | [Scroll, pull-to-refresh, and overscroll contract](references/contracts/scroll-refresh-and-overscroll.md) | The resolved beta01 source is customized or the page has competing gesture owners |
+| Exact CrossAxis pager configuration or BreadcrumbBar list state | [Pager and breadcrumb contract](references/contracts/pager-and-breadcrumb.md) | The task also needs saved-mode normalization |
+| Exact Card, SmallTitle, or navigation call | [Surface and navigation contract](references/contracts/surfaces-and-navigation.md) | The resolved beta01 source is customized or page ownership is also involved |
+| Exact dialog/window call | [Overlay and Window contract](references/contracts/overlays.md) | The resolved beta01 source is customized or the host/lifecycle contract is incomplete |
+| Exact preference, input, or button call | [Input and action contract](references/contracts/inputs-and-actions.md) | The resolved beta01 source is customized or the symbol is not covered |
+| Find the right contract guide for an exact call | [Verified API contract index](references/api-contracts.md) | The symbol is not listed or the resolved beta01 source is customized |
+| Exact call for an uncovered beta01 API, behavior, or local override | [Source verification](references/source-verification.md) | A component catalog or matching evidence is needed to identify the symbol |
 | Dependency, theme, root host, or preview setup | [Project setup and theme](references/setup-and-theme.md) | A migration or uncovered declaration is part of the task |
 | Overlay, Window, dialog, sheet, or popup lifecycle | [Overlay and Window catalog](references/overlays-and-windows.md) | An exact signature or version claim remains |
 | Preference, dropdown, spinner, or anchored menu family | [Preference and menu guide](references/preferences-and-menus.md) | An exact call or version claim remains |
 | Glass surfaces, Glass bars, Glass popups, or backdrop sampling | [Glass components](references/glass.md) | A lower-level material/blur declaration or page-level placement remains |
 | Desktop native window, caption bar, or draggable region | [Desktop window guide](references/desktop-window.md) | The page content or platform packaging question remains |
-| Navigation routes, back stack, transitions, or gestures | [miuix-nav guide](references/miuix-nav.md) | An exact declaration is missing or the task is a version migration |
+| Navigation routes, back stack, transitions, or gestures | [miuix-nav guide](references/miuix-nav.md) | An exact beta01 declaration or local-source customization is unresolved |
 | Color token or component `*Defaults` lookup | [Color semantics and visual lookup](references/color-lookup.md) | The named component is not covered or its source differs |
 | Icons, blur, squircle, material, or platform effect implementation | [Styling, icons, and effects](references/styling-icons-and-effects.md) | The effect requires a version-sensitive source check |
-| `v0.9.3` → `v0.9.4` migration | [Migration notes](references/release-v0.9.4.md) | A changed declaration must be checked in the historical tag |
 
 ### Progressive loading protocol
 

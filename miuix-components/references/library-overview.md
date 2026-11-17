@@ -2,7 +2,7 @@
 
 Use this reference when the task is about the shape of Miuix as a library: what it provides, how its modules relate, which capability layer fits a requirement, or which dependency is likely needed. This is an orientation document, not an API contract. Do not derive a package, overload, default, or host requirement from this overview alone.
 
-The overview is based on the current Miuix source-audit snapshot, upstream `main` at commit `d8efe1872c08c863a8b33e7044dd2a8b43038032` (`v0.9.4-80-gd8efe187`; not a release tag). The repository is a Compose Multiplatform library and marks its APIs as experimental. If the target project uses a published release or another commit, use this map only to choose a route, then verify the target source.
+The overview is based on the current Miuix source-audit snapshot, release tag `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03` (a published prerelease). The repository is a Compose Multiplatform library and marks its APIs as experimental. Only `0.9.5-beta01` is supported. Confirm its actual resolution and inspect local overrides; do not adapt this map into a different-release catalog.
 
 ## The library in layers
 
@@ -23,7 +23,7 @@ The layers are not a required page template. They are a way to locate the capabi
 | `miuix-preference` | Preference rows plus preference-oriented dropdown, spinner, menu, and popup families | The content is a complete setting row with title/summary and a trailing control or selector | It depends on `miuix-ui`; do not use a Preference merely because a page is called “settings” |
 | `miuix-material` | Runtime-shader handles, AGSL fragments, Glass material/style/shape/shadow definitions, and edge strokes | A lower-level render/material type is required directly, or a Glass surface needs a material preset | It is a render-definition layer, not a page component; `miuix-blur` and `miuix-glass` use it transitively |
 | `miuix-blur` | Backdrop sampling, blur, progressive blur, color blending, and runtime capability checks | A product requirement needs a blur/backdrop effect and a fallback for unsupported targets | Android's blur artifact declares `minSdk 33`; verify target setup and runtime support |
-| `miuix-glass` | Glass surfaces, app bars, navigation bars, tabs, buttons, popups, dialogs, sheets, and Glass preferences | The user explicitly wants the optional Glass visual family or a glass surface/interaction | It depends on `miuix-ui`, `miuix-material`, and `miuix-blur`; only the Scaffold-hosted dialog/sheet/preference variants require the Miuix popup host |
+| `miuix-glass` | Glass surfaces, app bars, navigation bars/rail, tabs, buttons, floating actions/toolbars, popups, dialogs, sheets, and Glass preferences | The user wants the optional Glass visual family, migration, or coexistence | It depends on `miuix-ui`, `miuix-material`, and `miuix-blur`; only the Scaffold-hosted dialog/sheet/preference variants require the Miuix popup host |
 | `miuix-glass-icons` | Generated Glass icon declarations exposed through `MiuixIcons.Glass` | The selected Glass visual family needs a matching icon | It is independent from `miuix-icons`; verify the requested name and weight in source |
 | `miuix-squircle` | Squircle shapes and modifiers | A shape is needed independently or a lower-level shape contract is being inspected | `miuix-ui` already exposes this dependency for ordinary UI use; do not add it by habit |
 | `miuix-icons` | Extended Miuix icon declarations | `miuix-ui`'s basic icon set does not contain the needed icon | It is independently consumable; verify the requested icon name and weight in source |
@@ -31,7 +31,7 @@ The layers are not a required page template. They are a way to locate the capabi
 | `miuix-window` | Desktop JVM native window frame, caption bar, dragging, resize, and backdrop integration | A Desktop JVM app needs Miuix window/caption-bar styling | It is `desktopMain` only and is separate from `miuix-ui`'s common `WindowDialog`/popup family |
 | `miuix-core` | Shared icon and utility infrastructure used by other modules | A source path or transitive dependency points here during investigation | It is a support module, not the normal starting point for selecting a page component |
 
-The module list follows the current repository's Gradle settings and getting-started guide. The settings include eleven library modules; `miuix-core` is included because it is a real support/publication module, while `miuix-window` is a Desktop JVM source-set module. `miuix-material` is the current home of the former low-level shader/material layer; do not route current source questions to a removed `miuix-shader` module.
+The module list follows the current repository's Gradle settings and getting-started guide. The settings include eleven library modules; `miuix-core` is included because it is a real support/publication module, while `miuix-window` is a Desktop JVM source-set module. `miuix-material` owns the render/material layer used by blur and Glass.
 
 ## Public capability families
 
@@ -49,7 +49,7 @@ This table is a semantic map. Use it to choose the next route, not to write an i
 | Menus and selectors | dropdown items, spinner, dropdown menu, cascading list popup | `miuix-ui/basic` plus `miuix-preference/menu` and `popup` | [Preference and menu guide](preferences-and-menus.md) |
 | Page-scoped transient surfaces | `OverlayDialog`, `OverlayBottomSheet`, overlay list/menu/popup families | `miuix-ui/overlay` and related public menu/popup packages | [Overlay and Window catalog](overlays-and-windows.md) |
 | Independent window surfaces | `WindowDialog`, `WindowBottomSheet`, window list/menu/popup families | `miuix-ui/window` and related public window packages | [Overlay and Window catalog](overlays-and-windows.md) |
-| Glass visual family | `GlassTopAppBar`, `GlassNavigationBar`, `GlassTabRow`, `GlassIconButton`, `GlassIconDropdownMenu`, Glass popups/dialogs/sheets | `miuix-glass/glass`, with `Backdrop` from `miuix-blur` and definitions from `miuix-material` | [Glass components](glass.md) |
+| Glass visual family | `GlassTopAppBar`, `GlassNavigationBar`, `GlassNavigationRail`, `GlassTabRow`, `GlassIconButton`, `GlassFloatingActionButton`, `GlassFloatingToolbar`, Glass popups/dialogs/sheets | `miuix-glass/glass`, with `Backdrop` from `miuix-blur` and definitions from `miuix-material` | [Glass components](glass.md) |
 | Colors and effects | `Colors`, color spaces, blur, progressive blur, squircle, runtime shader/material definitions | `miuix-ui/theme`, `miuix-ui/color`, `miuix-blur`, `miuix-material`, `miuix-squircle` | [Color semantics and visual lookup](color-lookup.md) or [Styling, icons, and effects](styling-icons-and-effects.md) |
 | Desktop window frame | `MiuixWindow`, `MiuixDialogWindow`, `MiuixCaptionBar`, `WindowDraggableArea` | `miuix-window/window` (`desktopMain`) | [Desktop window guide](desktop-window.md) |
 | Navigation runtime | `NavDisplay`, `NavController`, `NavKey`, transitions, gesture scope | `miuix-nav/nav/*` | [miuix-nav guide](miuix-nav.md) |

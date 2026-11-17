@@ -2,7 +2,7 @@
 
 Use this reference only when the user explicitly asks for glass, frosted, translucent, backdrop-sampled, or liquid-surface UI, or when the target already uses `miuix-glass`. It describes the optional Glass family; it does not replace the ordinary `miuix-ui` component route and does not make glass mandatory for a Miuix page.
 
-The current catalog evidence is Miuix `main` at `d8efe1872c08c863a8b33e7044dd2a8b43038032`. Exact declarations below are catalog-verified against that checkout; a published or substituted target source still has to be checked separately.
+The current catalog evidence is Miuix `v0.9.5-beta01` at `6d2554a850b8960e2616c968263ff64beb5ffb03`. Calls below are catalog-verified against that tag; target resolution and compilation still have to be checked separately. For replacing old components or keeping both families, use the dedicated [Glass migration guide](../../miuix-guidelines/references/glass-migration.md); dependency and platform setup is in [Project setup](setup-and-theme.md).
 
 ## Module boundary
 
@@ -13,7 +13,7 @@ The current catalog evidence is Miuix `main` at `d8efe1872c08c863a8b33e7044dd2a8
 | `miuix-blur` | `Backdrop`, layer recording, blur and progressive blur modifiers | Android blur artifact requires API 33; verify the target's manifest/minSdk boundary |
 | `miuix-glass-icons` | Generated `MiuixIcons.Glass` vectors | Independent optional icon artifact |
 
-For dependency setup and Android fallback behavior, read the current upstream [Glass Surfaces guide](https://github.com/compose-miuix-ui/miuix/blob/d8efe1872c08c863a8b33e7044dd2a8b43038032/docs/guide/glass.md). For material presets, read [Material](https://github.com/compose-miuix-ui/miuix/blob/d8efe1872c08c863a8b33e7044dd2a8b43038032/docs/guide/material.md).
+For dependency setup and Android fallback behavior, read the current upstream [Glass Surfaces guide](https://github.com/compose-miuix-ui/miuix/blob/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/guide/glass.md). For material presets, read [Material](https://github.com/compose-miuix-ui/miuix/blob/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/guide/material.md).
 
 ## Import boundaries
 
@@ -37,8 +37,10 @@ Glass surfaces and popup components expose a `backdrop` boundary. `GlassDialog`,
 |---|---|---|---|
 | Collapsing glass title bar with actions | `GlassTopAppBar` | `docs/components/glass/glasstopappbar.md` | `miuix-glass/.../glass/GlassTopAppBar.kt` |
 | Floating glass destination navigation | `GlassNavigationBar` | `docs/components/glass/glassnavigationbar.md` | `miuix-glass/.../glass/GlassNavigationBar.kt` |
+| Morphing wide-window navigation overlay | `GlassNavigationRail` | `docs/components/glass/glassnavigationrail.md` | `miuix-glass/.../glass/GlassNavigationRail.kt` |
 | Glass tabs in a bar or page | `GlassTabRow`, `GlassSegmentedTabRow` | `docs/components/glass/glasstabrow.md` | `miuix-glass/.../glass/GlassTabRow.kt` |
 | Round glass action or toolbar control | `GlassIconButton` | `docs/components/glass/glassiconbutton.md` | `miuix-glass/.../glass/GlassIconButton.kt` |
+| Floating primary action / action group | `GlassFloatingActionButton`, `GlassFloatingToolbar` | `docs/components/glass/glassfloatingactionbutton.md`, `glassfloatingtoolbar.md` | `GlassFloatingActionButton.kt`, `GlassFloatingToolbar.kt` |
 | Anchored menu or selected popup item | `GlassPopup`, `GlassPopupItem`, `GlassDropdownPopup` | `docs/components/glass/glasspopup.md`, `glassdropdownpopup.md` | `GlassPopup.kt`, `GlassDropdownPopup.kt` |
 | Glass icon menu with cascading child choices | `GlassIconDropdownMenu` | No dedicated component page; integrated Example use | `miuix-glass/.../glass/GlassIconDropdownMenu.kt` |
 | Morphing control into a popup / child popup | `GlassTransformPopup`, `GlassSecondaryPopup` | `docs/components/glass/glasstransformpopup.md`, `glasssecondarypopup.md` | `GlassTransformPopup.kt`, `GlassSecondaryPopup.kt` |
@@ -64,6 +66,8 @@ These public APIs are not page slots, but they are the source route when the tas
 | Reuse the library's pressed-surface scale | `Modifier.glassPress(...)`, `glassPressScale(...)` | `miuix-glass/.../glass/GlassPress.kt` |
 
 The important boundary is `glassPanel` versus `glass`: `glassPanel` accepts `Backdrop?` and can use `fallback`; `glass` requires a non-null `Backdrop` and does not provide the panel fallback. Verify the full declaration before adding material, stroke, shadow, or shading parameters.
+
+`glassPanel` without a supplied fallback only clips when sampling is absent/unsupported; it does not invent an opaque fill. Higher-level components provide their own fill policy. `Modifier.glass(enabled = false)` bypasses the effect; setting `alpha = 0f` does not disable blur. Release-summary names `GlassPanel` and `GlassSurface` are not uppercase composables exported by this tag.
 
 Minimal custom-panel shape:
 
@@ -135,7 +139,9 @@ Scaffold(
 }
 ```
 
-`GlassTopAppBar` uses the same `MiuixScrollBehavior` contract as the ordinary `TopAppBar`: the scrolling owner must attach its `nestedScrollConnection`. `progressiveBlur = true` is an explicit effect choice and requires a supported non-null backdrop; do not turn it on merely because the component is Glass.
+`GlassTopAppBar` uses the same `MiuixScrollBehavior` contract as the ordinary `TopAppBar`: the scrolling owner must attach its `nestedScrollConnection`. It supports `expandable = false` for a fixed compact title; its `titleBlurRadius` controls title transition blur, independently of backdrop effects. `progressiveBlur = true` is an explicit band effect choice and requires a supported non-null backdrop; do not turn it on merely because the component is Glass. For rebound-driven material/band visuals, bridge `overScrollVertical(onOffsetChanged = ...)` to `state.overscrollOffset` using the [scroll contract](contracts/scroll-refresh-and-overscroll.md).
+
+Inside this bar, `GlassIconButton` inherits the bar's backdrop/material/geometry by default (`inheritTopBarMaterial = true`). Standalone icon buttons need their intended backdrop supplied explicitly. The beta01 public icon-button signature has no `enabled` argument; do not copy every ordinary `IconButton` parameter into it.
 
 ### Glass navigation bar
 
@@ -157,9 +163,30 @@ GlassNavigationBar(
 
 The current declaration requires `items`, `selectedIndex`, `onSelect`, and `backdrop` (which may be `null` to use an opaque fill). Keep the navigation bar and any trailing action outside the backdrop recording layer.
 
+### Glass navigation rail
+
+`GlassNavigationRail` uses the same four required inputs as `GlassNavigationBar` and the same `GlassNavigationItem` model. Its separate `GlassNavigationRailState` is created with `rememberGlassNavigationRailState(initialExpanded = true)`. `expanded` is writable; `progress` is the animated morph position to read during layout/drawing. This state is not an ordinary `NavigationRailState` alias.
+
+The rail fills its overlay space, draws an expanded start-side panel, and morphs into a top capsule when collapsed. Place it outside recorded content and coordinate page clearance and top-title overlap from the same rail progress. A width-constrained ordinary rail slot is not a drop-in host. `secondaryItems` appear below a divider while expanded; their callback/selection indices follow the primary items (`items.size + secondaryIndex`). Preserve accessibility of secondary destinations in collapsed/compact layouts. `showToggle`, toggle content descriptions, `scrollState`, badges, and safe-inset handling remain part of the concrete source contract.
+
+### Glass floating actions and tabs
+
+```kotlin
+GlassFloatingActionButton(onClick = onAction, backdrop = backdrop) {
+    actionIconContent()
+}
+GlassFloatingToolbar(backdrop = backdrop) {
+    actionGroupContent()
+}
+```
+
+These calls belong in the existing `Scaffold` floating slots. Both default `backdrop` to null and use `surfaceAlpha` for material opacity. The toolbar's parameter spelling is `outSidePadding`; do not infer ordinary parameter names.
+
+`GlassTabRow` and `GlassSegmentedTabRow` take `tabs`, `selectedIndex`, `onSelect`, and `backdrop`. **Only GlassTabRow accepts a nullable backdrop**; the segmented variant requires `Backdrop`, including in a product with an effects-off branch. Branch to an appropriate alternate tab presentation when sampling is disabled. The segmented row supports horizontal drag and a morphing indicator; both remain caller-controlled selection surfaces, not pager state owners.
+
 ### Glass icon dropdown menu
 
-This is the current-main cascading menu shape. Unlike `GlassDropdownPreference`, it is not a preference row and does not require a `Scaffold` popup host:
+This is the beta01 cascading menu shape. Unlike `GlassDropdownPreference`, it is not a preference row and does not require a `Scaffold` popup host:
 
 ```kotlin
 val menuAnchor = rememberGlassPopupAnchor()
@@ -227,6 +254,8 @@ GlassBottomSheet(
 ```
 
 `GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` are `Scaffold`-hosted popup surfaces. `backdrop` must contain the page behind the surface but not the popup host or scrim. `GlassDropdownPreference` manages expansion internally; the caller owns the selected index. Use ordinary `OverlayDialog`/`OverlayBottomSheet`/`OverlayDropdownPreference` when the product does not require the Glass visual treatment.
+
+For a smaller existing-Overlay migration, `glassDialogSurface(backdrop)` returns an `@Composable DialogSurfaceScope.() -> Modifier` and `glassBottomSheetSurface(backdrop)` returns the corresponding `BottomSheetSurfaceScope` receiver. They compensate animated scrim/coordinates; dialog additionally receives scale, sheet receives `isOverscroll` and suppresses edge stroke on the overscroll extension. These typed helpers differ from `glassSurface(backdrop, visuals)`, whose return type is `@Composable (Shape) -> Modifier` for compatible cascading-popup surface overloads. Window dialogs/sheets do not expose these surface slots in beta01.
 
 ## Do not infer
 
