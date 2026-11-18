@@ -106,6 +106,7 @@ Start with exactly one primary reference. A link is a route, not an instruction 
 | Exact dialog, bottom sheet, popup, or snackbar call | [Overlay, window, and popup contract](references/contracts/overlays.md) | The resolved beta01 source is customized or the host/lifecycle contract is incomplete |
 | Exact preference row, dropdown, spinner, or menu call | [Preference and menu contract](references/contracts/preferences-and-menus.md) | The resolved beta01 source is customized or the symbol is not covered |
 | Exact basic control, button, input, slider, or search bar call | [Input, control, and action contract](references/contracts/inputs-and-actions.md) | The resolved beta01 source is customized or the symbol is not covered |
+| Exact Glass bar, navigation, tab, dialog, sheet, popup, or modifier call | [Glass component contract](references/contracts/glass.md) | The resolved beta01 source is customized or backdrop sampling is also involved |
 | Find the right contract guide for an exact call | [Verified API contract index](references/api-contracts.md) | The symbol is not listed or the resolved beta01 source is customized |
 | Exact call for an uncovered beta01 API, behavior, or local override | [Source verification](references/source-verification.md) | A component catalog or matching evidence is needed to identify the symbol |
 | Dependency, theme, root host, or preview setup | [Project setup and theme](references/setup-and-theme.md) | A migration or uncovered declaration is part of the task |

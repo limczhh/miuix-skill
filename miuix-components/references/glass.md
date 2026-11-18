@@ -2,7 +2,7 @@
 
 Use this reference only when the user explicitly asks for glass, frosted, translucent, backdrop-sampled, or liquid-surface UI, or when the target already uses `miuix-glass`. It describes the optional Glass family; it does not replace the ordinary `miuix-ui` component route and does not make glass mandatory for a Miuix page.
 
-The current catalog evidence is Miuix `v0.9.5-beta01` at `6d2554a850b8960e2616c968263ff64beb5ffb03`. Calls below are catalog-verified against that tag; target resolution and compilation still have to be checked separately. For replacing old components or keeping both families, use the dedicated [Glass migration guide](../../miuix-guidelines/references/glass-migration.md); dependency and platform setup is in [Project setup](setup-and-theme.md).
+The current catalog evidence is Miuix `v0.9.5-beta01` at `6d2554a850b8960e2616c968263ff64beb5ffb03`. For exact API declarations and parameter contracts, see [Glass Component Contracts](contracts/glass.md). For replacing old components or keeping both families, use the dedicated [Glass migration guide](../../miuix-guidelines/references/glass-migration.md); dependency and platform setup is in [Project setup](setup-and-theme.md).
 
 ## Module boundary
 

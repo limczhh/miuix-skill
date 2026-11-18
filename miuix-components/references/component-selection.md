@@ -98,21 +98,21 @@ When the user asks about a component, first match it case-insensitively against 
 
 ### Glass Components (miuix-glass)
 
-| Component | Doc | Demo | Source |
-|---|---|---|---|
-| GlassTopAppBar | `docs/components/glass/glasstopappbar.md` | `docs/demo/GlassTopAppBarDemo.kt` | `miuix-glass/.../glass/GlassTopAppBar.kt` |
-| GlassNavigationBar | `docs/components/glass/glassnavigationbar.md` | `docs/demo/GlassNavigationBarDemo.kt` | `miuix-glass/.../glass/GlassNavigationBar.kt` |
-| GlassNavigationRail | `docs/components/glass/glassnavigationrail.md` | `docs/demo/GlassNavigationRailDemo.kt` | `miuix-glass/.../glass/GlassNavigationRail.kt` |
-| GlassFloatingActionButton / GlassFloatingToolbar | `docs/components/glass/glassfloatingactionbutton.md`, `glassfloatingtoolbar.md` | matching `docs/demo/` files | `miuix-glass/.../glass/GlassFloatingActionButton.kt`, `GlassFloatingToolbar.kt` |
-| GlassTabRow / GlassSegmentedTabRow | `docs/components/glass/glasstabrow.md` | `docs/demo/GlassTabRowDemo.kt` | `miuix-glass/.../glass/GlassTabRow.kt` |
-| GlassIconButton | `docs/components/glass/glassiconbutton.md` | `docs/demo/GlassIconButtonDemo.kt` | `miuix-glass/.../glass/GlassIconButton.kt` |
-| GlassPopup / GlassPopupItem | `docs/components/glass/glasspopup.md` | `docs/demo/GlassPopupDemo.kt` | `miuix-glass/.../glass/GlassPopup.kt` |
-| GlassDropdownPopup | `docs/components/glass/glassdropdownpopup.md` | `docs/demo/GlassDropdownPopupDemo.kt` | `miuix-glass/.../glass/GlassDropdownPopup.kt` |
-| GlassIconDropdownMenu | No dedicated component page; integrated Example use | `example/shared/.../MainPage.kt` | `miuix-glass/.../glass/GlassIconDropdownMenu.kt` |
-| GlassTransformPopup / GlassSecondaryPopup | `docs/components/glass/glasstransformpopup.md`, `glasssecondarypopup.md` | matching `docs/demo/` files | `miuix-glass/.../glass/` |
-| GlassDialog / GlassDialogButton | `docs/components/glass/glassdialog.md` | `docs/demo/GlassDialogDemo.kt` | `miuix-glass/.../glass/GlassDialog.kt` |
-| GlassBottomSheet | `docs/components/glass/glassbottomsheet.md` | `docs/demo/GlassBottomSheetDemo.kt` | `miuix-glass/.../glass/GlassBottomSheet.kt` |
-| GlassDropdownPreference | `docs/components/glass/glassdropdownpreference.md` | `docs/demo/GlassDropdownPreferenceDemo.kt` | `miuix-glass/.../glass/GlassDropdownPreference.kt` |
+| Component | Doc | Demo | Source | Contract |
+|---|---|---|---|---|
+| GlassTopAppBar | `docs/components/glass/glasstopappbar.md` | `docs/demo/GlassTopAppBarDemo.kt` | `miuix-glass/.../glass/GlassTopAppBar.kt` | `contracts/glass.md` |
+| GlassNavigationBar | `docs/components/glass/glassnavigationbar.md` | `docs/demo/GlassNavigationBarDemo.kt` | `miuix-glass/.../glass/GlassNavigationBar.kt` | `contracts/glass.md` |
+| GlassNavigationRail | `docs/components/glass/glassnavigationrail.md` | `docs/demo/GlassNavigationRailDemo.kt` | `miuix-glass/.../glass/GlassNavigationRail.kt` | `contracts/glass.md` |
+| GlassFloatingActionButton / GlassFloatingToolbar | `docs/components/glass/glassfloatingactionbutton.md`, `glassfloatingtoolbar.md` | matching `docs/demo/` files | `miuix-glass/.../glass/GlassFloatingActionButton.kt`, `GlassFloatingToolbar.kt` | `contracts/glass.md` |
+| GlassTabRow / GlassSegmentedTabRow | `docs/components/glass/glasstabrow.md` | `docs/demo/GlassTabRowDemo.kt` | `miuix-glass/.../glass/GlassTabRow.kt` | `contracts/glass.md` |
+| GlassIconButton | `docs/components/glass/glassiconbutton.md` | `docs/demo/GlassIconButtonDemo.kt` | `miuix-glass/.../glass/GlassIconButton.kt` | `contracts/glass.md` |
+| GlassPopup / GlassPopupItem | `docs/components/glass/glasspopup.md` | `docs/demo/GlassPopupDemo.kt` | `miuix-glass/.../glass/GlassPopup.kt` | `contracts/glass.md` |
+| GlassDropdownPopup | `docs/components/glass/glassdropdownpopup.md` | `docs/demo/GlassDropdownPopupDemo.kt` | `miuix-glass/.../glass/GlassDropdownPopup.kt` | `contracts/glass.md` |
+| GlassIconDropdownMenu | No dedicated component page; integrated Example use | `example/shared/.../MainPage.kt` | `miuix-glass/.../glass/GlassIconDropdownMenu.kt` | `contracts/glass.md` |
+| GlassTransformPopup / GlassSecondaryPopup | `docs/components/glass/glasstransformpopup.md`, `glasssecondarypopup.md` | matching `docs/demo/` files | `miuix-glass/.../glass/` | `contracts/glass.md` |
+| GlassDialog / GlassDialogButton | `docs/components/glass/glassdialog.md` | `docs/demo/GlassDialogDemo.kt` | `miuix-glass/.../glass/GlassDialog.kt` | `contracts/glass.md` |
+| GlassBottomSheet | `docs/components/glass/glassbottomsheet.md` | `docs/demo/GlassBottomSheetDemo.kt` | `miuix-glass/.../glass/GlassBottomSheet.kt` | `contracts/glass.md` |
+| GlassDropdownPreference | `docs/components/glass/glassdropdownpreference.md` | `docs/demo/GlassDropdownPreferenceDemo.kt` | `miuix-glass/.../glass/GlassDropdownPreference.kt` | `contracts/glass.md` |
 
 ### Utilities (miuix-ui)
 

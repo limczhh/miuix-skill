@@ -16,6 +16,7 @@ The maintained snapshot is release tag v0.9.5-beta01 at commit 6d2554a850b8960e2
 | Dialogs (Overlay/Window), Bottom sheets (Overlay/Window), List popups, or Snackbar | [Overlays and popups](contracts/overlays.md) |
 | Preference rows (Switch/Arrow/Checkbox/Radio/Slider), Dropdown/Spinner preferences, or Dropdown menus | [Preferences and menus](contracts/preferences-and-menus.md) |
 | Basic controls (Switch, Checkbox, Radio, Slider), Button, TextField, SearchBar, or NumberPicker | [Inputs and actions](contracts/inputs-and-actions.md) |
+| Glass bars, navigation, tabs, dialogs, bottom sheets, popups, or modifiers | [Glass components](contracts/glass.md) |
 
 ## Contract rules
 
