@@ -2,7 +2,7 @@
 
 Use this reference only when the user explicitly asks for glass, frosted, translucent, backdrop-sampled, or liquid-surface UI, or when the target already uses `miuix-glass`. It describes the optional Glass family; it does not replace the ordinary `miuix-ui` component route and does not make glass mandatory for a Miuix page.
 
-The current catalog evidence is Miuix `v0.9.5-beta01` at `6d2554a850b8960e2616c968263ff64beb5ffb03`. For exact API declarations and parameter contracts, see [Glass Component Contracts](contracts/glass.md). For replacing old components or keeping both families, use the dedicated [Glass migration guide](../../miuix-guidelines/references/glass-migration.md); dependency and platform setup is in [Project setup](setup-and-theme.md).
+The maintained evidence is Miuix `v0.9.5-beta01` at `6d2554a850b8960e2616c968263ff64beb5ffb03`. Read the pinned official docs linked from [Glass integration notes](contracts/glass.md) for the selected API; the notes retain sampling, host and effect distinctions. For replacing components or keeping both families, use [Glass migration](../../miuix-guidelines/references/glass-migration.md); dependency and platform setup is in [Project setup](setup-and-theme.md).
 
 ## Module boundary
 
@@ -67,7 +67,7 @@ These public APIs are not page slots, but they are the source route when the tas
 | Configure popup size and appearance | `GlassPopupSizing`, `GlassPopupVisuals` | `miuix-glass/.../glass/GlassPopupSurface.kt` |
 | Reuse the library's pressed-surface scale | `Modifier.glassPress(...)`, `glassPressScale(...)` | `miuix-glass/.../glass/GlassPress.kt` |
 
-The important boundary is `glassPanel` versus `glass`: `glassPanel` accepts `Backdrop?` and can use `fallback`; `glass` requires a non-null `Backdrop` and does not provide the panel fallback. Verify the full declaration before adding material, stroke, shadow, or shading parameters.
+The important boundary is `glassPanel` versus `glass`: `glassPanel` accepts `Backdrop?` and can use `fallback`; `glass` requires a non-null `Backdrop` and does not provide the panel fallback. Their complete [panel](contracts/glass.md#modifierglasspanel) and [material-modifier](contracts/glass.md#modifierglass) declarations cover optional material, stroke, shadow and shading parameters where supported; do not transfer options between the two APIs.
 
 `glassPanel` without a supplied fallback only clips when sampling is absent/unsupported; it does not invent an opaque fill. Higher-level components provide their own fill policy. `Modifier.glass(enabled = false)` bypasses the effect; setting `alpha = 0f` does not disable blur. Release-summary names `GlassPanel` and `GlassSurface` are not uppercase composables exported by this tag.
 
@@ -186,7 +186,7 @@ These calls belong in the existing `Scaffold` floating slots. Both include a def
 
 `GlassTabRow` accepts `Backdrop?`; `GlassSegmentedTabRow` requires a non-null `Backdrop`. To disable segmented-track sampling on a supported runtime, set `surfaceAlpha = 0f`: the default opaque resting track and indicator remain, while material and its stroke are disabled. Unsupported shaders force that material ramp to zero internally. An unrecorded dummy backdrop alone does not trigger fallback. Coordinate parent-context sampling and tab state through the [tab off-state contract](blur-behavior.md#disable-tab-material-explicitly); retaining segmented geometry does not require ordinary underline tabs.
 
-When driving `GlassSegmentedTabRow` with a `HorizontalPager`, always bind `selectedIndex = pagerState.targetPage` (not `pagerState.currentPage`). The segmented row increments internal `settleGeneration` immediately upon pointer release; binding `currentPage` causes the indicator to jump or rebound toward the un-settled page during asynchronous scroll animations.
+For pager-driven selection, keep the application target stable under an intent lock through requested movement, then synchronize from `currentPage` when unlocked. This same [selection coordinator](../../miuix-guidelines/references/navigation-compositions.md#tab-selection-and-page-switching) serves top tabs and bottom navigation. `GlassSegmentedTabRow` settles its draggable indicator on release, making stale selection feedback especially visible; feeding predictive `targetPage` changes directly into it can also cause gesture-time oscillation.
 
 ### Glass icon dropdown menu
 

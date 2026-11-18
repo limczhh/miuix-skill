@@ -51,7 +51,7 @@ Follow the producer callback to its state object and layout/draw consumer. Compa
 
 Use beta01's `overScrollVertical(onOffsetChanged = ...)` and `TopAppBarState.overscrollOffset` for the selected rebound-driven presentation. The callback includes spring frames and the zero reset. Verify one producer and the actual layout/draw consumer; do not introduce a private-field workaround or a second controller.
 
-For pager configuration, use the [Pager and breadcrumb contract](../../miuix-components/references/contracts/pager-and-breadcrumb.md). Check the active mode and `userScrollEnabled` together: the CrossAxis override supplies touch recognition, while Native/disabled mode must restore native scrolling. Normalize saved mode values separately from input configuration.
+For pager configuration, use the [Tab, pager and breadcrumb contract](../../miuix-components/references/contracts/pager-and-breadcrumb.md). Check the active mode and `userScrollEnabled` together: the CrossAxis override supplies touch recognition, while Native/disabled mode must restore native scrolling. Normalize saved mode values separately from input configuration. Top tabs and pager-backed bottom navigation share the [intent-lock coordinator](navigation-compositions.md#tab-selection-and-page-switching): hold a requested target during navigation and follow `currentPage` when unlocked. Investigate edge translation separately through [pager effect ownership](../../miuix-components/references/contracts/pager-and-breadcrumb.md#pager-edge-effect-ownership).
 
 ## Symptom-oriented investigation
 
@@ -62,6 +62,8 @@ For pager configuration, use the [Pager and breadcrumb contract](../../miuix-com
 | Header snaps during rebound | Missing damped/spring bridge | Offset producer through final reset |
 | Indicator finishes but content stays displaced | Business and visual states conflated | Refresh/overscroll state owners |
 | Pager, list, and tab gestures fight | Direction/active-page ownership unclear | Pager and vertical-content chains |
+| Navigation indicator returns to the old tab, or oscillates during drag | Click intent mixed with pager position or predictive target | Intent lock, selected-index observer, currentPage versus targetPage |
+| First/last page moves sideways and reveals background | Pager or ancestor horizontal overscroll | Pager overscrollEffect, theme factory, explicit modifiers and transforms |
 | Drag list closes its sheet | Competing drag/dismiss paths | Sheet and reorder controller configuration |
 | Touch works but wheel/keyboard does not | Input-path-specific effect | Target platform event/scroll implementation |
 

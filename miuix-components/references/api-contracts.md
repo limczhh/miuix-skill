@@ -1,6 +1,6 @@
-# Verified API Contract Index
+# Documentation and Integration Index
 
-Use when the symbol is known but its contract section is not. Open the linked section only; skip this index when the entrypoint already gives the right link. Contracts target `v0.9.5-beta01` / `6d2554a850b8960e2616c968263ff64beb5ffb03`.
+Use when the component is known but its documentation/note route is not. Each linked section points to official Markdown at `v0.9.5-beta01` / `6d2554a850b8960e2616c968263ff64beb5ffb03` and retains only integration distinctions. Read the selected official doc for imports, complete parameters and basic usage; skip this index when that path is already known.
 
 ## Select one contract guide
 
@@ -10,6 +10,7 @@ Use when the symbol is known but its contract section is not. Open the linked se
 | TopAppBar / SmallTopAppBar / custom title layout | [Top bar](contracts/top-bars-and-scroll.md#top-app-bar) / [low-level layout](contracts/top-bars-and-scroll.md#low-level-title-layout) |
 | ScrollBehavior / PullToRefresh / overscroll bridge | [Collapsing behavior](contracts/top-bars-and-scroll.md#collapsing-top-bar-behavior) / [refresh declarations](contracts/scroll-refresh-and-overscroll.md#public-declarations) / [integration topology](contracts/scroll-refresh-and-overscroll.md#choose-one-top-bar-integration-topology) |
 | Pager / BreadcrumbBar | [Pager](contracts/pager-and-breadcrumb.md#pager) / [breadcrumb](contracts/pager-and-breadcrumb.md#breadcrumb) |
+| TabRow / TabRowWithContour | [Ordinary tab rows](contracts/pager-and-breadcrumb.md#ordinary-tab-rows) |
 | Card / SmallTitle / navigation bars | [Surface and navigation sections](contracts/surfaces-and-navigation.md) |
 | Preference row / dropdown / menu | [Preference and menu sections](#preferences-and-menus) |
 | Basic control / input / button | [Input and action sections](#inputs-and-actions) |
@@ -65,11 +66,11 @@ Use when the symbol is known but its contract section is not. Open the linked se
 | GlassSecondaryPopup / GlassPopupItem | [Child menu](contracts/glass.md#glasssecondarypopup) / [menu row](contracts/glass.md#glasspopupitem) |
 | GlassIconButton | [Icon button](contracts/glass.md#glassiconbutton) |
 | GlassFloatingActionButton / GlassFloatingToolbar | [Floating actions](contracts/glass.md#glassfloatingactionbutton--glassfloatingtoolbar) |
-| glassPanel / glass | [Surface modifiers](contracts/glass.md#low-level-glass-panel-modifiers) |
+| glassPanel / glass | [Nullable panel with fallback](contracts/glass.md#modifierglasspanel) / [non-null material modifier](contracts/glass.md#modifierglass); [call shapes](contracts/glass.md#call-shapes) |
 | Rail state / other surface adapters, popup anchors or press helpers | [Rail state](glass.md#glass-navigation-rail) / [support API source routes](glass.md#lower-level-glass-surfaces-and-support-types); inspect uncovered declarations as needed |
 
-## Contract rules
+## Lookup and maintenance
 
-Use the [covered-contract path](source-verification.md#covered-contract-path) for covered standard-beta01 calls. Inspect source only for a gap, override or contradiction. Declarations control library facts; usage examples and this router do not add parameters or defaults. Mark an intentional declaration excerpt as partial rather than suggesting it is complete.
+Use the [documentation-first path](source-verification.md#documentation-first-path). Inspect source for a gap, override or contradiction. Local notes and this router do not establish unlisted parameters or defaults. Mark a declaration excerpt as partial rather than suggesting it is complete.
 
-For navigation runtime use [miuix-nav](miuix-nav.md). For an uncovered symbol use [source verification](source-verification.md#acquire-source-evidence), locating its source through [library map](library-map.md) only if necessary. Extend a contract for a demonstrated integration need, not as an exhaustive library dump.
+For navigation runtime use [miuix-nav](miuix-nav.md). Locate an uncertain symbol through [source verification](source-verification.md#acquire-source-evidence), using [library map](library-map.md) only if its source area is unknown. Add a local note for a demonstrated integration need; link official documentation instead of copying another component's manual.

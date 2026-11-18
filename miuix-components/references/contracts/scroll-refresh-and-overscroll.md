@@ -1,16 +1,6 @@
-# Scroll, Pull-to-Refresh, and Overscroll Contracts
+# Scroll, Pull-to-Refresh, and Overscroll Integration Notes
 
-This is a focused, catalog-verified API contract guide for release tag `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03`.
-
-Use when the task needs PullToRefresh, rememberPullToRefreshState, overScrollVertical, TopAppBarState.overscrollOffset, or a nested-scroll chain that combines refresh, overscroll, and a collapsing bar.
-
-Do not use this guide to decide the page's shell, content hierarchy, or whether a refresh interaction belongs on the page; use miuix-guidelines for those decisions first.
-
-Before copying a call:
-
-- Check the target project's resolved Miuix version, source set, and dependency substitution.
-- Treat the declaration, state ownership, nested-scroll topology, and visual callback as one contract.
-- `catalog-verified` means the pinned declaration was checked; `target-source-verified` requires checking the target's resolved source; `compile-verified` requires compiling the affected target.
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta01 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
 ## Public declarations
 
@@ -22,49 +12,7 @@ Before copying a call:
 - `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/TopAppBar.kt`
 - `docs/guide/utils.md`
 
-Miuix imports:
-
-```kotlin
-import top.yukonga.miuix.kmp.basic.PullToRefresh
-import top.yukonga.miuix.kmp.basic.PullToRefreshState
-import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
-import top.yukonga.miuix.kmp.basic.ScrollBehavior
-import top.yukonga.miuix.kmp.basic.Scaffold
-import top.yukonga.miuix.kmp.basic.TopAppBar
-import top.yukonga.miuix.kmp.basic.rememberPullToRefreshState
-import top.yukonga.miuix.kmp.utils.overScrollVertical
-```
-
-Exact public declarations:
-
-```kotlin
-@Composable
-fun PullToRefresh(
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
-    modifier: Modifier = Modifier,
-    pullToRefreshState: PullToRefreshState = rememberPullToRefreshState(),
-    contentPadding: PaddingValues = PaddingValues(0.dp),
-    topAppBarScrollBehavior: ScrollBehavior? = null,
-    color: Color = PullToRefreshDefaults.color,
-    circleSize: Dp = PullToRefreshDefaults.circleSize,
-    refreshTexts: List<String> = PullToRefreshDefaults.refreshTexts,
-    refreshTextStyle: TextStyle = PullToRefreshDefaults.refreshTextStyle,
-    onPullProgress: ((Float) -> Unit)? = null,
-    content: @Composable () -> Unit,
-)
-
-@Composable
-fun rememberPullToRefreshState(
-    refreshThreshold: Float = 0.25f,
-): PullToRefreshState
-
-@Stable
-fun Modifier.overScrollVertical(
-    onOffsetChanged: ((Float) -> Unit)? = null,
-    isEnabled: () -> Boolean = { true },
-): Modifier
-```
+Read the pinned documentation/source: [PullToRefresh / rememberPullToRefreshState](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/basic/pulltorefresh.md), [Modifier.overScrollVertical](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/guide/utils.md).
 
 `TopAppBarState` exposes the visual overscroll bridge used by the official utility guide:
 

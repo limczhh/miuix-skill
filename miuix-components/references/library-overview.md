@@ -40,9 +40,9 @@ This table is a semantic map. Use it to choose the next route, not to write an i
 | Capability | Representative families | Typical module/source route | Next reference |
 |---|---|---|---|
 | Page host and theme | `MiuixTheme`, `ThemeController`, `Scaffold` | `miuix-ui/theme`, `miuix-ui/basic` | [Project setup and theme](setup-and-theme.md) |
-| Top-level navigation chrome | `TopAppBar`, `SmallTopAppBar`, `NavigationBar`, `FloatingNavigationBar`, `NavigationRail`, `TabRow`, `BreadcrumbBar` | `miuix-ui/basic` | [Component selection](component-selection.md), then [Verified API contracts](api-contracts.md) |
+| Top-level navigation chrome | `TopAppBar`, `SmallTopAppBar`, `NavigationBar`, `FloatingNavigationBar`, `NavigationRail`, `TabRow`, `BreadcrumbBar` | `miuix-ui/basic` | [Component selection](component-selection.md), then [Documentation and integration index](api-contracts.md) |
 | Surfaces and grouping | `Surface`, `Card`, `SmallTitle`, `Divider`, `BasicComponent` | `miuix-ui/basic` | [Component selection](component-selection.md), then [Color semantics and visual lookup](color-lookup.md) |
-| Actions and input | `Button`, `TextButton`, `IconButton`, `TextField`, `SearchBar`, `Switch`, `Checkbox`, `RadioButton`, `Slider`, `NumberPicker` | `miuix-ui/basic` | [Component selection](component-selection.md), then [Verified API contracts](api-contracts.md) |
+| Actions and input | `Button`, `TextButton`, `IconButton`, `TextField`, `SearchBar`, `Switch`, `Checkbox`, `RadioButton`, `Slider`, `NumberPicker` | `miuix-ui/basic` | [Component selection](component-selection.md), then [Documentation and integration index](api-contracts.md) |
 | Status and interaction feedback | `ProgressIndicator`, `Snackbar`, `PullToRefresh`, `Tooltip`, `Badge`, scroll bars | `miuix-ui/basic` | [Component selection](component-selection.md), then source verification for uncovered contracts |
 | Floating actions | `FloatingActionButton`, `FloatingToolbar` | `miuix-ui/basic` and `Scaffold` host slots | [Component selection](component-selection.md), then the guidelines composition route for placement |
 | Preference rows | `ArrowPreference`, `SwitchPreference`, `CheckboxPreference`, `RadioButtonPreference`, `SliderPreference`, range/selector preferences | `miuix-preference/preference` | [Preference and menu guide](preferences-and-menus.md) |

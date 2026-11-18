@@ -9,7 +9,7 @@ description: "Use to design, compose, review or refactor Miuix 0.9.5-beta01 page
 
 Serve only **Miuix `0.9.5-beta01`**, pinned to `v0.9.5-beta01` / `6d2554a850b8960e2616c968263ff64beb5ffb03`. Do not introduce older-version recipes. Report dependency mismatches; changing dependencies still needs task authorization. Runtime/platform fallbacks remain applicable and Glass is optional.
 
-This skill owns page composition and a chosen design profile. `miuix-components`, when available, owns exact symbols, defaults, modules and library behavior. For work involving both, settle structure here, verify the selected calls there, then check their composition. An isolated API question needs only the component skill.
+This skill owns page composition and a chosen design profile. `miuix-components`, when available, resolves selected APIs through pinned official docs, integration notes and source when needed. For work involving both, settle structure here, resolve selected calls there, then check their composition. An isolated API question needs only the component skill.
 
 ## Rules and guides
 
@@ -41,7 +41,7 @@ Resolve semantic content after the boundary: a page label alone does not mandate
 | Review, polish, “页面太乱” | [UI review](references/ui-review-workflow.md) |
 | Grouping, colors, Defaults or system-settings appearance | [Design language](references/design-language.md) |
 | Pinned/collapsing/blurred top bar | [Top bar](references/top-bar-compositions.md) |
-| Destination bar/rail or floating actions | [Navigation](references/navigation-compositions.md) |
+| Destination bar/rail, tabs/pager selection or floating actions | [Navigation](references/navigation-compositions.md) |
 | Scroll, refresh, rebound or pager conflict | [Gesture dynamics](references/gesture-dynamics.md) |
 | Settings, forms, search, dialogs, sheets or menus | [Content and overlays](references/content-and-overlays.md) |
 | New explicit Glass composition | [Glass composition](references/glass-compositions.md) |
@@ -51,7 +51,7 @@ Start with one guide plus applicable rules; open another only for an unresolved 
 
 ## Implement and review
 
-Reuse existing route, state, inset and host owners. For coupled gestures, trace actual modifier connections and the wrapper's callers before changing order or adding a bridge. Apply the chosen composition using the component skill's covered-contract path, escalating only uncertain library facts to source inspection.
+Reuse existing route, state, inset and host owners. For coupled gestures, trace actual modifier connections and the wrapper's callers before changing order or adding a bridge. Apply the chosen composition using the component skill's documentation-first path, escalating only uncertain library facts to source inspection. Avoid repeating API declarations or component tutorials in design guides.
 
 Check the affected rules, behavior continuity and exceptions within the changed scope. Compile the affected target when available and verify the relevant visual/interaction states separately. Stop when the requested result is handled; report unrelated defects without turning them into an unsolicited rewrite.
 
@@ -59,4 +59,4 @@ Check the affected rules, behavior continuity and exceptions within the changed 
 
 Explain the resulting behavior and non-obvious ownership/inset decisions or profile deviations. A complex change may need the ownership worksheet; a routine conforming edit needs no ceremonial blueprint or full checklist in the response.
 
-Keep rule conformance, API evidence, compilation, rendering/device behavior and performance measurements separate. Reused component contracts are `catalog-verified`; inspecting target source and compiling are distinct claims. Report what was actually checked and the material remaining uncertainty. User requirements outrank this profile.
+Keep rule conformance, API evidence, compilation, rendering/device behavior and performance measurements separate. Maintained integration facts are `catalog-verified`; reading official docs, inspecting target source and compiling are distinct claims. Report what was actually checked and the material remaining uncertainty. User requirements outrank this profile.

@@ -23,13 +23,13 @@ The `Coverage` column describes how far this repository routes the investigation
 | **Internal** | The path supports public behavior but is not a public entry point | Do not import it or expose it as a component |
 | **Platform-sensitive** | The behavior depends on a target/platform implementation | Verify the target source set and runtime platform before claiming support |
 
-Only the `Verified API Contracts` reference provides a maintained fast path for exact declarations, and it remains subordinate to the pinned source and target-project compilation.
+The [documentation and integration index](api-contracts.md) routes to pinned official docs and local integration notes. Read docs for ordinary calls; inspect the selected declaration when documentation is incomplete, conflicting or affected by target overrides.
 
 ## Repository source areas
 
 | Module and source area | What it covers | Route | Coverage |
 |---|---|---|---|
-| `miuix-ui/basic` | Core controls and page-facing components: app bars, navigation bars, buttons, text, cards, fields, indicators, lists, pull-to-refresh, tabs, toolbars, tooltips, badges, and related defaults | [Component selection](component-selection.md), then [Verified API contracts](api-contracts.md) | Catalogued; exact coverage depends on the symbol |
+| `miuix-ui/basic` | Core controls and page-facing components: app bars, navigation bars, buttons, text, cards, fields, indicators, lists, pull-to-refresh, tabs, toolbars, tooltips, badges, and related defaults | [Component selection](component-selection.md), then [Documentation and integration index](api-contracts.md) | Catalogued; exact coverage depends on the symbol |
 | `miuix-ui/overlay` | Page-hosted dialogs, bottom sheets, list popups, menus, and overlay hosts | [Overlay and Window catalog](overlays-and-windows.md) | Catalogued |
 | `miuix-ui/window` | Independent window dialogs, sheets, popups, and window-scoped hosts | [Overlay and Window catalog](overlays-and-windows.md) | Catalogued |
 | `miuix-ui/theme` | `MiuixTheme`, color scheme, typography, shapes, theme controller, and composition locals | [Project setup and theme](setup-and-theme.md), [Color semantics and visual lookup](color-lookup.md) | Catalogued |
@@ -54,7 +54,7 @@ Only the `Verified API Contracts` reference provides a maintained fast path for 
 | `miuix-material/material/agsl` | Shared AGSL fragments used by material shaders | [Source verification](source-verification.md) | Mapped; usually lower-level than application code |
 | `miuix-material/material/sensor` | Device tilt state and platform sensor integration | [Styling, icons, and effects](styling-icons-and-effects.md) | Platform-sensitive; migrated from blur/sensor |
 | `miuix-material/material/internal` | Material shaders and edge-stroke implementation | [Source verification](source-verification.md) | Internal; do not import directly |
-| `miuix-glass/glass` | Glass surfaces/modifiers, bars, tabs, buttons, popup anchors and popups, dialogs, sheets, and Glass preferences | [Glass components](glass.md) | Catalogued; exact signature still comes from source |
+| `miuix-glass/glass` | Glass surfaces/modifiers, bars, tabs, buttons, popup anchors and popups, dialogs, sheets, and Glass preferences | [Glass components](glass.md) | Official docs for usage; source for uncertain declarations |
 | `miuix-glass-icons/icon/glass` | Generated Glass icon vectors and weight variants | [Styling, icons, and effects](styling-icons-and-effects.md) | Catalogued; verify icon name and dependency |
 | `miuix-squircle/squircle` | Squircle shapes and modifiers | [Styling, icons, and effects](styling-icons-and-effects.md) | Catalogued |
 | `miuix-squircle/squircle/internal` | Squircle implementation support | [Source verification](source-verification.md) | Internal; do not import directly |
@@ -69,7 +69,7 @@ Only the `Verified API Contracts` reference provides a maintained fast path for 
 |---|---|---|
 | What does Miuix provide, and which module is the likely starting point? | [Library overview](library-overview.md) | A semantic role or exact symbol still needs to be selected |
 | Does Miuix provide this kind of component? | [Component selection](component-selection.md) | A matching public family and its semantic boundary |
-| What is the exact call, default, or import? | [Verified API contracts](api-contracts.md) | The declaration and module/import contract |
+| What is the exact call, default, or import? | [Documentation and integration index](api-contracts.md) | Selected official doc; source for gaps or conflicts |
 | The symbol is not covered by the contract sheet | [Source verification](source-verification.md) | Source plus docs/Demo/Example evidence appropriate to the claim |
 | How should several known components form a page? | Hand the composition question to `miuix-guidelines` | Its page skeleton or composition recipe; return here only for exact calls |
 | Is this path public or internal? | [Source verification](source-verification.md) | Visibility, package, source set, and dependency evidence |

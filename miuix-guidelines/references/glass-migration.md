@@ -20,7 +20,7 @@ Add only used dependencies. `miuix-glass` brings UI/material/blur transitively; 
 
 ## Replacement map
 
-These are migration candidates, not aliases or mandatory replacements. Verify exact signatures in [Glass components](../../miuix-components/references/glass.md) and the target source before copying calls.
+These are migration candidates, not aliases or mandatory replacements. Follow the pinned official documentation linked from [Glass components](../../miuix-components/references/glass.md), applying the integration notes; inspect target source for gaps, contradictions or overrides before copying calls.
 
 | Existing component or treatment | Glass candidate | Preserve / adapt |
 |---|---|---|
@@ -28,7 +28,7 @@ These are migration candidates, not aliases or mandatory replacements. Verify ex
 | Wide fixed header / custom `SmallTopAppBar` composition | `GlassTopAppBar(expandable = false)` when its layout fits | Fixed-title intent and content inset. Keep a special hero header if its structure matters. |
 | `NavigationBar` / `FloatingNavigationBar` | `GlassNavigationBar` | One destination model, selection and route callbacks; convert item models and revise component-owned bottom spacing. |
 | Ordinary `NavigationRail` | `GlassNavigationRail` | Same destination owner, but a **different overlay/morph layout** and separate Glass rail state; revise content clearance and title overlap. |
-| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Same pager owner; callbacks become `selectedIndex` / `onSelect`. Bind `selectedIndex` to `pagerState.targetPage` to prevent indicator rebound on touch release. For segmented tabs, keep the required non-null backdrop and set `surfaceAlpha = 0f` when sampling is disabled; the default opaque track/indicator remain, without the material stroke. See [blur controls](../../miuix-components/references/blur-behavior.md#disable-tab-material-explicitly). |
+| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Keep the same selection coordinator; arguments become `selectedIndex` / `onSelect`. Hold pending click targets before pager movement; see [selection coordination](navigation-compositions.md#tab-selection-and-page-switching). For segmented tabs, keep the required non-null backdrop and set `surfaceAlpha = 0f` when sampling is disabled; the default opaque track/indicator remain, without the material stroke. See [blur controls](../../miuix-components/references/blur-behavior.md#disable-tab-material-explicitly). |
 | `IconButton` | `GlassIconButton` | Same action/description. Inside `GlassTopAppBar`, inherit its material by default; outside it, supply the intended backdrop. Beta01 has no `enabled` parameter: retain an ordinary control or a verified semantic adapter when disabling is required; a no-op callback alone does not preserve disabled semantics. |
 | `FloatingActionButton` / `FloatingToolbar` | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Keep Scaffold slots and action ownership; adopt the built-in Glass material, bloom rim and separate shadow. See [floating-action migration](#migrate-floating-action-components) before retaining an application border or blur wrapper. |
 | `OverlayDialog` | Keep it with `glassDialogSurface`, or use `GlassDialog` | Existing show/draft/confirm/finished state and dialog geometry; Glass defaults include their own material/scrim. |
@@ -136,7 +136,7 @@ When placing `GlassTabRow`, `GlassSegmentedTabRow`, or custom pill actions insid
    ```
    This ensures child glass controls spring and reveal their stroke and material dynamically during vertical pull-down overscroll, rather than remaining flat or snapping abruptly.
 
-2. **Pager state binding and indicator stability**: When binding `GlassSegmentedTabRow` to `HorizontalPager`, always bind `selectedIndex = pagerState.targetPage` rather than `pagerState.currentPage`. Because `GlassSegmentedTabRow` increments its internal `settleGeneration` counter to align the sliding indicator immediately upon pointer release, binding `currentPage` (which updates only after the pager finishes scrolling or crosses the halfway threshold) pulls the sliding indicator backward toward the previous page before re-animating forward.
+2. **Pager selection and indicator stability**: Feed ordinary/Glass tabs and bottom navigation from the same [selection coordinator](navigation-compositions.md#tab-selection-and-page-switching). The segmented row settles its independently moving indicator toward the supplied selection on release. A synchronously selected click target stays under the intent lock through requested movement; unlocked gesture feedback follows `currentPage`, avoiding predictive `targetPage` changes. Keep the shared motion policy, fixed pager-edge policy and selection lifecycle when changing material.
 
 ## Keep ordinary and Glass navigation together
 

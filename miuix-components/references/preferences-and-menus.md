@@ -1,6 +1,6 @@
 # Preference and Dropdown Menu Components
 
-Use this reference to choose between Preference rows, basic controls, dropdown/spinner preferences, anchored menus, and the optional Glass dropdown row. For verified function signatures, parameter defaults, and data models, see [Preference and Dropdown Menu Contracts](contracts/preferences-and-menus.md).
+Use this reference to choose between Preference rows, basic controls, dropdown/spinner preferences, anchored menus, and the optional Glass dropdown row. Read the selected pinned official doc linked from [Preference and menu integration notes](contracts/preferences-and-menus.md) for full parameters and models; apply the notes for host and overload distinctions.
 
 ## Choose the Family
 
@@ -13,7 +13,7 @@ Use this reference to choose between Preference rows, basic controls, dropdown/s
 | The same selection row must use the optional Glass visual family | `GlassDropdownPreference` | It is supplied by `miuix-glass`, samples a `Backdrop`, and still requires a `Scaffold` popup host; it is not a drop-in alias for every preference |
 | Standalone anchored action menu rather than a settings row | `*DropdownMenu` family | The caller owns the anchor and menu action semantics |
 
-Choose Overlay versus Window lifetime only when that is part of the request. Verify an exact call only when the selected component is not already covered by the API contract sheet.
+Choose Overlay versus Window lifetime for the actual host. Read the selected component's pinned doc for the call; inspect source only for a gap, override or contradiction. The integration notes do not duplicate full signatures.
 
 ## Choose a Menu Variant
 

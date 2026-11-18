@@ -1,14 +1,19 @@
 # Source Verification
 
-Use for an uncovered beta01 API, an ambiguous overload/behavior, or a target source override. Covered standard-beta01 calls use the maintained contract directly; they do not require another source download. This file defines escalation and evidence boundaries, not an obligatory extra stop for every call.
+Use to resolve the selected component's pinned documentation and escalate uncertain facts to source. Official docs supply ordinary usage; local integration notes preserve verified distinctions. Read this workflow when lookup/source resolution is unclear, not as an extra stop for every call.
 
-Contents: [covered path](#covered-contract-path) · [acquire source](#acquire-source-evidence) · [source gate](#api-verification-gate) · [labels](#verification-labels) · [snapshot](#snapshot-scope) · [paths](#path-convention) · [supporting source](#supporting-source-and-low-level-apis) · [Example](#example-app).
+Contents: [documentation first](#documentation-first-path) · [acquire source](#acquire-source-evidence) · [source gate](#api-verification-gate) · [labels](#verification-labels) · [snapshot](#snapshot-scope) · [paths](#path-convention) · [supporting source](#supporting-source-and-low-level-apis) · [Example](#example-app).
 
-## Covered-contract path
+## Documentation-first path
 
 Confirm the target resolves `0.9.5-beta01`, its platform/source set, and whether substitution/local changes affect the needed API. Reuse this context until build inputs or source change. A declaration-version string alone does not establish resolution.
 
-When the needed call and host/state behavior are covered and no override or contradiction affects them, use that contract as **catalog-verified**. Do not reread source merely to obtain a stronger label. Compile an implementation in the available target; report pending resolution or compilation honestly. Without a target project, the pinned catalog still supports a labeled example.
+1. Locate the selected component through the [component map](component-selection.md#component-reference-table) or the [documentation and notes index](api-contracts.md). Skip these routers when the doc path is already known.
+2. Read its official Markdown at the pinned commit, using a matching local checkout or the raw URL in [Path convention](#path-convention). Read just the relevant API/usage section. The agent retrieves and applies the documentation; a list of links alone does not complete an implementation request.
+3. Apply only the relevant local integration note. Files under `contracts/` retain host/state/effect contracts and selected compositions, not complete API declarations. Reuse established document/source evidence until dependency or source inputs change.
+4. For a missing parameter, incomplete overload, implementation-dependent behavior or doc/code conflict, inspect that declaration/branch. Do not reread the whole module or treat every documented call as a source audit.
+
+If remote docs are unavailable, try the matching checkout's `git show <commit>:<doc-path>` or the target artifact's attached sources. Existing integration facts remain usable, but a note cannot establish unlisted parameters. If the needed evidence is still inaccessible, state exactly which call or behavior is unresolved and continue independent work. Do not guess an exact signature or silently switch to `main`.
 
 Only this version is maintained. Another release is a scope mismatch; dependency upgrades require task authorization. A local beta01 customization needs the source gate below for the affected symbols, not an alternate multi-version catalog.
 
@@ -16,7 +21,7 @@ Only this version is maintained. Another release is a scope mismatch; dependency
 
 Use a target artifact's attached source for a customized target claim. For catalog gaps, use the pinned commit `6d2554a850b8960e2616c968263ff64beb5ffb03`: inspect a matching clean checkout, use `git show <commit>:<path>` when the checkout has moved, or open the [pinned raw URL](#path-convention). Do not replace it with rolling rendered docs, untagged snippets, or remembered Material APIs.
 
-Read one declaration and the implementation needed for the uncertain behavior. Docs/Demo may explain intent; Example may explain integration. None is declaration authority. If source cannot be reached, keep covered catalog facts usable, but leave the uncovered or customized claim unresolved. `API verification blocked` applies only to that missing evidence, not the whole task.
+Read one declaration and the implementation needed for the uncertain behavior. Pinned docs support normal usage; declarations resolve exact API conflicts and implementation resolves behavioral conflicts. Demo/Example explain composition, not extra public parameters. If source cannot be reached, keep established integration facts usable, but leave the uncertain/customized claim unresolved. `API verification blocked` applies only to that missing evidence, not the whole task.
 
 ## API verification gate
 
@@ -33,13 +38,13 @@ For a complex investigation, record only the necessary facts: resolved source, s
 
 | Label | Evidence required | Does not prove |
 |---|---|---|
-| `catalog-verified` | Maintained declaration/behavior at the pinned beta01 commit; reusing its contract is sufficient | Target customization, successful compilation or runtime behavior |
+| `catalog-verified` | Maintained integration fact checked against the pinned beta01 source | Every parameter of an unlisted call, target customization, compilation or runtime behavior |
 | `target-source-verified` | The affected declaration/behavior in the target's actual resolved source, including relevant substitutions or changes, was inspected | Compilation or device behavior |
 | `compile-verified` | The affected target compiled with the delivered call | Visual, input, platform or performance outcomes |
 | `runtime-verified` | The named runtime/device behavior was exercised | Unexercised configurations or platforms |
 | `API verification blocked` | Required evidence for an uncovered/customized claim cannot be accessed | That a guessed API is usable |
 
-Do not label a reused catalog contract target-source-verified, and do not fetch source solely to change the label. Reuse established evidence until its source/dependency inputs change.
+A pinned documentation lookup can be reported as such without inventing a source-verification claim. Do not label reused notes or docs target-source-verified, and do not fetch source solely to change a label. Reuse established evidence until its source/dependency inputs change.
 
 ## Snapshot scope
 

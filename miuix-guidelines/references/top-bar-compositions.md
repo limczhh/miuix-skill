@@ -54,6 +54,7 @@ Scaffold(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
+                .consumeWindowInsets(contentPadding)
                 .pageScrollModifiers(
                     enableScrollEndHaptic = true,
                     showTopAppBar = true,
@@ -67,7 +68,7 @@ Scaffold(
 }
 ```
 
-The example is the standalone case from [inset rules](rules/page-shell.md#insets-and-content-padding). The helper merges current safe areas; a shell-hosted page additionally supplies its outer handoff and reserved-start policy. Standard refresh content retains list connection ownership. The adaptive helper calls `TopAppBar(expandable = !isWideWindow)` with the same behavior, and the list helper bridges damped `onOffsetChanged` to `state.overscrollOffset` for rebound-driven visuals. No version-compatibility branch, reflection or duplicate controller is needed.
+The example is the standalone case from [inset rules](rules/page-shell.md#insets-and-content-padding). The helper merges current safe areas; a shell-hosted page additionally supplies its outer handoff and reserved-start policy. The list applies the effective padding through `contentPadding` and consumes that same value through `consumeWindowInsets`; consumption does not add another gap or move the recorded background below the bar. If an existing wrapper already owns consumption, keep it there instead of consuming again. Standard refresh content retains list connection ownership. The adaptive helper calls `TopAppBar(expandable = !isWideWindow)` with the same behavior, and the list helper bridges damped `onOffsetChanged` to `state.overscrollOffset` for rebound-driven visuals. No version-compatibility branch, reflection or duplicate controller is needed.
 
 ## Render behind the status bar
 

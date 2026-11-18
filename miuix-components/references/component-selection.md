@@ -18,7 +18,7 @@ This catalog helps identify a public component for an already-understood semanti
 
 ## Source-backed cues for vague requests
 
-Use these cues to reach the right family when the user describes behavior instead of a symbol. They narrow the search; they do not authorize an import or an exact call without declaration verification.
+Use these cues to reach the right family when the user describes behavior instead of a symbol. Read the selected pinned documentation for imports and the call; inspect source for a missing API, contradiction or target override.
 
 | User describes | Inspect first | Boundary confirmed by the pinned source |
 |---|---|---|
@@ -53,7 +53,7 @@ When the user asks about a component, first match it case-insensitively against 
 | NavigationBar | `docs/components/basic/navigationbar.md` | `docs/demo/NavigationBarDemo.kt` | `miuix-ui/.../basic/NavigationBar.kt` |
 | FloatingNavigationBar | `docs/components/basic/navigationbar.md` | `docs/demo/NavigationBarDemo.kt` | `miuix-ui/.../basic/NavigationBar.kt` |
 | NavigationRail | `docs/components/basic/navigationrail.md` | `docs/demo/NavigationRailDemo.kt` | `miuix-ui/.../basic/NavigationRail.kt` |
-| TabRow | `docs/components/basic/tabrow.md` | `docs/demo/TabRowDemo.kt` | `miuix-ui/.../basic/TabRow.kt` |
+| [TabRow / TabRowWithContour](contracts/pager-and-breadcrumb.md#ordinary-tab-rows) | `docs/components/basic/tabrow.md` | `docs/demo/TabRowDemo.kt` | `miuix-ui/.../basic/TabRow.kt` |
 | Card | `docs/components/basic/card.md` | `docs/demo/CardDemo.kt` | `miuix-ui/.../basic/Card.kt` |
 | BasicComponent | `docs/components/basic/basiccomponent.md` | `docs/demo/BasicComponentDemo.kt` | `miuix-ui/.../basic/Component.kt` |
 | Button | `docs/components/basic/button.md` | `docs/demo/ButtonDemo.kt` | `miuix-ui/.../basic/Button.kt` |
@@ -124,7 +124,7 @@ When the user asks about a component, first match it case-insensitively against 
 
 The table above is a catalog of public entry points. Supporting source paths are evidence for behavior, not automatically importable APIs. In particular:
 
-- `TextButton` is a public button API documented and implemented with the Button family; verify its exact source signature before treating it as a separate module or inventing a wrapper.
+- `TextButton` is a public button API documented with the Button family; use that documentation instead of treating it as a separate module or inventing a wrapper.
 - `InputField` is the editable-field API nested in the SearchBar documentation/source. `SearchBar` itself does not expose every parameter accepted by `InputField`, including its color parameter.
 - `ProgressiveBlur` is a public effect descriptor used by modifier APIs in `miuix-blur`, not a general-purpose `miuix-ui` component; verify the target platform and the exact modifier overload in the blur source.
 - The [supporting-source index](source-verification.md#supporting-source-and-low-level-apis) includes public low-level APIs as well as implementation support. Beta01 exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent` and `rememberListPopupLayoutInfo`; prefer full preference/popup wrappers when their host and lifecycle behavior is needed. Do not infer visibility from `Impl` in a name.
@@ -145,11 +145,11 @@ At the current source-audit snapshot there is no public Miuix `SectionHeader`. `
 
 - `Scaffold` hosts `floatingToolbar` and `floatingToolbarPosition`; use the scaffold slot instead of manually overlaying a toolbar, and rely on its snackbar spacing for a bottom toolbar.
 - `InputField` accepts `color`; the `SearchBar` wrapper does not. Pass `Color.Transparent` only when another surface, such as a backdrop blur, intentionally owns the capsule background.
-- `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; keep one state owner for a refresh interaction instead of deriving a second refresh state. For exact signatures and mixed top-bar/overscroll topology, read [Scroll, pull-to-refresh, and overscroll contracts](contracts/scroll-refresh-and-overscroll.md).
+- `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; keep one state owner instead of deriving a second refresh state. For official documentation and mixed top-bar/overscroll topology, read [Scroll and refresh notes](contracts/scroll-refresh-and-overscroll.md).
 - `NavigationRail` has a fixed-layout overload (`expanded = false/true`) and a separate expandable overload with required non-null `state`; `state = null` is not a valid current call shape.
 - `NavigationBarItem` and `FloatingNavigationBarItem` share `NavigationBarItemColors` through `NavigationBarDefaults.navigationBarItemColors()`; `colors` appears before `badge`; use named arguments for these options.
 - `TabRow` and `TabRowWithContour` contain horizontal nested scroll/overscroll. For a pager containing vertical lists, use the dedicated `PagerGestureUtils` configuration instead of layering an ad-hoc nested-scroll interceptor.
 - `PagerInterceptionMode` has only `Native` and `CrossAxis`. Cross-Axis requires the same `flingBehavior` on `Modifier.pagerGestureOverride` and `HorizontalPager`, `userScrollEnabled = false`, and `PagerGestureNestedScrollConnection`.
-- For an exact pager configuration or `BreadcrumbBar(listState = ...)`, use the [Pager and breadcrumb contract](contracts/pager-and-breadcrumb.md). The breadcrumb row uses its own `LazyListState`.
+- For ordinary tab declarations, exact pager configuration or `BreadcrumbBar(listState = ...)`, use the [Tab, pager and breadcrumb contract](contracts/pager-and-breadcrumb.md). Horizontal tab/breadcrumb rows use their own `LazyListState`.
 - Glass components are an optional family, not aliases for the basic components. Read [Glass components](glass.md) for the `Backdrop` recording boundary. `GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` use the `Scaffold` popup host; the `GlassPopup`/`GlassTransformPopup`/`GlassIconDropdownMenu` family is composed in the caller's root `BoxScope`.
 - `LocalNavTransitionScope.current` is available only inside a `NavDisplay` entry; use its `isRunning` signal for coarse lifecycle decisions and deferred scope properties for frame-level effects.

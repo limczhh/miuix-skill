@@ -1,30 +1,12 @@
-# Glass Component Contracts
+# Glass Component Integration Notes
 
-This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: release tag `v0.9.5-beta01` at commit `6d2554a850b8960e2616c968263ff64beb5ffb03`.
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta01 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
-Use when the task needs exact signatures, parameters, imports, defaults, or host requirements for `miuix-glass` components, bars, popups, dialogs, sheets, or low-level modifiers.
-
-Before copying a call:
-- Confirm target project dependency: `implementation("top.yukonga.miuix.kmp:miuix-glass:0.9.5-beta01")`.
-- Shader-backed effects on Android require API 33. Higher-level components provide fallback fills; custom panels must supply their intended fallback. Check [dependency and manifest setup](../setup-and-theme.md#quick-start) separately. Choosing ordinary or Glass presentation remains a product decision.
-- **Sampling Boundary**: Always exclude the Glass surface itself, the dialog/sheet scrim, and the popup host from the sampled `Backdrop` (`Modifier.layerBackdrop`) to prevent self-sampling recursive artifacts.
-
----
-
-Read only the matching section; these declaration blocks describe library APIs, not application reimplementations.
-
-Jump to: [Sampling Primitives](#sampling-primitives) · [Glass TopAppBar](#glass-topappbar) · [Glass Navigation: Bar & Rail](#glass-navigation-bar--rail) · [Glass Tabs: TabRow & SegmentedTabRow](#glass-tabs-tabrow--segmentedtabrow) · [Glass Overlays: Dialogs & BottomSheets](#glass-overlays-dialogs--bottomsheets) · [Glass Preferences & Popups](#glass-preferences--popups) · [Glass Buttons & Actions](#glass-buttons--actions)
+Before adopting `miuix-glass`, check [dependency/platform setup](../setup-and-theme.md#quick-start) and the [sampling boundary](../glass.md#background-sampling-contract). Exclude the Glass surface, scrim and popup host from the recorded scene. Component-specific [blur-off behavior](../blur-behavior.md#component-behavior) remains distinct from shader/platform fallback.
 
 ## Sampling Primitives
 
 **Module:** `miuix-blur`, `miuix-glass`  
-**Imports:**
-```kotlin
-import top.yukonga.miuix.kmp.blur.Backdrop
-import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
-import top.yukonga.miuix.kmp.blur.layerBackdrop
-```
-
 ```kotlin
 val backdrop = rememberLayerBackdrop()
 
@@ -44,162 +26,32 @@ LazyColumn(
 `modifier` positions the whole band/foreground layout; `contentModifier` applies to the foreground. Keep status-area background rendering outside foreground safe padding. `defaultWindowInsetsPadding = false` does not disable the inner layout's top inset; see [top inset and background behavior](top-bars-and-scroll.md#top-inset-and-background-behavior).
 
 **Module:** `miuix-glass`  
-**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassTopAppBar.kt`  
-**Imports:**
-```kotlin
-import top.yukonga.miuix.kmp.glass.GlassTopAppBar
-import top.yukonga.miuix.kmp.glass.GlassTopAppBarDefaults
-import top.yukonga.miuix.kmp.basic.ScrollBehavior
-```
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassTopAppBar.kt`
 
 ### Overload 1: ScrollBehavior-Driven
 
-```kotlin
-@Composable
-fun GlassTopAppBar(
-    title: String,
-    modifier: Modifier = Modifier,
-    contentModifier: Modifier = Modifier,
-    expandable: Boolean = true,
-    progressiveBlur: Boolean = false,
-    backdrop: Backdrop? = null,
-    largeTitle: String = title,
-    subtitle: String = "",
-    scrollBehavior: ScrollBehavior? = null,
-    visualContentOffset: (() -> Float)? = null,
-    bandBrush: Brush = GlassTopAppBarDefaults.bandBrush(MiuixTheme.colorScheme.surface),
-    bandOverhang: Dp = GlassTopAppBarDefaults.BandOverhang,
-    titleBlurRadius: Dp = GlassTopAppBarDefaults.TitleBlurRadius,
-    style: GlassStyle = GlassDefaults.Style,
-    material: GlassMaterial = GlassTopAppBarDefaults.buttonMaterial(),
-    alpha: Float = 1f,
-    buttonSize: Dp = GlassTopAppBarDefaults.ButtonSize,
-    buttonShape: GlassShape = GlassShape(buttonSize / 2),
-    fill: Color = GlassTopAppBarDefaults.buttonFill(),
-    stroke: EdgeStroke? = GlassTopAppBarDefaults.buttonStroke(),
-    buttonShadow: GlassShadow? = GlassShadows.Regular,
-    defaultWindowInsetsPadding: Boolean = true,
-    titleAlpha: () -> Float = { 1f },
-    backgroundAlpha: () -> Float = { 1f },
-    navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = {},
-    bottomContent: @Composable () -> Unit = {},
-)
-```
+Read the pinned documentation/source: [GlassTopAppBar](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glasstopappbar.md).
 
 ### Overload 2: Explicit `isContentScrolled` State
 
-```kotlin
-@Composable
-fun GlassTopAppBar(
-    title: String,
-    isContentScrolled: Boolean,
-    modifier: Modifier = Modifier,
-    contentModifier: Modifier = Modifier,
-    expandable: Boolean = true,
-    progressiveBlur: Boolean = false,
-    backdrop: Backdrop? = null,
-    largeTitle: String = title,
-    subtitle: String = "",
-    scrollBehavior: ScrollBehavior? = null,
-    visualContentOffset: (() -> Float)? = null,
-    bandBrush: Brush = GlassTopAppBarDefaults.bandBrush(MiuixTheme.colorScheme.surface),
-    bandOverhang: Dp = GlassTopAppBarDefaults.BandOverhang,
-    titleBlurRadius: Dp = GlassTopAppBarDefaults.TitleBlurRadius,
-    style: GlassStyle = GlassDefaults.Style,
-    material: GlassMaterial = GlassTopAppBarDefaults.buttonMaterial(),
-    alpha: Float = 1f,
-    buttonSize: Dp = GlassTopAppBarDefaults.ButtonSize,
-    buttonShape: GlassShape = GlassShape(buttonSize / 2),
-    fill: Color = GlassTopAppBarDefaults.buttonFill(),
-    stroke: EdgeStroke? = GlassTopAppBarDefaults.buttonStroke(),
-    buttonShadow: GlassShadow? = GlassShadows.Regular,
-    defaultWindowInsetsPadding: Boolean = true,
-    titleAlpha: () -> Float = { 1f },
-    backgroundAlpha: () -> Float = { 1f },
-    navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = {},
-    bottomContent: @Composable () -> Unit = {},
-)
-```
+Read the pinned documentation/source: [GlassTopAppBar](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glasstopappbar.md).
 
 ---
 
 ## Glass Navigation: Bar & Rail
 
 **Module:** `miuix-glass`  
-**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassNavigationBar.kt`, `GlassNavigationRail.kt`  
-**Imports:**
-```kotlin
-import top.yukonga.miuix.kmp.glass.GlassNavigationBar
-import top.yukonga.miuix.kmp.glass.GlassNavigationBarDefaults
-import top.yukonga.miuix.kmp.glass.GlassNavigationItem
-import top.yukonga.miuix.kmp.glass.GlassNavigationRail
-import top.yukonga.miuix.kmp.glass.GlassNavigationRailDefaults
-import top.yukonga.miuix.kmp.glass.GlassNavigationRailState
-import top.yukonga.miuix.kmp.glass.rememberGlassNavigationRailState
-```
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassNavigationBar.kt`, `GlassNavigationRail.kt`
 
 ### GlassNavigationBar
 
 `backdrop = null` disables background sampling; `material = null` does not. The `visible` animation separately blurs the whole navigation group and is not disabled by a null backdrop. See [foreground blur](../blur-behavior.md#foreground-blur-is-a-separate-control).
 
-```kotlin
-@Composable
-fun GlassNavigationBar(
-    items: List<GlassNavigationItem>,
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    defaultWindowInsetsPadding: Boolean = true,
-    style: GlassStyle = GlassDefaults.Style,
-    shape: GlassShape = GlassShape(CornerSize(50), CornerSize(50), CornerSize(50), CornerSize(50)),
-    alpha: Float = 1f,
-    visible: Boolean = true,
-    stroke: EdgeStroke? = GlassNavigationBarDefaults.stroke(),
-    shadow: GlassShadow? = GlassShadows.Float,
-    height: Dp = GlassNavigationBarDefaults.Height,
-    material: GlassMaterial? = GlassNavigationBarDefaults.material(),
-    indicatorColor: Color = GlassNavigationBarDefaults.indicatorColor(),
-    indicatorPressedColor: Color = GlassNavigationBarDefaults.indicatorPressedColor(),
-    selectedColor: Color = if (MiuixTheme.isDynamicColor) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.onBackground,
-    unselectedColor: Color = MiuixTheme.colorScheme.onBackground,
-    trailingAction: (@Composable () -> Unit)? = null,
-)
-```
+Read the pinned documentation/source: [GlassNavigationBar](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassnavigationbar.md).
 
 ### GlassNavigationRail
 
-```kotlin
-@Composable
-fun GlassNavigationRail(
-    items: List<GlassNavigationItem>,
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    state: GlassNavigationRailState = rememberGlassNavigationRailState(),
-    secondaryItems: List<GlassNavigationItem> = emptyList(),
-    showToggle: Boolean = true,
-    defaultWindowInsetsPadding: Boolean = true,
-    collapsedTop: Dp = GlassNavigationRailDefaults.CollapsedTop,
-    expandedWidth: Dp = GlassNavigationRailDefaults.ExpandedWidth,
-    style: GlassStyle = GlassDefaults.Style,
-    alpha: Float = 1f,
-    material: GlassMaterial? = GlassNavigationRailDefaults.material(),
-    stroke: EdgeStroke? = GlassNavigationRailDefaults.stroke(),
-    shadow: GlassShadow? = GlassShadows.Float,
-    selectedColor: Color = if (MiuixTheme.isDynamicColor) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.onSurface,
-    unselectedColor: Color = MiuixTheme.colorScheme.onSurface,
-    indicatorColor: Color = GlassNavigationBarDefaults.indicatorColor(),
-    indicatorPressedColor: Color = GlassNavigationBarDefaults.indicatorPressedColor(),
-    labelStyle: TextStyle = MiuixTheme.textStyles.body1,
-    expandContentDescription: String = GlassNavigationRailDefaults.ExpandContentDescription,
-    collapseContentDescription: String = GlassNavigationRailDefaults.CollapseContentDescription,
-    scrollState: ScrollState = rememberScrollState(),
-)
-```
+Read the pinned documentation/source: [GlassNavigationRail](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassnavigationrail.md).
 > [!NOTE]
 > `GlassNavigationRail` is an overlay surface that morphs between an expanded start-side panel and a collapsed top capsule. Use `state.progress` to coordinate main content layout clearance.
 
@@ -208,134 +60,34 @@ fun GlassNavigationRail(
 ## Glass Tabs: TabRow & SegmentedTabRow
 
 **Module:** `miuix-glass`  
-**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassTabRow.kt`  
-**Imports:**
-```kotlin
-import top.yukonga.miuix.kmp.glass.GlassTabRow
-import top.yukonga.miuix.kmp.glass.GlassSegmentedTabRow
-import top.yukonga.miuix.kmp.glass.GlassTabRowDefaults
-import top.yukonga.miuix.kmp.glass.GlassSegmentedTabRowDefaults
-import top.yukonga.miuix.kmp.glass.GlassTabColors
-```
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassTabRow.kt`
 
 ### GlassTabRow
 
-```kotlin
-@Composable
-fun GlassTabRow(
-    tabs: List<String>,
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    style: GlassStyle = GlassDefaults.Style,
-    alpha: Float = 1f,
-    surfaceAlpha: Float = 1f,
-    stroke: EdgeStroke? = GlassTabRowDefaults.stroke(),
-    shadow: GlassShadow? = GlassShadows.Float,
-    material: GlassMaterial? = GlassTabRowDefaults.material(),
-    height: Dp = GlassTabRowDefaults.Height,
-    tabGap: Dp = GlassTabRowDefaults.TabGap,
-    colors: GlassTabColors = GlassTabRowDefaults.primaryColors(),
-)
-```
+Read the pinned documentation/source: [GlassTabRow](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glasstabrow.md).
 
 ### GlassSegmentedTabRow
 
 For effects-off behavior use `surfaceAlpha = 0f`, retaining the required non-null backdrop and resting track/indicator. An unrecorded backdrop does not automatically select fallback. See [tab material control](../blur-behavior.md#disable-tab-material-explicitly) for the supported-runtime branch and inherited-context boundary.
 
-```kotlin
-@Composable
-fun GlassSegmentedTabRow(
-    tabs: List<String>,
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit,
-    backdrop: Backdrop,
-    modifier: Modifier = Modifier,
-    style: GlassStyle = GlassDefaults.Style,
-    alpha: Float = 1f,
-    surfaceAlpha: Float = 1f,
-    stroke: EdgeStroke? = GlassSegmentedTabRowDefaults.stroke(),
-    shadow: GlassShadow? = GlassShadows.Float,
-    material: GlassMaterial? = GlassSegmentedTabRowDefaults.material(),
-    height: Dp = GlassSegmentedTabRowDefaults.Height,
-    trackColor: Color = GlassSegmentedTabRowDefaults.restingTrackColor(),
-    indicatorColor: Color = GlassSegmentedTabRowDefaults.indicatorColor(),
-    selectedContentColor: Color = MiuixTheme.colorScheme.onSurface,
-    contentColor: Color = MiuixTheme.colorScheme.onSurface,
-)
-```
+Read the pinned documentation/source: [GlassSegmentedTabRow](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glasstabrow.md).
 > [!IMPORTANT]
-> When pairing `GlassSegmentedTabRow` with a `HorizontalPager`, always bind `selectedIndex = pagerState.targetPage` (instead of `currentPage`). `GlassSegmentedTabRow` updates its settle generation on pointer release; binding `currentPage` causes indicator rebound animation conflicts.
+> `GlassSegmentedTabRow` settles its draggable indicator toward the supplied selection on release. A pending application request needs a synchronously held visual target so an old pager position cannot pull the indicator backward; use the same coordinator across ordinary/Glass variants. See [tab/pager feedback timing](pager-and-breadcrumb.md#pager) and the [application coordination pattern](../../../miuix-guidelines/references/navigation-compositions.md#tab-selection-and-page-switching).
 
 ---
 
 ## Glass Overlays: Dialogs & BottomSheets
 
 **Module:** `miuix-glass`  
-**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassDialog.kt`, `GlassBottomSheet.kt`  
-**Imports:**
-```kotlin
-import top.yukonga.miuix.kmp.glass.GlassDialog
-import top.yukonga.miuix.kmp.glass.GlassDialogDefaults
-import top.yukonga.miuix.kmp.glass.GlassDialogButton
-import top.yukonga.miuix.kmp.glass.GlassDialogButtonDefaults
-import top.yukonga.miuix.kmp.glass.GlassDialogButtonRole
-import top.yukonga.miuix.kmp.glass.glassDialogSurface
-import top.yukonga.miuix.kmp.glass.GlassBottomSheet
-import top.yukonga.miuix.kmp.glass.GlassBottomSheetDefaults
-import top.yukonga.miuix.kmp.glass.glassBottomSheetSurface
-```
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassDialog.kt`, `GlassBottomSheet.kt`
 
 ### GlassDialog
 
-```kotlin
-@Composable
-fun GlassDialog(
-    onDismissRequest: () -> Unit,
-    show: Boolean,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    enableWindowDim: Boolean = true,
-    defaultWindowInsetsPadding: Boolean = true,
-    renderInRootScaffold: Boolean = true,
-    largeScreen: Boolean? = null,
-    title: String? = null,
-    titleColor: Color = DialogDefaults.titleColor(),
-    summary: String? = null,
-    summaryColor: Color = DialogDefaults.summaryColor(),
-    cornerRadius: Dp? = null,
-    maxWidth: Dp = DialogDefaults.MaxWidth,
-    outsideMargin: DpSize = DialogDefaults.outsideMargin,
-    insideMargin: DpSize = DialogDefaults.insideMargin,
-    material: GlassMaterial = GlassDialogDefaults.material(),
-    stroke: EdgeStroke? = GlassDialogDefaults.stroke(),
-    containerColor: Color = GlassDialogDefaults.containerColor(),
-    dimColor: Color = GlassDialogDefaults.ScrimColor,
-    onDismissFinished: (() -> Unit)? = null,
-    content: @Composable () -> Unit,
-)
-```
+Read the pinned documentation/source: [GlassDialog](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassdialog.md).
 
 ### GlassDialogButton
 
-```kotlin
-@Composable
-fun GlassDialogButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    role: GlassDialogButtonRole = GlassDialogButtonRole.Normal,
-    cornerRadius: Dp = GlassDialogButtonDefaults.CornerRadius,
-    minWidth: Dp = GlassDialogButtonDefaults.MinWidth,
-    minHeight: Dp = GlassDialogButtonDefaults.MinHeight,
-    colors: ButtonColors = GlassDialogButtonDefaults.buttonColors(role),
-    pressedColor: Color = GlassDialogButtonDefaults.pressedColor(),
-    insideMargin: PaddingValues = GlassDialogButtonDefaults.InsideMargin,
-    interactionSource: MutableInteractionSource? = null,
-    content: @Composable RowScope.() -> Unit,
-)
-```
+Read the pinned documentation/source: [GlassDialogButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassdialog.md).
 
 ### Typed Surface Adapters for Standard Overlays
 
@@ -359,152 +111,24 @@ glassBottomSheetSurface(
 
 ### GlassBottomSheet
 
-```kotlin
-@Composable
-fun GlassBottomSheet(
-    onDismissRequest: () -> Unit,
-    show: Boolean,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    enableWindowDim: Boolean = true,
-    defaultWindowInsetsPadding: Boolean = true,
-    allowDismiss: Boolean = true,
-    enableNestedScroll: Boolean = true,
-    renderInRootScaffold: Boolean = true,
-    title: String? = null,
-    startAction: @Composable (() -> Unit)? = null,
-    endAction: @Composable (() -> Unit)? = null,
-    cornerRadius: Dp = BottomSheetDefaults.cornerRadius,
-    sheetMaxWidth: Dp = BottomSheetDefaults.maxWidth,
-    outsideMargin: DpSize = BottomSheetDefaults.outsideMargin,
-    insideMargin: DpSize = BottomSheetDefaults.insideMargin,
-    dragHandleColor: Color = BottomSheetDefaults.dragHandleColor(),
-    material: GlassMaterial = GlassBottomSheetDefaults.material(),
-    stroke: EdgeStroke? = GlassBottomSheetDefaults.stroke(),
-    containerColor: Color = GlassBottomSheetDefaults.containerColor(),
-    dimColor: Color = GlassBottomSheetDefaults.ScrimColor,
-    onDismissFinished: (() -> Unit)? = null,
-    content: @Composable () -> Unit,
-)
-```
+Read the pinned documentation/source: [GlassBottomSheet](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassbottomsheet.md).
 
 ---
 
 ## Glass Preferences & Popups
 
 **Module:** `miuix-glass`  
-**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/`  
-**Imports:**
-```kotlin
-import top.yukonga.miuix.kmp.glass.GlassDropdownPreference
-import top.yukonga.miuix.kmp.glass.GlassDropdownPopup
-import top.yukonga.miuix.kmp.glass.GlassPopup
-import top.yukonga.miuix.kmp.glass.GlassPopupItem
-import top.yukonga.miuix.kmp.glass.GlassIconDropdownMenu
-import top.yukonga.miuix.kmp.glass.GlassTransformPopup
-import top.yukonga.miuix.kmp.glass.GlassSecondaryPopup
-import top.yukonga.miuix.kmp.glass.GlassPopupAnchor
-import top.yukonga.miuix.kmp.glass.rememberGlassPopupAnchor
-import top.yukonga.miuix.kmp.glass.glassPopupAnchor
-```
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/`
 
 ### GlassDropdownPreference (Scaffold-Hosted)
 
-```kotlin
-@Composable
-fun GlassDropdownPreference(
-    onSelectedIndexChange: (Int) -> Unit,
-    items: List<String>,
-    selectedIndex: Int,
-    title: String,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    showValue: Boolean = true,
-    renderInRootScaffold: Boolean = true,
-    titleColor: BasicComponentColors = BasicComponentDefaults.titleColor(),
-    summary: String? = null,
-    summaryColor: BasicComponentColors = BasicComponentDefaults.summaryColor(),
-    startAction: @Composable (() -> Unit)? = null,
-    bottomAction: (@Composable () -> Unit)? = null,
-    insideMargin: PaddingValues = BasicComponentDefaults.InsideMargin,
-    sizing: GlassPopupSizing = GlassPopupSizing(),
-    visuals: GlassPopupVisuals = GlassPopupDefaults.visuals(),
-    onExpandedChange: ((Boolean) -> Unit)? = null,
-)
-```
+Read the pinned documentation/source: [GlassDropdownPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassdropdownpreference.md).
 
 ### BoxScope Glass Popup Components
 
 These components are composed inside the caller's root `BoxScope` sharing coordinates with their anchor:
 
-```kotlin
-@Composable
-fun BoxScope.GlassDropdownPopup(
-    show: Boolean,
-    onDismissRequest: () -> Unit,
-    anchorBounds: Rect,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    anchor: GlassPopupAnchor? = null,
-    sizing: GlassPopupSizing = GlassPopupSizing(),
-    visuals: GlassPopupVisuals = GlassPopupDefaults.visuals(),
-    cornerRadius: Dp = GlassDropdownDefaults.CornerRadius,
-    contentPadding: PaddingValues = PaddingValues(vertical = GlassPopupDefaults.ContentPaddingVertical),
-    content: @Composable ColumnScope.() -> Unit,
-)
-
-@Composable
-fun BoxScope.GlassPopup(
-    show: Boolean,
-    onDismissRequest: () -> Unit,
-    anchorBounds: Rect,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    sizing: GlassPopupSizing = GlassPopupSizing(),
-    visuals: GlassPopupVisuals = GlassPopupDefaults.visuals(),
-    cornerRadius: Dp = GlassPopupDefaults.CornerRadius,
-    secondary: Boolean = false,
-    contentPadding: PaddingValues = PaddingValues(vertical = GlassPopupDefaults.ContentPaddingVertical),
-    content: @Composable ColumnScope.() -> Unit,
-)
-
-@Composable
-fun BoxScope.GlassIconDropdownMenu(
-    show: Boolean,
-    onDismissRequest: () -> Unit,
-    anchor: GlassPopupAnchor,
-    anchorContent: @Composable () -> Unit,
-    entries: List<DropdownEntry>,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    secondaryBackdrop: Backdrop? = backdrop,
-    sizing: GlassPopupSizing = GlassPopupSizing(),
-    visuals: GlassPopupVisuals = GlassPopupDefaults.visuals(),
-    collapseOnSelection: Boolean = entries.size <= 1,
-)
-
-@Composable
-fun BoxScope.GlassTransformPopup(
-    show: Boolean,
-    onDismissRequest: () -> Unit,
-    anchor: GlassPopupAnchor,
-    backdrop: Backdrop?,
-    anchorContent: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    simplified: Boolean = false,
-    stacked: Boolean = false,
-    sizing: GlassPopupSizing = GlassPopupSizing(),
-    visuals: GlassPopupVisuals = GlassPopupDefaults.visuals(),
-    anchorAlpha: Float = 1f,
-    maskColor: Color = GlassPopupDefaults.maskColor(),
-    cornerRadius: Dp = GlassPopupDefaults.CornerRadius,
-    gap: Dp = 0.dp,
-    contentPadding: PaddingValues = PaddingValues(vertical = GlassPopupDefaults.ContentPaddingVertical),
-    onMeasured: ((Size) -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit,
-)
-```
+Read the pinned documentation/source: [BoxScope.GlassDropdownPopup](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassdropdownpopup.md), [BoxScope.GlassPopup](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glasspopup.md), [BoxScope.GlassIconDropdownMenu](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassIconDropdownMenu.kt), [BoxScope.GlassTransformPopup](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glasstransformpopup.md).
 
 ---
 
@@ -512,23 +136,7 @@ fun BoxScope.GlassTransformPopup(
 
 **Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassSecondaryPopup.kt`
 
-```kotlin
-@Composable
-fun BoxScope.GlassSecondaryPopup(
-    show: Boolean,
-    onDismissRequest: () -> Unit,
-    anchorBounds: Rect,
-    backdrop: Backdrop?,
-    modifier: Modifier = Modifier,
-    materialAnchor: GlassPopupAnchor? = null,
-    sizing: GlassPopupSizing = GlassPopupSizing(),
-    visuals: GlassPopupVisuals = GlassPopupDefaults.visuals(),
-    cornerRadius: Dp = GlassPopupDefaults.CornerRadius,
-    contentPadding: PaddingValues = PaddingValues(vertical = GlassPopupDefaults.ContentPaddingVertical),
-    onDismissFinished: (() -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit,
-)
-```
+Read the pinned documentation/source: [BoxScope.GlassSecondaryPopup](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glasssecondarypopup.md).
 
 This is a caller-controlled child menu in the same root `BoxScope`. Capture its trigger row's resting `boundsInWindow()` before changing the primary transform popup's `stacked` state. Its backdrop includes the primary popup but excludes the child itself; null falls back to the material anchor's backdrop when available. Share `materialAnchor` when both levels should reuse the primary appearance. Keep it composed through collapse; `onDismissFinished` handles completed-exit cleanup.
 
@@ -536,24 +144,7 @@ This is a caller-controlled child menu in the same root `BoxScope`. Capture its 
 
 **Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassPopup.kt`
 
-```kotlin
-@Composable
-fun GlassPopupItem(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
-    summary: String? = null,
-    enabled: Boolean = true,
-    selected: Boolean = false,
-    showArrow: Boolean = false,
-    arrowRotation: () -> Float = { 0f },
-    contentColor: Color = MiuixTheme.colorScheme.onSurfaceContainer,
-    summaryColor: Color = MiuixTheme.colorScheme.onSurfaceContainerVariant,
-    selectedContentColor: Color = MiuixTheme.colorScheme.primary,
-    pressedColor: Color = GlassPopupDefaults.itemPressedColor(),
-)
-```
+Read the pinned documentation/source: [GlassPopupItem](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glasspopup.md).
 
 This renders a menu row, including disabled/selected state, optional icon/summary and submenu arrow. It does not create a popup, sample a backdrop, or supply a Glass container. The caller owns selection and the action; the surrounding popup owns material and visibility.
 
@@ -562,36 +153,11 @@ This renders a menu row, including disabled/selected state, optional icon/summar
 ## Glass Buttons & Actions
 
 **Module:** `miuix-glass`  
-**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassIconButton.kt`, `GlassFloatingActionButton.kt`, `GlassFloatingToolbar.kt`  
-**Imports:**
-```kotlin
-import top.yukonga.miuix.kmp.glass.GlassIconButton
-import top.yukonga.miuix.kmp.glass.GlassFloatingActionButton
-import top.yukonga.miuix.kmp.glass.GlassFloatingToolbar
-import top.yukonga.miuix.kmp.glass.glassPanel
-import top.yukonga.miuix.kmp.glass.glass
-```
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassIconButton.kt`, `GlassFloatingActionButton.kt`, `GlassFloatingToolbar.kt`
 
 ### GlassIconButton
 
-```kotlin
-@Composable
-fun GlassIconButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    inheritTopBarMaterial: Boolean = true,
-    backdrop: Backdrop? = null,
-    surfaceAlpha: Float = 1f,
-    style: GlassStyle = LocalGlassTopAppBarContext.current?.style ?: GlassDefaults.Style,
-    material: GlassMaterial? = null,
-    size: Dp = LocalGlassTopAppBarContext.current?.size ?: GlassTopAppBarDefaults.ButtonSize,
-    shape: GlassShape = LocalGlassTopAppBarContext.current?.shape ?: GlassShape(size / 2),
-    fill: Color = LocalGlassTopAppBarContext.current?.fill ?: GlassTopAppBarDefaults.buttonFill(),
-    stroke: EdgeStroke? = LocalGlassTopAppBarContext.current.let { if (it != null) it.stroke else GlassTopAppBarDefaults.buttonStroke() },
-    shadow: GlassShadow? = LocalGlassTopAppBarContext.current.let { if (it != null) it.shadow else GlassShadows.Regular },
-    content: @Composable () -> Unit,
-)
-```
+Read the pinned documentation/source: [GlassIconButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassiconbutton.md).
 > [!WARNING]
 > `GlassIconButton` in `0.9.5-beta01` has NO `enabled` parameter. Disabling must be composed at the interaction level (or retain an ordinary `IconButton`).
 
@@ -601,53 +167,47 @@ Both components include a bloom rim through their default non-null `stroke`; it 
 
 The FAB defaults to a primary-colored material/fallback fill. A null backdrop selects the fill path, which still draws the rim when runtime shaders are supported. `drawEdgeStroke` skips drawing without runtime shader support. `surfaceAlpha` affects the surface/stroke; it is not an effects-off switch. The [migration guide](../../../miuix-guidelines/references/glass-migration.md#migrate-floating-action-components) owns placement and replacement decisions.
 
-```kotlin
-@Composable
-fun GlassFloatingActionButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    backdrop: Backdrop? = null,
-    surfaceAlpha: Float = 1f,
-    style: GlassStyle = GlassDefaults.Style,
-    material: GlassMaterial = GlassFloatingActionButtonDefaults.material(),
-    size: Dp = GlassFloatingActionButtonDefaults.Size,
-    shape: GlassShape = GlassShape(size / 2),
-    fill: Color = GlassFloatingActionButtonDefaults.fill(),
-    stroke: EdgeStroke? = GlassFloatingActionButtonDefaults.stroke(),
-    shadow: GlassShadow? = GlassShadows.Regular,
-    content: @Composable () -> Unit,
-)
-
-@Composable
-fun GlassFloatingToolbar(
-    modifier: Modifier = Modifier,
-    backdrop: Backdrop? = null,
-    cornerRadius: Dp = GlassFloatingToolbarDefaults.CornerRadius,
-    shape: GlassShape = remember(cornerRadius) { GlassShape(cornerRadius) },
-    outSidePadding: PaddingValues = GlassFloatingToolbarDefaults.OutSidePadding,
-    surfaceAlpha: Float = 1f,
-    style: GlassStyle = GlassDefaults.Style,
-    material: GlassMaterial = GlassFloatingToolbarDefaults.material(),
-    fill: Color = GlassFloatingToolbarDefaults.fill(),
-    stroke: EdgeStroke? = GlassFloatingToolbarDefaults.stroke(),
-    shadow: GlassShadow? = GlassShadows.Regular,
-    content: @Composable () -> Unit,
-)
-```
+Read the pinned documentation/source: [GlassFloatingActionButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassfloatingactionbutton.md), [GlassFloatingToolbar](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/glass/glassfloatingtoolbar.md).
 
 ### Low-level Glass Panel Modifiers
 
+Read the modifier declarations through the pinned guide and source. Surface adapters, press helpers and other APIs follow their [source routes](../glass.md#lower-level-glass-surfaces-and-support-types).
+
+Import both extensions from `top.yukonga.miuix.kmp.glass`, `Backdrop` from `top.yukonga.miuix.kmp.blur`, and the Glass/edge-stroke types from `top.yukonga.miuix.kmp.material`. `BlendMode` is `androidx.compose.ui.graphics.BlendMode`.
+
+#### Modifier.glassPanel
+
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassPanel.kt`
+
+Read the pinned documentation/source: [Modifier.glassPanel](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/guide/glass.md).
+
+Null backdrop or unsupported shaders select `fallback`; omitting it only clips to `shape`, without supplying an opaque fill. Shadow and supported stroke drawing remain separate from the fill.
+
+#### Modifier.glass
+
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/Glass.kt`
+
+Read the pinned documentation/source: [Modifier.glass](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/guide/glass.md).
+
+This requires a non-null backdrop. `enabled = false` or unsupported shaders bypass the pipeline; neither supplies a fallback fill. `material = null` leaves the sampled body path active, and zero opacity is not the disabled branch. See [blur behavior](../blur-behavior.md#component-behavior).
+
+#### Call shapes
+
+The caller supplies `sampling: Backdrop?` after resolving effect policy, and `recordedBackdrop: Backdrop` for the non-null variant. Record the intended scene separately; these calls do not record it. Reuse the same shape for material and fallback clipping:
+
 ```kotlin
+val panelShape = GlassShape(24.dp)
+
 // Modifier with fallback fill when Backdrop? is null or unsupported:
 Modifier.glassPanel(
-    backdrop = backdrop,
-    shape = GlassShape(24.dp),
-    fallback = Modifier.clip(shape).background(MiuixTheme.colorScheme.surface),
+    backdrop = sampling,
+    shape = panelShape,
+    fallback = Modifier.clip(panelShape).background(MiuixTheme.colorScheme.surface),
 )
 
 // Modifier requiring non-null Backdrop (no fallback):
 Modifier.glass(
-    backdrop = backdrop,
-    shape = GlassShape(24.dp),
+    backdrop = recordedBackdrop,
+    shape = panelShape,
 )
 ```

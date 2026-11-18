@@ -1,19 +1,7 @@
-# Surface and Navigation Contracts
+# Surface and Navigation Integration Notes
 
-This is a focused, catalog-verified API contract guide for the maintained Miuix snapshot: release tag v0.9.5-beta01 at commit 6d2554a850b8960e2616c968263ff64beb5ffb03.
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta01 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
-Use when the task needs Card, SmallTitle, NavigationBar, or FloatingNavigationBar.
-
-Do not use when the task only needs to decide whether navigation belongs to the shell or page; use miuix-guidelines for that.
-
-Before copying a call:
-
-- Check the target project's resolved Miuix version, source set, and dependency substitution.
-- Treat the declaration, package/import, module, defaults, state/callback direction, and host requirement as one contract.
-- An omitted parameter is not permission to invent an overload or transfer a Material parameter.
-- `catalog-verified` means the pinned declaration was checked; `target-source-verified` requires checking the target's resolved source; `compile-verified` requires compiling the affected target.
-
-The exact source path is part of each contract below. Confirm beta01 resolution and inspect local overrides before presenting code; another release is outside this Skill's supported scope.
 ## Card and section title
 
 **Module:** `miuix-ui`  
@@ -21,63 +9,15 @@ The exact source path is part of each contract below. Confirm beta01 resolution 
 **Documentation:** `docs/components/basic/card.md`, `docs/components/basic/smalltitle.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/CardDemo.kt`, `SmallTitleDemo.kt`
 
-Miuix imports:
-
-```kotlin
-import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.SmallTitle
-import top.yukonga.miuix.kmp.utils.PressFeedbackType
-```
-
 `Card` has a non-clickable overload and a clickable/long-press overload. The two overloads share the first parameters; use named arguments when selecting the interactive form.
 
-```kotlin
-@Composable
-fun Card(
-    modifier: Modifier = Modifier,
-    cornerRadius: Dp = CardDefaults.CornerRadius,
-    insideMargin: PaddingValues = CardDefaults.InsideMargin,
-    colors: CardColors = CardDefaults.defaultColors(),
-    content: @Composable ColumnScope.() -> Unit,
-)
-
-@Composable
-fun Card(
-    modifier: Modifier = Modifier,
-    cornerRadius: Dp = CardDefaults.CornerRadius,
-    insideMargin: PaddingValues = CardDefaults.InsideMargin,
-    colors: CardColors = CardDefaults.defaultColors(),
-    pressFeedbackType: PressFeedbackType = PressFeedbackType.None,
-    showIndication: Boolean = false,
-    holdDownState: Boolean = false,
-    onClick: (() -> Unit)? = null,
-    onLongPress: (() -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit,
-)
-
-@Composable
-fun SmallTitle(
-    text: String,
-    modifier: Modifier = Modifier,
-    textColor: Color = MiuixTheme.colorScheme.onBackgroundVariant,
-    insideMargin: PaddingValues = SmallTitleDefaults.InsideMargin,
-)
-```
+Read the pinned documentation/source: [Card / Card](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/basic/card.md), [SmallTitle](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/basic/smalltitle.md).
 
 Pinned defaults that are safe to quote for this version:
 
 - `CardDefaults.CornerRadius`: `16.dp`
 - `CardDefaults.InsideMargin`: `PaddingValues(0.dp)`
 - `SmallTitleDefaults.InsideMargin`: `PaddingValues(28.dp, 8.dp)`
-
-Minimal grouping call:
-
-```kotlin
-SmallTitle(text = "Group")
-Card {
-    // Related content.
-}
-```
 
 These defaults do not make `Card` mandatory for every page. Select it only when the content has a real containment relationship.
 
@@ -88,53 +28,9 @@ These defaults do not make `Card` mandatory for every page. Select it only when 
 **Documentation:** `docs/components/basic/navigationbar.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/NavigationBarDemo.kt`
 
-Miuix imports:
-
-```kotlin
-import top.yukonga.miuix.kmp.basic.NavigationBar
-import top.yukonga.miuix.kmp.basic.NavigationBarDefaults
-import top.yukonga.miuix.kmp.basic.NavigationBarDisplayMode
-import top.yukonga.miuix.kmp.basic.NavigationBarItem
-```
-
 The source documents `NavigationBar` for 2–5 items. `NavigationBarItem` is a `RowScope` extension, so it must be called inside the bar content lambda.
 
-```kotlin
-@Composable
-fun NavigationBar(
-    modifier: Modifier = Modifier,
-    color: Color = MiuixTheme.colorScheme.surface,
-    showDivider: Boolean = true,
-    defaultWindowInsetsPadding: Boolean = true,
-    mode: NavigationBarDisplayMode = NavigationBarDisplayMode.IconAndText,
-    content: @Composable RowScope.() -> Unit,
-)
-
-@Composable
-fun RowScope.NavigationBarItem(
-    selected: Boolean,
-    onClick: () -> Unit,
-    icon: ImageVector,
-    label: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    colors: NavigationBarItemColors = NavigationBarDefaults.navigationBarItemColors(),
-    badge: (@Composable () -> Unit)? = null,
-)
-```
-
-Minimal call shape:
-
-```kotlin
-NavigationBar {
-    NavigationBarItem(
-        selected = selectedIndex == 0,
-        onClick = { selectedIndex = 0 },
-        icon = itemIcon,
-        label = "Home",
-    )
-}
-```
+Read the pinned documentation/source: [NavigationBar / RowScope.NavigationBarItem](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/basic/navigationbar.md).
 
 `itemIcon` must be an actual `ImageVector`; do not replace it with a Material icon unless that dependency and icon choice are intentional. The `colors` parameter appears before `badge`; name `badge` instead of relying on positional arguments. The navigation bar presents the route owner's state; it must not create a second back stack.
 
@@ -147,43 +43,7 @@ NavigationBar {
 
 `FloatingNavigationBar` is still bottom navigation, not a generic overlay. Put it in the owning `Scaffold`'s `bottomBar` slot so the page content receives the correct bottom `PaddingValues`. The documented navigation pattern supports two to five icon items. The component always creates its own floating bottom spacing; `defaultWindowInsetsPadding = true` additionally applies the animated caption-bar inset. It does not mean that every surrounding bottom inset is transferred to the caller.
 
-Miuix imports:
-
-```kotlin
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBar
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBarDefaults
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBarItem
-import top.yukonga.miuix.kmp.basic.NavigationBarDefaults
-import top.yukonga.miuix.kmp.basic.NavigationBarItemColors
-import top.yukonga.miuix.kmp.basic.Scaffold
-```
-
-```kotlin
-@Composable
-fun FloatingNavigationBar(
-    modifier: Modifier = Modifier,
-    color: Color = MiuixTheme.colorScheme.surfaceContainer,
-    cornerRadius: Dp = FloatingToolbarDefaults.CornerRadius,
-    horizontalAlignment: Alignment.Horizontal = CenterHorizontally,
-    horizontalOutSidePadding: Dp = FloatingNavigationBarDefaults.HorizontalOutSidePadding,
-    shadowElevation: Dp = FloatingNavigationBarDefaults.ShadowElevation,
-    showDivider: Boolean = false,
-    defaultWindowInsetsPadding: Boolean = true,
-    content: @Composable () -> Unit,
-)
-
-@Composable
-fun FloatingNavigationBarItem(
-    selected: Boolean,
-    onClick: () -> Unit,
-    icon: ImageVector,
-    label: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    colors: NavigationBarItemColors = NavigationBarDefaults.navigationBarItemColors(),
-    badge: (@Composable () -> Unit)? = null,
-)
-```
+Read the pinned documentation/source: [FloatingNavigationBar / FloatingNavigationBarItem](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/basic/navigationbar.md).
 
 Minimal host shape:
 

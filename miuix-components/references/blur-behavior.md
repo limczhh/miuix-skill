@@ -62,21 +62,21 @@ Default texture blur leaves foreground content sharp. `contentBlendMode = BlendM
 
 The beta01 `GlassSegmentedTabRow` code computes its ramp from shader support and `surfaceAlpha`; it does **not** check whether the backdrop was recorded. Its `resolvedBackdrop` is null only when shaders are unsupported, since the argument is non-null. An unrecorded dummy backdrop alone therefore does not select the resting track.
 
-The pinned [Example IconPage](https://github.com/compose-miuix-ui/miuix/blob/6d2554a850b8960e2616c968263ff64beb5ffb03/example/shared/src/commonMain/kotlin/IconPage.kt) uses this call shape (excerpt):
+The pinned [Example IconPage](https://github.com/compose-miuix-ui/miuix/blob/6d2554a850b8960e2616c968263ff64beb5ffb03/example/shared/src/commonMain/kotlin/IconPage.kt) demonstrates material gating through `surfaceAlpha`. Adapt that gating to the application's coordinated selection:
 
 ```kotlin
 val samplingActive = backgroundBlurEnabled && isRuntimeShaderSupported()
 
 GlassSegmentedTabRow(
     tabs = tabs,
-    selectedIndex = pagerState.targetPage,
-    onSelect = onSelect,
+    selectedIndex = selection.selectedIndex,
+    onSelect = selection::select,
     backdrop = sceneBackdrop,
     surfaceAlpha = if (samplingActive) 1f else 0f,
 )
 ```
 
-`sceneBackdrop`, the setting, selection callback and pager are application-owned. The backdrop can stay remembered; record the intended opaque scene when sampling is active. A custom `trackColor` must preserve readability at the resting endpoint. If a top bar supplies its own material ramp, combine it with the setting so the off branch remains zero. Keep selection/state above presentation branches rather than replacing segmented tabs just to turn material off.
+`sceneBackdrop`, the setting and `selection` are application-owned; `selection` follows the [tab/pager coordination pattern](../../miuix-guidelines/references/navigation-compositions.md#tab-selection-and-page-switching), not a Miuix type. The backdrop can stay remembered; record the intended opaque scene when sampling is active. A custom `trackColor` must preserve readability at the resting endpoint. If a top bar supplies its own material ramp, combine it with the setting so the off branch remains zero. Keep selection/state above presentation branches rather than replacing segmented tabs just to turn material off.
 
 ## Resolve inherited sampling
 
