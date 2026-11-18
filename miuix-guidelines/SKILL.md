@@ -26,11 +26,14 @@ Keep the evidence labels separate: `catalog-verified` describes the maintained p
 
 ## Guidance and mandatory rules
 
-This entrypoint selects the workflow and relevant guides. [Design system rules](references/rules/design-system.md) defines shared visual rules, strength, exceptions, and the [required topic routing](references/rules/design-system.md#required-topic-rules) to page-shell, settings/overlay, and state/performance rules.
+This Skill acts as a design specification, and explicitly distinguishes between **Mandatory Rules (刚性强制规范)** and **Non-mandatory Guides (弹性参考实践与工作流)**:
 
-Before implementing or reviewing a page, MUST read the shared scope, exceptions, and topic table, then the visual and topic sections applicable to the changed boundary. Read those rules alongside the selected workflow guide; choosing one primary guide does not waive topic routing. Do not preload unrelated rule sections. Pure conceptual explanations can use the relevant guide without a conformance review.
+| Category | Location | Purpose & Force |
+|---|---|---|
+| **Mandatory Design Rules** | `references/rules/*.md`<br>([design-system.md](references/rules/design-system.md), [page-shell.md](references/rules/page-shell.md), [settings-and-overlays.md](references/rules/settings-and-overlays.md), [state-and-performance.md](references/rules/state-and-performance.md)) | **Strict UI conformance requirements**. Governs essential correctness baselines: Insets safe-area handoff, Glass self-sampling exclusion, `HorizontalPager` with `targetPage`, popup exit animation preservation, and accessibility. Must be strictly enforced during implementation and review. |
+| **Non-Mandatory Guides & Workflows** | `references/*.md`<br>(e.g. [page-structure.md](references/page-structure.md), [greenfield-page.md](references/greenfield-page.md), [brownfield-evolution.md](references/brownfield-evolution.md), [content-and-overlays.md](references/content-and-overlays.md), [glass-migration.md](references/glass-migration.md), [gesture-dynamics.md](references/gesture-dynamics.md), [ui-review-workflow.md](references/ui-review-workflow.md)) | **Flexible best practices, architectural templates, and migration advice**. These provide patterns and inspiration for how to investigate and structure work. They should be adapted to the target's practical needs and must not be treated as rigid dogma. |
 
-UI conformance requirements live only in `references/rules/`. Other references provide workflow steps, decision aids, diagnostics, and examples that link to those rules. Their instructions about how to investigate or deliver work do not define another UI specification. Exact API/version facts live in `miuix-components`.
+Before implementing or reviewing a page, MUST read the shared scope, exceptions, and topic table in [Design system rules](references/rules/design-system.md), then the visual and topic sections applicable to the changed boundary. Read those rules alongside the selected workflow guide; choosing one primary guide does not waive topic routing. Do not preload unrelated rule sections. Pure conceptual explanations can use the relevant guide without a conformance review. Exact API/version facts live in `miuix-components`.
 
 ## Natural-language intake
 

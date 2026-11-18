@@ -59,6 +59,7 @@ Do not start an orientation request with the API contract sheet, and do not answ
 ## Operating contract
 
 - Treat the pinned Miuix source as the authority for maintained catalog facts. Confirm beta01 resolution and inspect its actual dependency graph and local overrides before writing target code.
+- **Accurate yet concise:** Component contracts must be 100% factually accurate, but strictly concise. This Skill is an authoritative compass/guide, NOT an exhaustive dump of the entire library codebase. Focus strictly on public API signatures, required parameters, key defaults, host prerequisites, and fatal pitfalls (gotchas).
 - Never infer Miuix names or parameters from Material, Material 3, another Compose library, or a similarly named component.
 - Keep public API, documentation, Demo, Example, and target-project evidence distinct. Example code demonstrates integration; it is not a public API contract.
 - Report catalog evidence, target-source evidence, and compilation as separate facts. Do not use an unqualified `source-verified` label in the final status.
