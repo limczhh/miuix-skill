@@ -14,6 +14,10 @@ Before copying a call:
 
 ---
 
+Read only the matching section; these declaration blocks describe library APIs, not application reimplementations.
+
+Jump to: [Buttons & Action Bars](#buttons--action-bars) · [Text Field](#text-field) · [Basic Controls: Switch, Checkbox, RadioButton](#basic-controls-switch-checkbox-radiobutton) · [Sliders & Range Sliders](#sliders--range-sliders) · [NumberPicker](#numberpicker) · [SearchBar & InputField](#searchbar--inputfield)
+
 ## Buttons & Action Bars
 
 **Module:** `miuix-ui`  

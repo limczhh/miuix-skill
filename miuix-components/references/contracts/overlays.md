@@ -11,6 +11,10 @@ Before copying a call:
 
 ---
 
+Read only the matching section; these declaration blocks describe library APIs, not application reimplementations.
+
+Jump to: [Dialogs](#dialogs) · [Bottom Sheets](#bottom-sheets) · [List Popups](#list-popups) · [Snackbars](#snackbars)
+
 ## Dialogs
 
 **Module:** `miuix-ui`  

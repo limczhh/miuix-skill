@@ -6,10 +6,14 @@ Use when the task needs exact signatures, parameters, imports, defaults, or host
 
 Before copying a call:
 - Confirm target project dependency: `implementation("top.yukonga.miuix.kmp:miuix-glass:0.9.5-beta01")`.
-- Runtime blur effects on Android require API 33 (`RenderEffectCompat`). For lower API levels or platforms without `RuntimeShader` support, components automatically downgrade to opaque fills or fallback shapes; do not remove glass components merely because hardware blur is unavailable.
+- Shader-backed effects on Android require API 33. Higher-level components provide fallback fills; custom panels must supply their intended fallback. Check [dependency and manifest setup](../setup-and-theme.md#quick-start) separately. Choosing ordinary or Glass presentation remains a product decision.
 - **Sampling Boundary**: Always exclude the Glass surface itself, the dialog/sheet scrim, and the popup host from the sampled `Backdrop` (`Modifier.layerBackdrop`) to prevent self-sampling recursive artifacts.
 
 ---
+
+Read only the matching section; these declaration blocks describe library APIs, not application reimplementations.
+
+Jump to: [Sampling Primitives](#sampling-primitives) · [Glass TopAppBar](#glass-topappbar) · [Glass Navigation: Bar & Rail](#glass-navigation-bar--rail) · [Glass Tabs: TabRow & SegmentedTabRow](#glass-tabs-tabrow--segmentedtabrow) · [Glass Overlays: Dialogs & BottomSheets](#glass-overlays-dialogs--bottomsheets) · [Glass Preferences & Popups](#glass-preferences--popups) · [Glass Buttons & Actions](#glass-buttons--actions)
 
 ## Sampling Primitives
 
@@ -269,6 +273,7 @@ fun GlassSegmentedTabRow(
 import top.yukonga.miuix.kmp.glass.GlassDialog
 import top.yukonga.miuix.kmp.glass.GlassDialogDefaults
 import top.yukonga.miuix.kmp.glass.GlassDialogButton
+import top.yukonga.miuix.kmp.glass.GlassDialogButtonDefaults
 import top.yukonga.miuix.kmp.glass.GlassDialogButtonRole
 import top.yukonga.miuix.kmp.glass.glassDialogSurface
 import top.yukonga.miuix.kmp.glass.GlassBottomSheet
@@ -315,10 +320,13 @@ fun GlassDialogButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     role: GlassDialogButtonRole = GlassDialogButtonRole.Normal,
-    cornerRadius: Dp = GlassDialogDefaults.buttonCornerRadius(),
-    minWidth: Dp = GlassDialogDefaults.buttonMinWidth(),
-    minHeight: Dp = GlassDialogDefaults.buttonMinHeight(),
-    colors: ButtonColors = GlassDialogDefaults.buttonColors(role),
+    cornerRadius: Dp = GlassDialogButtonDefaults.CornerRadius,
+    minWidth: Dp = GlassDialogButtonDefaults.MinWidth,
+    minHeight: Dp = GlassDialogButtonDefaults.MinHeight,
+    colors: ButtonColors = GlassDialogButtonDefaults.buttonColors(role),
+    pressedColor: Color = GlassDialogButtonDefaults.pressedColor(),
+    insideMargin: PaddingValues = GlassDialogButtonDefaults.InsideMargin,
+    interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 )
 ```
@@ -522,7 +530,7 @@ fun GlassIconButton(
     shape: GlassShape = LocalGlassTopAppBarContext.current?.shape ?: GlassShape(size / 2),
     fill: Color = LocalGlassTopAppBarContext.current?.fill ?: GlassTopAppBarDefaults.buttonFill(),
     stroke: EdgeStroke? = LocalGlassTopAppBarContext.current.let { if (it != null) it.stroke else GlassTopAppBarDefaults.buttonStroke() },
-    shadow: GlassShadow? = GlassShadows.Regular,
+    shadow: GlassShadow? = LocalGlassTopAppBarContext.current.let { if (it != null) it.shadow else GlassShadows.Regular },
     content: @Composable () -> Unit,
 )
 ```

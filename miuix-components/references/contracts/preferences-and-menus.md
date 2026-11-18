@@ -11,6 +11,10 @@ Before copying a call:
 
 ---
 
+Read only the matching section; these declaration blocks describe library APIs, not application reimplementations.
+
+Jump to: [Standard Preference Rows](#standard-preference-rows) · [Slider Preferences](#slider-preferences) · [Dropdown & Spinner Preferences](#dropdown--spinner-preferences) · [Anchored Dropdown Menus](#anchored-dropdown-menus)
+
 ## Standard Preference Rows
 
 **Module:** `miuix-preference`  
@@ -296,7 +300,6 @@ fun OverlaySpinnerPreference(
     renderInRootScaffold: Boolean = true,
     onExpandedChange: ((Boolean) -> Unit)? = null,
     onSelectedIndexChange: ((Int) -> Unit)? = null,
-    dialogMode: Boolean = false,
 )
 
 @Composable
@@ -392,7 +395,6 @@ fun OverlayIconCascadingDropdownMenu(
     dropdownColors: DropdownColors = DropdownDefaults.dropdownColors(),
     renderInRootScaffold: Boolean = true,
     collapseOnSelection: Boolean = true,
-    surface: (@Composable DialogSurfaceScope.() -> Modifier)? = null,
     onExpandedChange: ((Boolean) -> Unit)? = null,
     backgroundColor: Color = Color.Unspecified,
     cornerRadius: Dp = IconButtonDefaults.CornerRadius,
@@ -401,5 +403,7 @@ fun OverlayIconCascadingDropdownMenu(
     content: @Composable () -> Unit,
 )
 ```
+The surface-taking overload adds required `surface: (@Composable (Shape) -> Modifier)?` immediately after `entry`. The surface receives a `Shape`, not `DialogSurfaceScope`; omitting `surface` selects the base overload above. Both `entry: DropdownEntry` and `entries: List<DropdownEntry>` overloads exist; Window variants omit `renderInRootScaffold`. Check the specific overload instead of merging their parameter lists.
+
 > [!TIP]
 > To configure submenus for cascading menus, assign a child list to `DropdownItem.children`. The cascading engine recursively opens submenus on row click.

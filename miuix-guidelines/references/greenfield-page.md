@@ -11,7 +11,7 @@ Use when there is no usable page/host contract or shell replacement is explicitl
 5. **Verify APIs.** Hand the concrete symbols, host requirements, and target-version questions to `miuix-components`; treat guide code as placement examples.
 6. **Implement and validate.** Apply the mapped boundary and rules, compile the affected target when available, then inspect the relevant visual/interaction states. Use the entrypoint's [Code Delivery Contract](../SKILL.md#code-delivery-contract).
 
-The entrypoint's compact delivery record is sufficient; do not create a second competing blueprint. Unknown context stays unknown until inspected.
+Use the existing ownership worksheet only for unresolved structural decisions; do not require a second blueprint for a routine page. Unknown context stays unknown until inspected.
 
 ## Routing out
 

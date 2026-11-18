@@ -1,55 +1,45 @@
 # Source Verification
 
-Use this reference when an exact API, behavior, dependency, or version claim needs pinned Miuix evidence. It can be the primary reference for an uncovered beta01 API or a local-source override. It defines how abbreviated paths in this Skill map to the public Miuix repository, distinguishes maintained catalog evidence from target-project evidence, and pins the current catalog to the published prerelease tag listed below.
+Use for an uncovered beta01 API, an ambiguous overload/behavior, or a target source override. Covered standard-beta01 calls use the maintained contract directly; they do not require another source download. This file defines escalation and evidence boundaries, not an obligatory extra stop for every call.
 
-Read only the evidence workflow, API gate, path table, or supporting-internals entry required by the claim. Do not load the Example-app inventory during an ordinary API check.
+Contents: [covered path](#covered-contract-path) · [acquire source](#acquire-source-evidence) · [source gate](#api-verification-gate) · [labels](#verification-labels) · [snapshot](#snapshot-scope) · [paths](#path-convention) · [internals](#supporting-internals) · [Example](#example-app).
 
-Contents: [acquire source evidence](#acquire-source-evidence) · [evidence workflow](#evidence-resolution-workflow) · [API verification gate](#api-verification-gate) · [snapshot scope](#snapshot-scope) · [path convention](#path-convention) · [supporting internals](#supporting-internals) · [Example app](#example-app)
+## Covered-contract path
+
+Confirm the target resolves `0.9.5-beta01`, its platform/source set, and whether substitution/local changes affect the needed API. Reuse this context until build inputs or source change. A declaration-version string alone does not establish resolution.
+
+When the needed call and host/state behavior are covered and no override or contradiction affects them, use that contract as **catalog-verified**. Do not reread source merely to obtain a stronger label. Compile an implementation in the available target; report pending resolution or compilation honestly. Without a target project, the pinned catalog still supports a labeled example.
+
+Only this version is maintained. Another release is a scope mismatch; dependency upgrades require task authorization. A local beta01 customization needs the source gate below for the affected symbols, not an alternate multi-version catalog.
 
 ## Acquire source evidence
 
-Use the strongest source available for the claim, while keeping target-project compatibility separate from the maintained library snapshot:
+Use a target artifact's attached source for a customized target claim. For catalog gaps, use the pinned commit `6d2554a850b8960e2616c968263ff64beb5ffb03`: inspect a matching clean checkout, use `git show <commit>:<path>` when the checkout has moved, or open the [pinned raw URL](#path-convention). Do not replace it with rolling rendered docs, untagged snippets, or remembered Material APIs.
 
-1. Inspect the target project's declared Miuix dependency, source set, dependency substitution or `includeBuild`, resolved source checkout/commit, and available source attachment first. This determines what can actually compile in that project.
-2. For maintained current-library facts, use a local Miuix checkout only after confirming it is exactly the current audit commit `6d2554a850b8960e2616c968263ff64beb5ffb03`. Read that commit with `git show` when the working checkout has moved; do not substitute another release.
-3. If no verified local checkout is available, open the pinned raw source URL from [Path Convention](#path-convention).
-4. Do not use the rolling documentation site, an untagged branch, a search-result snippet, or remembered Compose/Material APIs as a substitute for the pinned declaration.
-
-This Skill supports only `0.9.5-beta01`. If the target resolves another version, report that scope mismatch rather than maintaining an alternate contract. A substituted or modified beta01 source must be inspected before implementation; record its deviations and keep them separate from the pinned catalog. Upgrading the target dependency requires task authorization.
-
-## Evidence Resolution Workflow
-
-1. Start from the exact declaration or evidence path required by the task. Use a component catalog or Example evidence only when the task does not already identify the symbol or integration point.
-2. Expand abbreviated paths with the table below.
-3. Read only the evidence required by the claim: choose the relevant docs, demo, Example section, or pinned source path; do not load all evidence types by default. The pinned source is required for an API/behavior contract, while docs, demos, and Example code are optional evidence for the specific claim.
-4. For current catalog work, keep all evidence on commit `6d2554a850b8960e2616c968263ff64beb5ffb03` / tag `v0.9.5-beta01`. Do not use the rolling rendered documentation site or generated Dokka pages for version-sensitive parameters.
-5. Return to the [Delivery Contract](../SKILL.md#delivery-contract) before presenting implementation or validation claims.
-
-If the pinned catalog source cannot be reached, do not silently substitute memory, the rolling documentation site, or an unpinned snippet. Use an already verified local checkout when available; otherwise state that catalog verification is unavailable. If the target-sensitive source is also unavailable, state `API verification blocked` before making a version-sensitive claim.
+Read one declaration and the implementation needed for the uncertain behavior. Docs/Demo may explain intent; Example may explain integration. None is declaration authority. If source cannot be reached, keep covered catalog facts usable, but leave the uncovered or customized claim unresolved. `API verification blocked` applies only to that missing evidence, not the whole task.
 
 ## API verification gate
 
-Use this gate whenever delivered code contains a Miuix symbol, dependency, or version-sensitive call. It is a correctness gate, not a component catalog:
+For a gap or customized source:
 
-1. **Pin the target.** Confirm the project's declared Miuix coordinate, platform, source set, dependency substitution or `includeBuild`, resolved source commit, and whether that checkout is dirty. Do not call a catalog declaration target-source-verified for a different resolved source.
-2. **Locate the declaration.** For target code, use the resolved target source identified in step 1; for maintained catalog facts, use the pinned source. Confirm the public package/module, symbol name, overload, full parameter list, parameter order, required/optional parameters, defaults, and any experimental or platform opt-in.
-3. **Match intended usage when needed.** Use the matching Markdown doc for intent or the demo for an isolated call only when that claim matters. Use Example code only to understand integrated composition; never use Example code as the API contract.
-4. **Check behavior assumptions.** Confirm state/callback direction, required ancestor or host, insets, lifecycle, and disabled/dismissal behavior when they affect the call.
-5. **Compile the affected target.** Run the target project's relevant source-set/module compilation after the change when the project is available. A target source check without compilation is `target-source-verified`, not `compile-verified`; a check of only the maintained snapshot is `catalog-verified`.
-6. **Report the boundary.** If the target source was checked but compilation cannot run, state `target-source-verified; compilation pending`. If only the maintained snapshot was checked, state `catalog-verified; target compatibility pending`. State `API verification blocked` only when the target-sensitive source/version evidence cannot be checked.
+1. Identify the actual coordinate/source, source set and relevant checkout changes. Keep its deviations separate from the pinned catalog.
+2. Verify public package/module, overload, parameters/defaults, required inputs and opt-in for the call. Never merge parameters from different overloads.
+3. Inspect host, callback/state direction, insets, dismissal or input behavior only where they affect the task. Refer to docs/Demo/Example only for a separate unresolved usage question.
+4. Write the smallest matching call and compile the affected target when available. Source inspection alone does not prove compilation or runtime behavior.
 
-Use this compact record when the API risk is non-trivial:
+For a complex investigation, record only the necessary facts: resolved source, symbol/path, affected contract and evidence level. Return the resulting call/behavior using the [delivery contract](../SKILL.md#delivery-contract); omit a routine search transcript.
 
-```text
-Catalog:            pinned commit + symbol
-Miuix target:       declared coordinate / resolved source / platform / source set
-Declaration:        target or catalog source path + symbol
-Call contract:      import / overload / required state and callbacks
-Host contract:      ancestor / inset / lifecycle requirement
-Verification:       catalog-verified / target-source-verified / compile-verified / blocked
-```
+## Verification labels
 
-`references/api-contracts.md` is the maintained index for the focused contract guides under `references/contracts/`. Treat the index and cards as a copyable route into this gate, not as a second API authority: the pinned declaration defines this beta01 catalog; customized beta01 source must be checked separately, and every source change invalidates the relevant target claim until rechecked.
+| Label | Evidence required | Does not prove |
+|---|---|---|
+| `catalog-verified` | Maintained declaration/behavior at the pinned beta01 commit; reusing its contract is sufficient | Target customization, successful compilation or runtime behavior |
+| `target-source-verified` | The affected declaration/behavior in the target's actual resolved source, including relevant substitutions or changes, was inspected | Compilation or device behavior |
+| `compile-verified` | The affected target compiled with the delivered call | Visual, input, platform or performance outcomes |
+| `runtime-verified` | The named runtime/device behavior was exercised | Unexercised configurations or platforms |
+| `API verification blocked` | Required evidence for an uncovered/customized claim cannot be accessed | That a guessed API is usable |
+
+Do not label a reused catalog contract target-source-verified, and do not fetch source solely to change the label. Reuse established evidence until its source/dependency inputs change.
 
 ## Snapshot scope
 
