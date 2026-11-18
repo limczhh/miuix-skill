@@ -21,7 +21,7 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 
 ## Icons
 
-- `miuix-ui` includes the seven basic Regular-weight icons: `ArrowRight`, `ArrowUpDown`, `Check`, `Close`, `Search`, `SearchCleanup`, and `Sidebar`.
+- `miuix-ui` includes seven basic icons under `MiuixIcons.Basic`: `ArrowRight`, `ArrowUpDown`, `Check`, `Close`, `Search`, `SearchCleanup`, and `Sidebar`. Import their extensions from `top.yukonga.miuix.kmp.icon.basic`; the Basic namespace is separate from extended Regular-weight icons and Glass icons.
 - Extended icons require `top.yukonga.miuix.kmp:miuix-icons:0.9.5-beta01` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-beta01` for Android-only projects.
 - Glass icons require the separate `miuix-glass-icons` dependency and are exposed through `MiuixIcons.Glass`. The source package is `top.yukonga.miuix.kmp.icon.glass`; import the requested extension from that package after confirming the icon name exists.
 - Verify every requested name in `docs/guide/icons.md` and its source file. Use `MiuixIcons.Name` for Regular; use `MiuixIcons.Light.Name`, `MiuixIcons.Normal.Name`, `MiuixIcons.Medium.Name`, or `MiuixIcons.Demibold.Name` only when that weight exists in the pinned source.
@@ -42,7 +42,7 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 
 For component-specific on/off behavior, inherited sampling and runtime fallbacks, read [Blur controls and fallbacks](blur-behavior.md). A setting must map to the selected component; there is no universal library blur switch.
 
-- Add `miuix-blur` explicitly; it is not included by `miuix-ui`.
+- `miuix-ui` does not include `miuix-blur`. Add blur when the ordinary app directly uses its effects; an existing `miuix-glass` dependency already brings it transitively. Declare direct use according to the consumer's dependency policy rather than adding duplicate artifacts blindly.
 - On Android, blur requires API 33. Gate shader-backed behavior with the public support check shown by the pinned guide and Example, and preserve a readable non-blurred surface when unsupported.
 - Treat Example blur backdrops and bar helpers as application-specific composition. Copy only the effect and fallback the product actually needs.
 - Import `isRuntimeShaderSupported`, `RuntimeShader`, `RuntimeShaderCache`, `DefaultRuntimeShaderCache` and `LocalRuntimeShaderCache` from `top.yukonga.miuix.kmp.material`; `DeviceTilt` and `rememberDeviceTilt` come from `material.sensor`. `Backdrop` recording/downscale values use `Float`, and `BlurDefaults.MaxBlurRadius` is `100f`.
@@ -63,9 +63,11 @@ import top.yukonga.miuix.kmp.material.EdgeStrokes
 import top.yukonga.miuix.kmp.material.edgeStroke
 
 Modifier
-    .drawBackdrop(backdrop = backdrop, shape = { shape }, effects = { blur(20f) })
+    .drawBackdrop(backdrop = backdrop, shape = { shape }, effects = { blur(20f * density) })
     .edgeStroke(shape = shape, stroke = EdgeStrokes.MiddleLight)
 ```
+
+The `BackdropEffectScope.blur` call above takes pixels; multiplying by density expresses a 20 dp radius. `Modifier.textureBlur(blurRadius = ...)` takes dp directly.
 
 `material.rememberTiltLight(base: EdgeLightSource, sensitivity: Float = 0.1f)` returns an `EdgeLightSource`. Use the theme-appropriate preset or verified custom light data; these optical values do not belong in per-page copies.
 

@@ -214,7 +214,7 @@ fun WindowListPopup(
 )
 ```
 > [!TIP]
-> Use `ListPopupColumn` inside `content` to automatically size the popup width according to the widest child item.
+> `ListPopupColumn` is public. It uses intrinsic widths from **up to the first 8 children**, then clamps the result to a 200–288 dp band adjusted to the parent constraints. It does not measure every later item to find a global maximum. Check long labels beyond that prefix; use a deliberate custom content layout when the stock sizing does not fit.
 
 ---
 

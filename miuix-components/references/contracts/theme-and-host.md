@@ -70,7 +70,7 @@ fun App() {
 
 Do not add a second page-level `MiuixTheme` only to obtain colors or text styles.
 
-Beta01 adds `ThemePaletteStyle.Cmf` and internally chooses spec 2026 for it; `ThemeColorSpec` has no `Spec2026` member. The theme installs `ProvideDisplayCutoutFix`, controlled through `LocalDisplayCutoutFixEnabled`. These are version-specific behavior additions, not extra required arguments on `MiuixTheme` or `ThemeController`.
+Beta01 seed-generated Monet colors use spec 2026 for `ThemePaletteStyle.Cmf`; `ThemeColorSpec` has no `Spec2026` member. Palette style/spec are used by `colorsFromSeed` only when a Monet mode has a non-null `keyColor`. With a null key, Monet delegates to `platformDynamicColors(dark)` without those arguments; System/Light/Dark use the supplied light/dark schemes instead. Do not promise a palette change in those other paths. The theme installs `ProvideDisplayCutoutFix`, controlled through `LocalDisplayCutoutFixEnabled`. These are version-specific behavior additions, not extra required arguments on `MiuixTheme` or `ThemeController`.
 
 ## Page host
 

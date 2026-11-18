@@ -41,6 +41,8 @@ LazyColumn(
 
 ## Glass TopAppBar
 
+`modifier` positions the whole band/foreground layout; `contentModifier` applies to the foreground. Keep status-area background rendering outside foreground safe padding. `defaultWindowInsetsPadding = false` does not disable the inner layout's top inset; see [top inset and background behavior](top-bars-and-scroll.md#top-inset-and-background-behavior).
+
 **Module:** `miuix-glass`  
 **Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassTopAppBar.kt`  
 **Imports:**

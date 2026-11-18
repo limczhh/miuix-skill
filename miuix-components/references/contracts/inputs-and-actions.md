@@ -347,8 +347,10 @@ fun InputField(
 Minimal composition pattern:
 
 ```kotlin
-var query by remember { mutableStateOf("") }
-var expanded by remember { mutableStateOf(false) }
+import androidx.compose.runtime.saveable.rememberSaveable
+
+var query by rememberSaveable { mutableStateOf("") }
+var expanded by rememberSaveable { mutableStateOf(false) }
 
 SearchBar(
     inputField = {
@@ -367,3 +369,5 @@ SearchBar(
     // Search result list shown when expanded
 }
 ```
+
+The minimal shape saves query and stable expansion intent when the host supplies saveable state; it does not persist application settings or restore focus by itself. Reuse an existing screen owner when present. For restored focus/IME, cancel/back and result-state coordination, follow the [search rules](../../../miuix-guidelines/references/rules/settings-and-overlays.md#search).

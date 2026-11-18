@@ -11,7 +11,9 @@ The relationship is:
 ```text
 page owner: window policy + scroll behavior + backdrop policy + effective bar color
 └── Scaffold
-    ├── topBar: blur background + adaptive foreground bar(same behavior)
+    ├── topBar: full background frame(including owned top safe area)
+    │   ├── blur / fallback background
+    │   └── adaptive foreground bar(safe content, same behavior)
     └── content: recorded backdrop layer → scroll owner(same behavior, shared safe padding)
 ```
 
@@ -66,6 +68,24 @@ Scaffold(
 ```
 
 The example is the standalone case from [inset rules](rules/page-shell.md#insets-and-content-padding). The helper merges current safe areas; a shell-hosted page additionally supplies its outer handoff and reserved-start policy. Standard refresh content retains list connection ownership. The adaptive helper calls `TopAppBar(expandable = !isWideWindow)` with the same behavior, and the list helper bridges damped `onOffsetChanged` to `state.overscrollOffset` for rebound-driven visuals. No version-compatibility branch, reflection or duplicate controller is needed.
+
+## Render behind the status bar
+
+Apply the [status-bar background rule](rules/page-shell.md#status-bar-background-ownership) to the helper implementation as well as its call site. Reserving room for system icons and rendering behind them are separate responsibilities:
+
+```text
+window top / edge-to-edge top-bar frame
+├── background: status-bar area + measured title/actions/tabs area
+└── foreground: consume top safe inset → title/actions/tabs
+```
+
+For the ordinary helper above, keep the outer `BlurredBar` frame unpadded at the owned top edge. Its `matchParentSize` background then includes the inset space measured with the foreground. The foreground bar's own inset handling, or an application helper that applies and consumes the remaining safe insets, keeps controls clear. When blur is off, paint `barColor` over the same full frame. Do not put `statusBarsPadding()` on the whole wrapper and assume a child background will fill the excluded strip, or size the background to the collapsed control-row height alone.
+
+The pinned beta01 `TopAppBarLayout` and `SmallTopAppBarLayout` apply their `background(color)` **before** `windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top))`. Their `defaultWindowInsetsPadding` flag controls extra horizontal display-cutout/navigation-bar padding; the top modifier remains even when that flag is false. If a shared helper owns top status/caption/cutout clearance, apply and consume the relevant insets so the inner bar sees only the remainder. Ordinary additive padding does not establish consumption. See the [exact inset contract](../../miuix-components/references/contracts/top-bars-and-scroll.md#top-inset-and-background-behavior).
+
+`GlassTopAppBar` keeps its background and foreground separate. Its progressive-band height includes the status-bar inset, collapsed bar and bottom-content height; its non-progressive band uses the measured foreground height plus gradient overhang. Both layers start at the outer layout's top. In the Example-style wrapper, pass foreground safe-area handling through **`contentModifier`**, preserving the outer band's origin. Do not add the ordinary blur wrapper or an opaque status-bar cap around it. A band that fades at rest is intentional; keep the underlying page scene/background readable rather than treating every transparent pixel as a missing fill.
+
+For an existing shell that has already reserved the top region, inspect that shell's background and inset handoff before changing page modifiers. Verify the resulting composition with visible content moving behind the status bar: expanded/collapsed title, rebound, blur on/off, light/dark theme, cutout/landscape and window caption. Source alignment does not prove the rendered pixels or system-icon contrast.
 
 ## Variants to resolve deliberately
 

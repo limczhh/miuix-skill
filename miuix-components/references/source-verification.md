@@ -2,7 +2,7 @@
 
 Use for an uncovered beta01 API, an ambiguous overload/behavior, or a target source override. Covered standard-beta01 calls use the maintained contract directly; they do not require another source download. This file defines escalation and evidence boundaries, not an obligatory extra stop for every call.
 
-Contents: [covered path](#covered-contract-path) · [acquire source](#acquire-source-evidence) · [source gate](#api-verification-gate) · [labels](#verification-labels) · [snapshot](#snapshot-scope) · [paths](#path-convention) · [internals](#supporting-internals) · [Example](#example-app).
+Contents: [covered path](#covered-contract-path) · [acquire source](#acquire-source-evidence) · [source gate](#api-verification-gate) · [labels](#verification-labels) · [snapshot](#snapshot-scope) · [paths](#path-convention) · [supporting source](#supporting-source-and-low-level-apis) · [Example](#example-app).
 
 ## Covered-contract path
 
@@ -97,9 +97,9 @@ The repository Markdown file is the documentation evidence. The rendered site ma
 | `example/shared/.../` | `example/shared/src/commonMain/kotlin/` |
 | `example/shared/.../navigation/` | `example/shared/src/commonMain/kotlin/navigation/` |
 
-## Supporting Internals
+## Supporting source and low-level APIs
 
-These files underpin multiple components. They're read-on-demand, not listed per component above:
+These files underpin multiple components and are read on demand. This is a supporting-source index, **not a visibility classification**: beta01 publicly exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent` and `rememberListPopupLayoutInfo`. They are lower-level building blocks, so ordinary application flows usually start with the complete preference/popup wrappers. Names containing `Impl` are not automatically internal; inspect the declaration.
 
 | File | Role |
 |------|------|
@@ -113,8 +113,8 @@ These files underpin multiple components. They're read-on-demand, not listed per
 | `miuix-ui/.../layout/CascadingMorphContent.kt` | Shared cascading morph content |
 | `miuix-ui/.../layout/MorphHeaderRow.kt` | Shared morph header row |
 | `miuix-preference/.../popup/DropdownEntriesContent.kt` | Internal dropdown entries content |
-| `miuix-ui/.../basic/Dropdown.kt` | `DropdownImpl` and `SpinnerItemImpl` — internal dropdown/spinner building blocks used by preference selectors |
-| `miuix-ui/.../basic/ListPopup.kt` | `ListPopupContent`, `ListPopupColumn`, `rememberListPopupLayoutInfo` — internal list popup building blocks |
+| `miuix-ui/.../basic/Dropdown.kt` | `DropdownImpl` and `SpinnerItemImpl` — public low-level dropdown/spinner building blocks used by preference selectors |
+| `miuix-ui/.../basic/ListPopup.kt` | `ListPopupContent`, `ListPopupColumn`, `rememberListPopupLayoutInfo` — public low-level list-popup rendering, sizing and position helpers |
 | `miuix-ui/.../basic/PullToRefresh.kt` | `PullToRefreshState` threshold/progress state machine and real-gesture gating |
 | `miuix-ui/.../basic/TopAppBar.kt` | `SmallTopAppBar` pinned-state handling and `TopAppBarState.Saver` |
 | `miuix-blur/.../blur/TextureEffect.kt` | Uniform and progressive texture-blur modifier overloads |

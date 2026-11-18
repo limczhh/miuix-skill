@@ -4,7 +4,9 @@ Use when the target already has routes, hosts, page helpers, state, providers, o
 
 ## Inspect the actual chain
 
-Record the resolved Miuix artifact/source, platform/source set, route entry, theme, hosts, padding handoff, primary scroll owner, gesture participants, shared helpers/callers, presentation switches, state owners, and the requested delta. Account for `includeBuild` or dependency substitution rather than trusting a version catalog alone.
+Scale inspection to the requested delta. A local row/control change needs its actual value/event owner, relevant wrapper callers and any affected API/host contract; it does not require an application-wide inventory or migration table.
+
+For structural or cross-owner changes, map the relevant route, theme/hosts, padding handoff, scroll/gesture participants, shared helpers/callers, presentation policy and state owners. Confirm the resolved Miuix artifact/source once, accounting for `includeBuild` or dependency substitution rather than trusting a version catalog alone.
 
 Trace outside-in:
 
@@ -23,7 +25,7 @@ A working wrapper is a likely integration seam. For example, a page-specific cus
 1. Inventory the affected structure, metrics, controls, state, and interactions.
 2. Classify each relevant decision as aligned, an intentional project convention, an accidental inconsistency, or unknown using the [exception criteria](rules/design-system.md#exceptions-and-conformance).
 3. Select one coherent scope: a section, page wrapper, navigation family, or shared helper with known callers.
-4. Map boundaries with this delta table:
+4. For multiple changed boundaries, use the delta table below. A small, unambiguous change can keep the decision inline:
 
 | Boundary | Current implementation | Decision | Reason/evidence |
 |---|---|---|---|

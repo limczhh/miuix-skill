@@ -87,6 +87,14 @@ Use `SmallTopAppBar` when the bar must remain pinned. Do not pass a composable t
 
 For title-transition blur use the public low-level `TopAppBarLayout(titleBlurRadius = ...)` after verifying its full required arguments, or choose `GlassTopAppBar` for an intentional Glass treatment. This differs from backdrop blur behind an ordinary bar.
 
+### Top inset and background behavior
+
+In the pinned `TopAppBar.kt`, both ordinary layout implementations apply `.background(color)` before the internal `.windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top))`. The background therefore includes the top inset area when the bar owns that area; its foreground is inset. A caller-applied outer padding can still move the entire bar below that region.
+
+`defaultWindowInsetsPadding` only gates the default **horizontal** display-cutout/navigation-bar modifiers in beta01. Setting it to false leaves the internal top-system-bar inset modifier active. That modifier respects already-consumed insets; a parent/shared wrapper that owns safe-area handling should consume what it handles rather than adding an unconsumed duplicate gap. Caption/custom safe-area handling belongs to the actual application/window contract.
+
+For Glass, `modifier` belongs to the outer background/foreground layout and `contentModifier` belongs to the inner title/control layout. The inner layout uses the same top-inset path. The progressive band accounts for `WindowInsets.statusBars`; the non-progressive band follows measured foreground height plus overhang. Keep foreground safe padding separate from the background origin. The [composition guide](../../../miuix-guidelines/references/top-bar-compositions.md#render-behind-the-status-bar) owns the application placement decision.
+
 ## Low-level title layout
 
 `TopAppBarLayout` is public in beta01 and is the route for a custom title blur without adopting Glass. It is a layout API with required colors, slots, paddings and nullable `scrollBehavior`; `TopAppBar` remains the smaller ordinary-page entry point. Import `top.yukonga.miuix.kmp.basic.TopAppBarLayout`.

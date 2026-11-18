@@ -124,7 +124,8 @@ Do not invent `warning`, `alert`, `success`, `info`, `blue`, or `gray` propertie
 - `MiuixTheme.colorScheme` exposes the current `Colors` object inside `MiuixTheme`; it is not a fixed palette.
 - `lightColorScheme()` and `darkColorScheme()` provide the fixed non-Monet defaults shown above.
 - `ThemeController(ColorSchemeMode.MonetSystem/MonetLight/MonetDark)` can generate roles from a key color or system wallpaper. In Monet mode, `primary` may no longer be blue and `error`/surface roles may also change tone.
-- Beta01's `ThemePaletteStyle.Cmf` internally selects spec 2026; do not invent `ThemeColorSpec.Spec2026`. Glass component material/fill presets are separate from flat semantic colors: use [Glass components](glass.md) for the sampled surface and retain semantic foreground contrast.
+- With a non-null seed in a Monet mode, beta01's `ThemePaletteStyle.Cmf` internally selects spec 2026; do not invent `ThemeColorSpec.Spec2026`. Glass component material/fill presets are separate from flat semantic colors: use [Glass components](glass.md) for the sampled surface and retain semantic foreground contrast.
+- Palette style/spec affect the explicit-seed Monet path. With no `keyColor`, Monet uses `platformDynamicColors(dark)` without forwarding the chosen palette/spec; ordinary System/Light/Dark modes use their provided schemes. Remembering a different palette choice alone does not establish that those paths will render differently.
 - If the user wants a fixed brand blue rather than a theme role, configure `lightColorScheme(primary = ...)` and `darkColorScheme(primary = ...)` or a custom `Colors` scheme, then verify contrast and every paired `on*` role. Do not silently replace a semantic role with a literal color.
 - If source and rendered documentation disagree, the declaration at the pinned audit commit wins; do not copy a rendered-doc hex value when the target source computes the role differently.
 

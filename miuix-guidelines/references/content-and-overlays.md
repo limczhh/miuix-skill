@@ -30,25 +30,25 @@ item {
             title = "Enable Feature",
             summary = "Turn on core service",
         )
-        AnimatedVisibility(visible = featureEnabled) {
-            Column {
-                OverlayDropdownPreference(
-                    items = listOf("Standard", "High", "Ultra"),
-                    selectedIndex = selectedQuality,
-                    onSelectedIndexChange = { selectedQuality = it },
-                    title = "Quality Mode",
-                )
-                SliderPreference(
-                    value = intensity,
-                    onValueChange = { intensity = it },
-                    title = "Intensity",
-                    valueText = "${(intensity * 100).toInt()}%",
-                )
-            }
-        }
+        OverlayDropdownPreference(
+            items = listOf("Standard", "High", "Ultra"),
+            selectedIndex = selectedQuality,
+            onSelectedIndexChange = { selectedQuality = it },
+            title = "Quality Mode",
+            enabled = featureEnabled,
+        )
+        SliderPreference(
+            value = intensity,
+            onValueChange = { intensity = it },
+            title = "Intensity",
+            valueText = "${(intensity * 100).toInt()}%",
+            enabled = featureEnabled,
+        )
     }
 }
 ```
+
+The child settings remain visible but disabled while the parent is off; their stored values are retained. Hide a dependent group only when the selected product behavior or capability makes it irrelevant. This snippet shows composition; the existing settings owner supplies and persists the values.
 
 The dimensions illustrate the [group rules](rules/design-system.md#grouped-content-cards). Page padding belongs to the primary content boundary described by [Page shell rules](rules/page-shell.md#insets-and-content-padding).
 

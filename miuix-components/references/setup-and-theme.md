@@ -46,6 +46,11 @@ kotlin {
 ```kotlin
 // module build.gradle.kts — ensure mavenCentral() is configured
 android {
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
     defaultConfig {
         minSdk = 24
     }
@@ -78,10 +83,11 @@ The manifest entry is placed on the `<uses-sdk>` element, not on a Glass composa
 
 Use this only for the `minSdk < 33` compatibility decision above; it does not make the Android blur implementation available on older releases.
 
-**AAR metadata and compileSdk constraints (`0.9.5-beta01`):**
-The published `0.9.5-beta01` Android AAR artifacts declare `minCompileSdk = 37.2` in `META-INF/com/android/build/gradle/aar-metadata.properties`. If the consuming Android project uses `compileSdk = 36` or standard `compileSdk = 37` without preview minor support, AGP will fail compilation with `The minCompileSdk (37.2) ... is greater than this module's compileSdkVersion`. To resolve this in pure Android projects:
-1. In `app/build.gradle.kts`: configure `compileSdkMinor = 2` inside the `android {}` block (when targeting SDK 37).
-2. Or in `gradle.properties`: add `android.suppressUnsupportedCompileSdk=37.2` to bypass the AGP check.
+### Android compile SDK requirements
+
+The published beta01 `miuix-ui-android`, `miuix-blur-android`, and `miuix-glass-android` AAR metadata was checked directly. Each declares `minCompileSdk=37` and **`minCompileMinorSdk=2`**, not a decimal-valued `minCompileSdk=37.2`. Use SDK 37 minor API 2 (or a compatible newer compile SDK) and an AGP/SDK installation that supports it. The Android-only snippet above uses the same expanded `compileSdk { version = release(37) { minorApiLevel = 2 } }` shape as the pinned upstream build; place it in the matching Android target DSL for a multiplatform project.
+
+See [Android SDK configuration](https://developer.android.com/build#module-level) for the minor-API DSL. Do not substitute an invented `compileSdkMinor` property or warning suppression for satisfying dependency metadata. If the existing toolchain cannot express or provide that SDK, report the exact build constraint before proposing a scoped toolchain change. Compile SDK, runtime `minSdk`, and the blur manifest override are separate boundaries; the override above does not resolve a compile-SDK mismatch.
 
 ## MiuixTheme Setup
 
@@ -93,8 +99,8 @@ fun App() {
     val controller = remember { ThemeController(ColorSchemeMode.System) }
     MiuixTheme(controller = controller) {
         Scaffold(
-            topBar = { /* TopAppBar, NavigationBar, etc. */ },
-            bottomBar = { /* NavigationBar, TabRow, etc. */ },
+            topBar = { /* Page TopAppBar; tabs can use its bottomContent. */ },
+            bottomBar = { /* Shell NavigationBar or FloatingNavigationBar. */ },
             floatingActionButton = { /* FloatingActionButton */ },
             floatingToolbar = { /* FloatingToolbar */ },
             floatingToolbarPosition = ToolbarPosition.BottomCenter,
@@ -107,7 +113,7 @@ fun App() {
 
 `ColorSchemeMode` options: `System` / `Light` / `Dark` / `MonetSystem` / `MonetLight` / `MonetDark`.
 
-In beta01, `ThemePaletteStyle.Cmf` internally uses spec 2026. `ThemeColorSpec` still has only `Spec2021` and `Spec2025`; there is no public `ThemeColorSpec.Spec2026`. Keep effective-spec labels and exhaustive palette handling consistent with the selected style. Both theme overloads install `ProvideDisplayCutoutFix`; inspect any older application cutout workaround before retaining it. `LocalDisplayCutoutFixEnabled` controls that behavior at the actual theme/window boundary.
+In beta01's explicit-seed Monet path, `ThemePaletteStyle.Cmf` internally uses spec 2026; palette/spec do not override the ordinary or seedless platform-dynamic paths. See the [theme contract](contracts/theme-and-host.md#theme). `ThemeColorSpec` still has only `Spec2021` and `Spec2025`; there is no public `ThemeColorSpec.Spec2026`. Keep effective-spec labels and exhaustive palette handling consistent with the selected style. Both theme overloads install `ProvideDisplayCutoutFix`; inspect any older application cutout workaround before retaining it. `LocalDisplayCutoutFixEnabled` controls that behavior at the actual theme/window boundary.
 
 > **Supported version**: Only `0.9.5-beta01`, tag `v0.9.5-beta01` at `6d2554a850b8960e2616c968263ff64beb5ffb03`. Verify target resolution, including local substitutions, even when the declared coordinate matches. This Skill does not supply other-release compatibility paths.
 

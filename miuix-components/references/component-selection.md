@@ -127,7 +127,7 @@ The table above is a catalog of public entry points. Supporting source paths are
 - `TextButton` is a public button API documented and implemented with the Button family; verify its exact source signature before treating it as a separate module or inventing a wrapper.
 - `InputField` is the editable-field API nested in the SearchBar documentation/source. `SearchBar` itself does not expose every parameter accepted by `InputField`, including its color parameter.
 - `ProgressiveBlur` is a public effect descriptor used by modifier APIs in `miuix-blur`, not a general-purpose `miuix-ui` component; verify the target platform and the exact modifier overload in the blur source.
-- Names under [Supporting Internals](source-verification.md#supporting-internals), such as `ListPopupContent` or `DropdownImpl`, are implementation evidence unless the pinned source exports them publicly.
+- The [supporting-source index](source-verification.md#supporting-source-and-low-level-apis) includes public low-level APIs as well as implementation support. Beta01 exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent` and `rememberListPopupLayoutInfo`; prefer full preference/popup wrappers when their host and lifecycle behavior is needed. Do not infer visibility from `Impl` in a name.
 
 ### SmallTitle and section labels
 
