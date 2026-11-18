@@ -2,7 +2,7 @@
 
 Use when replacing existing ordinary components with the optional Glass family, adopting only a Glass surface, or supporting both presentations. This guide targets **`0.9.5-beta01`**, not a future stable release. Confirm the [beta01 dependency and platform setup](../../miuix-components/references/setup-and-theme.md) first. Ordinary and Glass components below both use this one library version; this guide does not maintain older-release APIs. Mandatory visual/ownership requirements remain in [page-shell rules](rules/page-shell.md#blur-and-glass) and [popup rules](rules/settings-and-overlays.md#popup-family-and-lifetime); this file supplies migration decisions and examples.
 
-Contents: [scope](#choose-the-migration-boundary) · [replacement map](#replacement-map) · [sampling](#record-the-right-scene) · [bars](#replace-a-top-bar) · [navigation](#keep-ordinary-and-glass-navigation-together) · [overlays](#adapt-an-existing-overlay-surface) · [menus](#migrate-menus-and-setting-rows) · [coexistence](#own-coexistence-policy-once) · [acceptance](#acceptance).
+Contents: [scope](#choose-the-migration-boundary) · [replacement map](#replacement-map) · [sampling](#record-the-right-scene) · [bars](#replace-a-top-bar) · [navigation](#keep-ordinary-and-glass-navigation-together) · [floating actions and stroke](#migrate-floating-actions-and-their-bloom-stroke) · [overlays](#adapt-an-existing-overlay-surface) · [menus](#migrate-menus-and-setting-rows) · [coexistence](#own-coexistence-policy-once) · [acceptance](#acceptance).
 
 ## Choose the migration boundary
 
@@ -30,7 +30,7 @@ These are migration candidates, not aliases or mandatory replacements. Verify ex
 | Ordinary `NavigationRail` | `GlassNavigationRail` | Same destination owner, but a **different overlay/morph layout** and separate Glass rail state; revise content clearance and title overlap. |
 | `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Same pager owner; callbacks become `selectedIndex` / `onSelect`. Bind `selectedIndex` to `pagerState.targetPage` to prevent indicator rebound on touch release. Segmented variant self-downgrades to opaque resting track and bloom stroke when blur is disabled (pass an unrecorded dummy `Backdrop` or inherit top-bar context; no need to revert to ordinary tabs). |
 | `IconButton` | `GlassIconButton` | Same action/description. Inside `GlassTopAppBar`, inherit its material by default; outside it, supply the intended backdrop. Beta01 has no `enabled` parameter: retain an ordinary control or a verified semantic adapter when disabling is required; a no-op callback alone does not preserve disabled semantics. |
-| `FloatingActionButton` / `FloatingToolbar` | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Existing Scaffold slots, visibility/action ownership; new shape/material and `surfaceAlpha` parameters. |
+| `FloatingActionButton` / `FloatingToolbar` | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Keep Scaffold slots and action ownership; adopt the built-in Glass material, bloom rim and separate shadow. See [floating-action migration](#migrate-floating-actions-and-their-bloom-stroke) before retaining an application border or blur wrapper. |
 | `OverlayDialog` | Keep it with `glassDialogSurface`, or use `GlassDialog` | Existing show/draft/confirm/finished state and dialog geometry; Glass defaults include their own material/scrim. |
 | `OverlayBottomSheet` | Keep it with `glassBottomSheetSurface`, or use `GlassBottomSheet` | Existing drag/list state, nesting and actions. Surface helper handles top corners and overscroll extension. |
 | `WindowDialog` / `WindowBottomSheet` | Retain Window, or explicitly migrate host to Overlay/Glass | Glass wrappers are Scaffold-hosted; they are **not** Window replacements and Window APIs do not gain the typed surface slots. |
@@ -162,6 +162,29 @@ if (useGlassChrome) {
 `ordinaryNavigation` is the application's existing ordinary/floating bar wrapper. Glass uses `GlassNavigationItem` from `top.yukonga.miuix.kmp.glass`, not the ordinary item model. Preserve badges explicitly when adapting models. Render one active navigation surface; do not duplicate route mutations or hide an interactive second bar with alpha.
 
 For wide windows, `GlassNavigationRail` is an overlay that fills its given space and morphs into a top capsule. Do not put it in the old rail's width-constrained Row and assume equivalent measurement. Reuse one remembered `GlassNavigationRailState`; derive page clearance and title visibility from its layout/draw `progress`. Keep rail overlays outside recording and coordinate top controls when the capsule overlaps them. `secondaryItems` appear while expanded and use indices after the primary `items` (`items.size + secondaryIndex`); ensure the selected secondary destination stays accessible when the rail collapses or the layout becomes compact. Use the ordinary rail when the requested migration does not include this layout change.
+
+## Migrate floating actions and their bloom stroke
+
+The ordinary `FloatingActionButton` supplies a colored surface and elevation shadow; it does not supply the Glass bloom rim. `GlassFloatingActionButton` includes that rim by default through `stroke`, independently of its drop shadow. A color-only or translucent ordinary FAB is not the same treatment. The exact defaults for the FAB and toolbar live in the [floating-action contract](../../miuix-components/references/contracts/glass.md#glassfloatingactionbutton--glassfloatingtoolbar).
+
+Replace the control in its existing `Scaffold.floatingActionButton` slot, preserve `onClick` and icon semantics, and pass the scene backdrop already owned by the shell/page:
+
+```kotlin
+import top.yukonga.miuix.kmp.glass.GlassFloatingActionButton
+
+// Inside the existing Scaffold.floatingActionButton slot:
+GlassFloatingActionButton(
+    onClick = onAction,
+    backdrop = sampling,
+    // Omitting stroke preserves the built-in theme-adapted bloom rim.
+) {
+    actionIconContent()
+}
+```
+
+Remove a superseded application blur wrapper or duplicate `border`/`edgeStroke` around this control; do not draw a second rim just to obtain the default effect. Set `stroke = null` only to deliberately remove the rim, and `shadow = null` only to remove the drop shadow. Neither disables background sampling. Use the matching `GlassFloatingToolbar` in `Scaffold.floatingToolbar` for an action group; it also includes its own default bloom stroke.
+
+With `backdrop = null`, the Glass FAB uses its opaque fill and still attempts the rim when runtime shaders are supported. If runtime shaders are unavailable, the rim drawing is skipped; a readable opaque fallback does not guarantee the same optical highlight. Check effects-off and unsupported-runtime states separately. For a rim-only treatment that deliberately retains an ordinary component, use the separate [material edge-stroke modifier](../../miuix-components/references/styling-icons-and-effects.md#glass-and-material-boundary) with a matching shape; do not describe it as a full Glass component migration.
 
 ## Adapt an existing overlay surface
 

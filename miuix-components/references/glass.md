@@ -180,7 +180,7 @@ GlassFloatingToolbar(backdrop = backdrop) {
 }
 ```
 
-These calls belong in the existing `Scaffold` floating slots. Both default `backdrop` to null and use `surfaceAlpha` for material opacity. The toolbar's parameter spelling is `outSidePadding`; do not infer ordinary parameter names.
+These calls belong in the existing `Scaffold` floating slots. Both include a default bloom stroke, separate from their shadow; see the [floating-action contract](contracts/glass.md#glassfloatingactionbutton--glassfloatingtoolbar) for its defaults and runtime boundary. Both default `backdrop` to null and use `surfaceAlpha` for material opacity. The toolbar's parameter spelling is `outSidePadding`; do not infer ordinary parameter names.
 
 `GlassTabRow` and `GlassSegmentedTabRow` take `tabs`, `selectedIndex`, `onSelect`, and `backdrop`. While `GlassTabRow` accepts a nullable `Backdrop?`, `GlassSegmentedTabRow` declares a non-null `Backdrop` in its signature. However, `GlassSegmentedTabRow` internally handles `resolvedBackdrop == null` (and `runtimeShaderSupported == false`) by gracefully rendering its opaque `restingTrackColor`, indicator, bloom stroke, and shadow without runtime shaders. When blur effects are disabled, pass a dummy `rememberLayerBackdrop()` (or rely on `LocalGlassTopAppBarContext`) to retain the HyperOS 4 pill segmented presentation; do not branch away to legacy underline tabs merely because sampling is off.
 

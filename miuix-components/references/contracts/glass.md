@@ -539,6 +539,10 @@ fun GlassIconButton(
 
 ### GlassFloatingActionButton & GlassFloatingToolbar
 
+Both components include a bloom rim through their default non-null `stroke`; it is separate from `shadow`. `GlassFloatingActionButtonDefaults.stroke()` delegates to `GlassTopAppBarDefaults.buttonStroke()` (theme-selected `GlassEdgeStrokes.SmallLight` / `SmallDark`); the toolbar uses its own `GlassFloatingToolbarDefaults.stroke()`. Set `stroke = null` to omit the rim; do not add a second border for the stock appearance.
+
+The FAB defaults to a primary-colored material/fallback fill. A null backdrop selects the fill path, which still draws the rim when runtime shaders are supported. `drawEdgeStroke` skips drawing without runtime shader support. `surfaceAlpha` affects the surface/stroke; it is not an effects-off switch. The [migration guide](../../../miuix-guidelines/references/glass-migration.md#migrate-floating-actions-and-their-bloom-stroke) owns placement and replacement decisions.
+
 ```kotlin
 @Composable
 fun GlassFloatingActionButton(
