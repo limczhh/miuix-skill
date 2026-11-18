@@ -29,6 +29,7 @@ For vague wording, identify the semantic role first: preference row versus stand
 | Exact Glass component or modifier | [Glass sections](references/api-contracts.md#glass) |
 | Find a specific covered symbol | [Contract index](references/api-contracts.md#select-one-contract-guide) |
 | Choose a popup host / preference model / Glass sampling boundary | [Overlay vs Window](references/overlays-and-windows.md#choose-the-host-first) / [preferences](references/preferences-and-menus.md) / [Glass](references/glass.md#background-sampling-contract) |
+| Blur setting, component fallback or inherited sampling | [Blur behavior](references/blur-behavior.md#component-behavior) |
 | Colors / icons, blur or shapes | [Color lookup](references/color-lookup.md) / [effects](references/styling-icons-and-effects.md) |
 | Route stack / native desktop window | [miuix-nav](references/miuix-nav.md) / [desktop window](references/desktop-window.md) |
 | Uncovered API, source override or uncertain behavior | [Source verification](references/source-verification.md#acquire-source-evidence) |

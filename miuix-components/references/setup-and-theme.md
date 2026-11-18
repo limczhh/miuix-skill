@@ -64,9 +64,9 @@ dependencies {
 }
 ```
 
-`miuix-ui`, `miuix-preference`, `miuix-icons`, `miuix-material`, and `miuix-nav` follow the repository's Android baseline of `minSdk = 24`; `miuix-blur-android` declares `minSdk = 33`. `miuix-glass` targets API 24 and has an opaque fallback below API 33, but its transitive `miuix-blur` Android artifact still creates the dependency/manifest boundary described by the upstream Glass guide. Keep the dependency artifact aligned with the source set: use the common artifact in `commonMain`, `-android` for a pure Android module, and `miuix-window` only in `desktopMain`. Verify the target project's published version and Compose/Kotlin/AGP compatibility before changing its build versions.
+`miuix-ui`, `miuix-preference`, `miuix-icons`, `miuix-material`, and `miuix-nav` follow the repository's Android baseline of `minSdk = 24`; `miuix-blur-android` declares `minSdk = 33`. `miuix-glass` targets API 24 and has component-specific non-sampling fallbacks below API 33, but its transitive `miuix-blur` Android artifact still creates the dependency/manifest boundary described by the upstream Glass guide. Keep the dependency artifact aligned with the source set: use the common artifact in `commonMain`, `-android` for a pure Android module, and `miuix-window` only in `desktopMain`. Verify the target project's published version and Compose/Kotlin/AGP compatibility before changing its build versions.
 
-For an Android app with `minSdk < 33` that uses `miuix-glass`, follow the upstream manifest boundary for its transitive blur artifact: add `tools:overrideLibrary="top.yukonga.miuix.kmp.blur"` only after accepting that shader-backed blur is skipped below API 33, and keep an opaque fallback. This is a build/runtime constraint, not a promise that Glass blur works on older Android versions.
+For an Android app with `minSdk < 33` that uses `miuix-glass`, follow the upstream manifest boundary for its transitive blur artifact: add `tools:overrideLibrary="top.yukonga.miuix.kmp.blur"` only after accepting that shader-backed blur is skipped below API 33, and preserve a [readable component-specific fallback](blur-behavior.md#component-behavior). This is a build/runtime constraint, not a promise that Glass blur works on older Android versions.
 
 The manifest entry is placed on the `<uses-sdk>` element, not on a Glass composable:
 

@@ -27,7 +27,7 @@ Glass is not selected by passing a translucent color alone. The common surface c
 2. Apply `Modifier.layerBackdrop(backdrop)` to the opaque page/background content that should be sampled.
 3. Place the Glass surface outside that recorded content and pass the same `backdrop` to it.
 4. Exclude the Glass surface, popup host, and dialog/sheet scrim from the recording. Add an opaque background inside the recorded layer; parent backgrounds are not captured automatically.
-5. Keep the fallback path visible. A `null` backdrop or unsupported runtime must still produce a readable opaque surface.
+5. Preserve readable component-specific fallback: a fill, resting track or top-bar gradient band. Custom panels supply their own fill. Null arguments can still resolve an inherited backdrop; see [blur behavior](blur-behavior.md#component-behavior).
 
 Glass surfaces and popup components expose a `backdrop` boundary. `GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` are Scaffold-hosted and use the Miuix `MiuixPopupHost`; keep them composed until their exit animation finishes. `GlassPopup`, `GlassDropdownPopup`, `GlassTransformPopup`, `GlassSecondaryPopup`, and `GlassIconDropdownMenu` are `BoxScope` components instead: compose them in the same root `BoxScope` as their anchor, keep their window-coordinate anchor alive, and let the caller own `show`/selection state.
 
@@ -184,7 +184,7 @@ GlassFloatingToolbar(backdrop = backdrop) {
 
 These calls belong in the existing `Scaffold` floating slots. Both include a default bloom stroke, separate from their shadow; see the [floating-action contract](contracts/glass.md#glassfloatingactionbutton--glassfloatingtoolbar) for its defaults and runtime boundary. Both default `backdrop` to null and use `surfaceAlpha` for material opacity. The toolbar's parameter spelling is `outSidePadding`; do not infer ordinary parameter names.
 
-`GlassTabRow` and `GlassSegmentedTabRow` take `tabs`, `selectedIndex`, `onSelect`, and `backdrop`. While `GlassTabRow` accepts a nullable `Backdrop?`, `GlassSegmentedTabRow` declares a non-null `Backdrop` in its signature. However, `GlassSegmentedTabRow` internally handles `resolvedBackdrop == null` (and `runtimeShaderSupported == false`) by gracefully rendering its opaque `restingTrackColor`, indicator, bloom stroke, and shadow without runtime shaders. When blur effects are disabled, pass a dummy `rememberLayerBackdrop()` (or rely on `LocalGlassTopAppBarContext`) to retain the HyperOS 4 pill segmented presentation; do not branch away to legacy underline tabs merely because sampling is off.
+`GlassTabRow` accepts `Backdrop?`; `GlassSegmentedTabRow` requires a non-null `Backdrop`. To disable segmented-track sampling on a supported runtime, set `surfaceAlpha = 0f`: the default opaque resting track and indicator remain, while material and its stroke are disabled. Unsupported shaders force that material ramp to zero internally. An unrecorded dummy backdrop alone does not trigger fallback. Coordinate parent-context sampling and tab state through the [tab off-state contract](blur-behavior.md#disable-tab-material-explicitly); retaining segmented geometry does not require ordinary underline tabs.
 
 When driving `GlassSegmentedTabRow` with a `HorizontalPager`, always bind `selectedIndex = pagerState.targetPage` (not `pagerState.currentPage`). The segmented row increments internal `settleGeneration` immediately upon pointer release; binding `currentPage` causes the indicator to jump or rebound toward the un-settled page during asynchronous scroll animations.
 

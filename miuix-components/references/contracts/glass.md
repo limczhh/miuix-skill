@@ -140,6 +140,8 @@ import top.yukonga.miuix.kmp.glass.rememberGlassNavigationRailState
 
 ### GlassNavigationBar
 
+`backdrop = null` disables background sampling; `material = null` does not. The `visible` animation separately blurs the whole navigation group and is not disabled by a null backdrop. See [foreground blur](../blur-behavior.md#foreground-blur-is-a-separate-control).
+
 ```kotlin
 @Composable
 fun GlassNavigationBar(
@@ -237,6 +239,8 @@ fun GlassTabRow(
 ```
 
 ### GlassSegmentedTabRow
+
+For effects-off behavior use `surfaceAlpha = 0f`, retaining the required non-null backdrop and resting track/indicator. An unrecorded backdrop does not automatically select fallback. See [tab material control](../blur-behavior.md#disable-tab-material-explicitly) for the supported-runtime branch and inherited-context boundary.
 
 ```kotlin
 @Composable

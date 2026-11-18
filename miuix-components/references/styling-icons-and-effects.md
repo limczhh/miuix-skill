@@ -40,6 +40,8 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 
 ## Blur
 
+For component-specific on/off behavior, inherited sampling and runtime fallbacks, read [Blur controls and fallbacks](blur-behavior.md). A setting must map to the selected component; there is no universal library blur switch.
+
 - Add `miuix-blur` explicitly; it is not included by `miuix-ui`.
 - On Android, blur requires API 33. Gate shader-backed behavior with the public support check shown by the pinned guide and Example, and preserve a readable non-blurred surface when unsupported.
 - Treat Example blur backdrops and bar helpers as application-specific composition. Copy only the effect and fallback the product actually needs.
@@ -49,7 +51,7 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 
 - `miuix-material` supplies `RuntimeShader`, `GlassStyle`, `GlassMaterial`, `GlassShape`, `GlassShadow`, `GlassDefaults`, and edge-stroke definitions.
 - `miuix-glass` composes those definitions into `glassPanel`, `glass`, `glassShadow`, `glassSurface`, Glass app bars, navigation, tabs, buttons, popups, dialogs, sheets, and `GlassDropdownPreference`.
-- A Glass component that accepts `Backdrop?` samples recorded content; create it with `rememberLayerBackdrop` and apply `Modifier.layerBackdrop` to an opaque background layer that excludes the Glass surface. A `null` backdrop is an explicit opaque fallback, not an error.
+- A Glass sampling surface needs a recorded scene: create it with `rememberLayerBackdrop` and apply `Modifier.layerBackdrop` to an opaque background layer that excludes the surface. The effective null-backdrop path varies by component (fill, gradient band, inherited scene or custom fallback); use the [behavior matrix](blur-behavior.md#component-behavior).
 - `GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` use the Miuix `Scaffold` popup host. Keep them composed while they exit and keep the popup host/scrim out of the backdrop recording. `GlassPopup`, `GlassDropdownPopup`, `GlassTransformPopup`, `GlassSecondaryPopup`, and `GlassIconDropdownMenu` are `BoxScope` components and must share a root box with their anchor. Use [Glass components](glass.md) for the exact host and callback contract.
 
 For an ordinary blurred rim, select `EdgeStrokes`; Glass presets use `GlassEdgeStrokes`. Both use `EdgeStroke` / `EdgeLightSource`. Draw the stroke separately from backdrop effects, using the same shape:
