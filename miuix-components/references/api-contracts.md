@@ -61,9 +61,12 @@ Use when the symbol is known but its contract section is not. Open the linked se
 | GlassBottomSheet | [Sheet](contracts/glass.md#glassbottomsheet) |
 | GlassDropdownPreference | [Preference](contracts/glass.md#glassdropdownpreference-scaffold-hosted) |
 | GlassPopup / GlassDropdownPopup / GlassTransformPopup | [BoxScope popups](contracts/glass.md#boxscope-glass-popup-components) |
+| GlassIconDropdownMenu | [Composed cascading icon menu](contracts/glass.md#boxscope-glass-popup-components) |
+| GlassSecondaryPopup / GlassPopupItem | [Child menu](contracts/glass.md#glasssecondarypopup) / [menu row](contracts/glass.md#glasspopupitem) |
 | GlassIconButton | [Icon button](contracts/glass.md#glassiconbutton) |
 | GlassFloatingActionButton / GlassFloatingToolbar | [Floating actions](contracts/glass.md#glassfloatingactionbutton--glassfloatingtoolbar) |
 | glassPanel / glass | [Surface modifiers](contracts/glass.md#low-level-glass-panel-modifiers) |
+| Rail state / other surface adapters, popup anchors or press helpers | [Rail state](glass.md#glass-navigation-rail) / [support API source routes](glass.md#lower-level-glass-surfaces-and-support-types); inspect uncovered declarations as needed |
 
 ## Contract rules
 

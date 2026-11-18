@@ -33,6 +33,8 @@ Glass surfaces and popup components expose a `backdrop` boundary. `GlassDialog`,
 
 ## Component routes
 
+This table covers all **18 public Glass UI component names** in the pinned beta01 source, counting `GlassTopAppBar` overloads once. Each has a declaration in the [component contracts](contracts/glass.md) and a route in the [API index](api-contracts.md#glass). Support functions, state/models, Defaults and material/blur APIs are separate from this UI-component count; their routes follow below.
+
 | User need | Component family | Current documentation | Source route |
 |---|---|---|---|
 | Collapsing glass title bar with actions | `GlassTopAppBar` | `docs/components/glass/glasstopappbar.md` | `miuix-glass/.../glass/GlassTopAppBar.kt` |
@@ -41,9 +43,9 @@ Glass surfaces and popup components expose a `backdrop` boundary. `GlassDialog`,
 | Glass tabs in a bar or page | `GlassTabRow`, `GlassSegmentedTabRow` | `docs/components/glass/glasstabrow.md` | `miuix-glass/.../glass/GlassTabRow.kt` |
 | Round glass action or toolbar control | `GlassIconButton` | `docs/components/glass/glassiconbutton.md` | `miuix-glass/.../glass/GlassIconButton.kt` |
 | Floating primary action / action group | `GlassFloatingActionButton`, `GlassFloatingToolbar` | `docs/components/glass/glassfloatingactionbutton.md`, `glassfloatingtoolbar.md` | `GlassFloatingActionButton.kt`, `GlassFloatingToolbar.kt` |
-| Anchored menu or selected popup item | `GlassPopup`, `GlassPopupItem`, `GlassDropdownPopup` | `docs/components/glass/glasspopup.md`, `glassdropdownpopup.md` | `GlassPopup.kt`, `GlassDropdownPopup.kt` |
+| Anchored menu or selected popup item | `GlassPopup`, [`GlassPopupItem`](contracts/glass.md#glasspopupitem), `GlassDropdownPopup` | `docs/components/glass/glasspopup.md`, `glassdropdownpopup.md` | `GlassPopup.kt`, `GlassDropdownPopup.kt` |
 | Glass icon menu with cascading child choices | `GlassIconDropdownMenu` | No dedicated component page; integrated Example use | `miuix-glass/.../glass/GlassIconDropdownMenu.kt` |
-| Morphing control into a popup / child popup | `GlassTransformPopup`, `GlassSecondaryPopup` | `docs/components/glass/glasstransformpopup.md`, `glasssecondarypopup.md` | `GlassTransformPopup.kt`, `GlassSecondaryPopup.kt` |
+| Morphing control into a popup / child popup | `GlassTransformPopup`, [`GlassSecondaryPopup`](contracts/glass.md#glasssecondarypopup) | `docs/components/glass/glasstransformpopup.md`, `glasssecondarypopup.md` | `GlassTransformPopup.kt`, `GlassSecondaryPopup.kt` |
 | Glass confirmation/input surface | `GlassDialog`, `GlassDialogButton` | `docs/components/glass/glassdialog.md` | `GlassDialog.kt`, `GlassDialogButton.kt` |
 | Glass sheet | `GlassBottomSheet` | `docs/components/glass/glassbottomsheet.md` | `GlassBottomSheet.kt` |
 | Glass setting row with a value dropdown | `GlassDropdownPreference` | `docs/components/glass/glassdropdownpreference.md` | `GlassDropdownPreference.kt` |

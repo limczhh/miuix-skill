@@ -396,6 +396,7 @@ import top.yukonga.miuix.kmp.glass.GlassPopup
 import top.yukonga.miuix.kmp.glass.GlassPopupItem
 import top.yukonga.miuix.kmp.glass.GlassIconDropdownMenu
 import top.yukonga.miuix.kmp.glass.GlassTransformPopup
+import top.yukonga.miuix.kmp.glass.GlassSecondaryPopup
 import top.yukonga.miuix.kmp.glass.GlassPopupAnchor
 import top.yukonga.miuix.kmp.glass.rememberGlassPopupAnchor
 import top.yukonga.miuix.kmp.glass.glassPopupAnchor
@@ -501,6 +502,57 @@ fun BoxScope.GlassTransformPopup(
 
 ---
 
+### GlassSecondaryPopup
+
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassSecondaryPopup.kt`
+
+```kotlin
+@Composable
+fun BoxScope.GlassSecondaryPopup(
+    show: Boolean,
+    onDismissRequest: () -> Unit,
+    anchorBounds: Rect,
+    backdrop: Backdrop?,
+    modifier: Modifier = Modifier,
+    materialAnchor: GlassPopupAnchor? = null,
+    sizing: GlassPopupSizing = GlassPopupSizing(),
+    visuals: GlassPopupVisuals = GlassPopupDefaults.visuals(),
+    cornerRadius: Dp = GlassPopupDefaults.CornerRadius,
+    contentPadding: PaddingValues = PaddingValues(vertical = GlassPopupDefaults.ContentPaddingVertical),
+    onDismissFinished: (() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+)
+```
+
+This is a caller-controlled child menu in the same root `BoxScope`. Capture its trigger row's resting `boundsInWindow()` before changing the primary transform popup's `stacked` state. Its backdrop includes the primary popup but excludes the child itself; null falls back to the material anchor's backdrop when available. Share `materialAnchor` when both levels should reuse the primary appearance. Keep it composed through collapse; `onDismissFinished` handles completed-exit cleanup.
+
+### GlassPopupItem
+
+**Source:** `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/GlassPopup.kt`
+
+```kotlin
+@Composable
+fun GlassPopupItem(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    summary: String? = null,
+    enabled: Boolean = true,
+    selected: Boolean = false,
+    showArrow: Boolean = false,
+    arrowRotation: () -> Float = { 0f },
+    contentColor: Color = MiuixTheme.colorScheme.onSurfaceContainer,
+    summaryColor: Color = MiuixTheme.colorScheme.onSurfaceContainerVariant,
+    selectedContentColor: Color = MiuixTheme.colorScheme.primary,
+    pressedColor: Color = GlassPopupDefaults.itemPressedColor(),
+)
+```
+
+This renders a menu row, including disabled/selected state, optional icon/summary and submenu arrow. It does not create a popup, sample a backdrop, or supply a Glass container. The caller owns selection and the action; the surrounding popup owns material and visibility.
+
+---
+
 ## Glass Buttons & Actions
 
 **Module:** `miuix-glass`  
@@ -541,7 +593,7 @@ fun GlassIconButton(
 
 Both components include a bloom rim through their default non-null `stroke`; it is separate from `shadow`. `GlassFloatingActionButtonDefaults.stroke()` delegates to `GlassTopAppBarDefaults.buttonStroke()` (theme-selected `GlassEdgeStrokes.SmallLight` / `SmallDark`); the toolbar uses its own `GlassFloatingToolbarDefaults.stroke()`. Set `stroke = null` to omit the rim; do not add a second border for the stock appearance.
 
-The FAB defaults to a primary-colored material/fallback fill. A null backdrop selects the fill path, which still draws the rim when runtime shaders are supported. `drawEdgeStroke` skips drawing without runtime shader support. `surfaceAlpha` affects the surface/stroke; it is not an effects-off switch. The [migration guide](../../../miuix-guidelines/references/glass-migration.md#migrate-floating-actions-and-their-bloom-stroke) owns placement and replacement decisions.
+The FAB defaults to a primary-colored material/fallback fill. A null backdrop selects the fill path, which still draws the rim when runtime shaders are supported. `drawEdgeStroke` skips drawing without runtime shader support. `surfaceAlpha` affects the surface/stroke; it is not an effects-off switch. The [migration guide](../../../miuix-guidelines/references/glass-migration.md#migrate-floating-action-components) owns placement and replacement decisions.
 
 ```kotlin
 @Composable

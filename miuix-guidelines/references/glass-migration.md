@@ -2,7 +2,7 @@
 
 Use when replacing existing ordinary components with the optional Glass family, adopting only a Glass surface, or supporting both presentations. This guide targets **`0.9.5-beta01`**, not a future stable release. Confirm the [beta01 dependency and platform setup](../../miuix-components/references/setup-and-theme.md) first. Ordinary and Glass components below both use this one library version; this guide does not maintain older-release APIs. Mandatory visual/ownership requirements remain in [page-shell rules](rules/page-shell.md#blur-and-glass) and [popup rules](rules/settings-and-overlays.md#popup-family-and-lifetime); this file supplies migration decisions and examples.
 
-Contents: [scope](#choose-the-migration-boundary) · [replacement map](#replacement-map) · [sampling](#record-the-right-scene) · [bars](#replace-a-top-bar) · [navigation](#keep-ordinary-and-glass-navigation-together) · [floating actions and stroke](#migrate-floating-actions-and-their-bloom-stroke) · [overlays](#adapt-an-existing-overlay-surface) · [menus](#migrate-menus-and-setting-rows) · [coexistence](#own-coexistence-policy-once) · [acceptance](#acceptance).
+Contents: [scope](#choose-the-migration-boundary) · [replacement map](#replacement-map) · [sampling](#record-the-right-scene) · [bars](#replace-a-top-bar) · [navigation](#keep-ordinary-and-glass-navigation-together) · [floating components](#migrate-floating-action-components) · [overlays](#adapt-an-existing-overlay-surface) · [menus](#migrate-menus-and-setting-rows) · [coexistence](#own-coexistence-policy-once) · [acceptance](#acceptance).
 
 ## Choose the migration boundary
 
@@ -30,11 +30,16 @@ These are migration candidates, not aliases or mandatory replacements. Verify ex
 | Ordinary `NavigationRail` | `GlassNavigationRail` | Same destination owner, but a **different overlay/morph layout** and separate Glass rail state; revise content clearance and title overlap. |
 | `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Same pager owner; callbacks become `selectedIndex` / `onSelect`. Bind `selectedIndex` to `pagerState.targetPage` to prevent indicator rebound on touch release. Segmented variant self-downgrades to opaque resting track and bloom stroke when blur is disabled (pass an unrecorded dummy `Backdrop` or inherit top-bar context; no need to revert to ordinary tabs). |
 | `IconButton` | `GlassIconButton` | Same action/description. Inside `GlassTopAppBar`, inherit its material by default; outside it, supply the intended backdrop. Beta01 has no `enabled` parameter: retain an ordinary control or a verified semantic adapter when disabling is required; a no-op callback alone does not preserve disabled semantics. |
-| `FloatingActionButton` / `FloatingToolbar` | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Keep Scaffold slots and action ownership; adopt the built-in Glass material, bloom rim and separate shadow. See [floating-action migration](#migrate-floating-actions-and-their-bloom-stroke) before retaining an application border or blur wrapper. |
+| `FloatingActionButton` / `FloatingToolbar` | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Keep Scaffold slots and action ownership; adopt the built-in Glass material, bloom rim and separate shadow. See [floating-action migration](#migrate-floating-action-components) before retaining an application border or blur wrapper. |
 | `OverlayDialog` | Keep it with `glassDialogSurface`, or use `GlassDialog` | Existing show/draft/confirm/finished state and dialog geometry; Glass defaults include their own material/scrim. |
+| Dialog action buttons | `GlassDialogButton` | Preserve confirm/cancel actions and enabled state; select the appropriate role/colors. It is an action-row component, not a separate sampled Glass panel. |
 | `OverlayBottomSheet` | Keep it with `glassBottomSheetSurface`, or use `GlassBottomSheet` | Existing drag/list state, nesting and actions. Surface helper handles top corners and overscroll extension. |
 | `WindowDialog` / `WindowBottomSheet` | Retain Window, or explicitly migrate host to Overlay/Glass | Glass wrappers are Scaffold-hosted; they are **not** Window replacements and Window APIs do not gain the typed surface slots. |
 | Icon dropdown / cascading menu | Surface-taking ordinary cascading overload, or `GlassIconDropdownMenu` | Ordinary host can remain; full Glass menu instead needs root Box, anchor recording and controlled visibility. |
+| Custom anchored menu / value list | `GlassPopup` / `GlassDropdownPopup` | Own `show`, window-coordinate anchor bounds and root Box placement. The popup container owns material; its rows remain caller content. |
+| Control-to-menu morph | `GlassTransformPopup` | Preserve the action while adding a remembered anchor, copied anchor content and coordinated open/close state. Prefer the composed icon menu when its built-in behavior fits. |
+| Custom child submenu | `GlassSecondaryPopup` | Coordinate it with the primary popup, capture the resting row bounds before stacking, and preserve its collapse/finished lifecycle. |
+| Custom popup choice row | `GlassPopupItem` | Preserve icon, summary, selected/enabled state and action. It does not supply the enclosing popup or sample its background. |
 | Dropdown preference row | `GlassDropdownPreference` when its selection model fits | Caller-owned value; component-owned expansion. Do not map richer spinner items to string choices blindly. |
 | Card/custom panel | Ordinary Card body plus selected custom `glassPanel` surface | Card click/measurement semantics and opaque fallback; no universal `GlassCard` or glass preference/control for every ordinary component. |
 | Extended icons | Optional `MiuixIcons.Glass` extensions | Verify each semantic symbol; no mechanical one-to-one mapping or compulsory icon replacement. |
@@ -163,9 +168,9 @@ if (useGlassChrome) {
 
 For wide windows, `GlassNavigationRail` is an overlay that fills its given space and morphs into a top capsule. Do not put it in the old rail's width-constrained Row and assume equivalent measurement. Reuse one remembered `GlassNavigationRailState`; derive page clearance and title visibility from its layout/draw `progress`. Keep rail overlays outside recording and coordinate top controls when the capsule overlaps them. `secondaryItems` appear while expanded and use indices after the primary `items` (`items.size + secondaryIndex`); ensure the selected secondary destination stays accessible when the rail collapses or the layout becomes compact. Use the ordinary rail when the requested migration does not include this layout change.
 
-## Migrate floating actions and their bloom stroke
+## Migrate floating action components
 
-The ordinary `FloatingActionButton` supplies a colored surface and elevation shadow; it does not supply the Glass bloom rim. `GlassFloatingActionButton` includes that rim by default through `stroke`, independently of its drop shadow. A color-only or translucent ordinary FAB is not the same treatment. The exact defaults for the FAB and toolbar live in the [floating-action contract](../../miuix-components/references/contracts/glass.md#glassfloatingactionbutton--glassfloatingtoolbar).
+`GlassFloatingActionButton` is a distinct composed component, so adopting it replaces the ordinary `FloatingActionButton`; adding a rim to the existing FAB is a different, decoration-only change. The Glass component owns its sampled material or fallback fill, shape, press response, button semantics, bloom rim and shadow. `GlassFloatingToolbar` likewise replaces the floating action-group surface. Their exact defaults live in the [floating-action contract](../../miuix-components/references/contracts/glass.md#glassfloatingactionbutton--glassfloatingtoolbar).
 
 Replace the control in its existing `Scaffold.floatingActionButton` slot, preserve `onClick` and icon semantics, and pass the scene backdrop already owned by the shell/page:
 
@@ -219,6 +224,8 @@ For existing cascading popups, first consider the added `surface` overload with 
 Keep the anchor alive through exit. Register outer control bounds with `glassPopupAnchor`, and the copied glyph/content with `glassPopupAnchorContent` where the transform family requires it. Reuse existing `DropdownEntry` / `DropdownItem` actions, enabled state and children. Do not attach both the old menu and new Glass menu to the same click.
 
 `GlassDropdownPreference` owns expansion, while the caller owns `selectedIndex` and persistence. It takes string items, not every ordinary spinner model. Keep richer controls, secondary actions, disabled reasons and saved values in their existing form unless an explicit semantic migration is justified.
+
+For custom menus, `GlassPopup` / `GlassDropdownPopup` supply the container and `GlassPopupItem` supplies a choice row. A control-morphing menu uses `GlassTransformPopup`; a separately controlled child uses `GlassSecondaryPopup`, sharing the primary material anchor when appearance should remain continuous. Record the child backdrop with the primary menu included but the child excluded, and retain it through collapse. These are custom-composition paths, not extra requirements when `GlassIconDropdownMenu` already handles the intended cascading flow.
 
 ## Own coexistence policy once
 
