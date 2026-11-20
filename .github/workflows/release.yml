@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "要创建的 tag，例如 v0.1.0；输入内容会原样使用"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ inputs.tag }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create or verify tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$RELEASE_TAG" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ || "$RELEASE_TAG" == *".."* ]]; then
+            echo "::error::tag 只能包含字母、数字、点、下划线和连字符，且不能包含连续的点。推荐格式：v0.1.0"
+            exit 1
+          fi
+
+          remote_tag_ref="refs/tags/$RELEASE_TAG"
+          if git ls-remote --exit-code --refs origin "$remote_tag_ref" >/dev/null 2>&1; then
+            git fetch origin "$remote_tag_ref:$remote_tag_ref"
+            tag_commit="$(git rev-list -n 1 "$remote_tag_ref")"
+            if [[ "$tag_commit" != "$GITHUB_SHA" ]]; then
+              echo "::error::tag $RELEASE_TAG 已存在，但没有指向当前提交 $GITHUB_SHA。"
+              exit 1
+            fi
+            echo "tag $RELEASE_TAG 已存在且指向当前提交，继续复用。"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$RELEASE_TAG" "$GITHUB_SHA" -m "Release $RELEASE_TAG"
+          git push origin "$remote_tag_ref"
+
+      - name: Build release archive
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          archive="miuix-skills-${RELEASE_TAG}.zip"
+          prefix="miuix-skill-${RELEASE_TAG}/"
+
+          git archive \
+            --format=zip \
+            --prefix="$prefix" \
+            --output="$archive" \
+            "$GITHUB_SHA" \
+            README.md \
+            .agents \
+            .codex-plugin \
+            miuix-components \
+            miuix-guidelines
+
+          unzip -t "$archive"
+          echo "RELEASE_ARCHIVE=$archive" >> "$GITHUB_ENV"
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh release create "$RELEASE_TAG" "$RELEASE_ARCHIVE" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$RELEASE_TAG" \
+            --draft \
+            --generate-notes \
+            --verify-tag \
+            --target "$GITHUB_SHA"
