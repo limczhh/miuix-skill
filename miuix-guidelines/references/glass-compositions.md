@@ -1,6 +1,6 @@
 # Glass Composition Guide
 
-Use this guide for a new Glass composition on the `0.9.5-beta01` baseline. For replacing existing components, a surface-only change, or keeping ordinary and Glass families, start with [Glass migration and coexistence](glass-migration.md). Ordinary blurred app bars follow [Top bar compositions](top-bar-compositions.md); they do not require Glass components. Mandatory recording, fallback, and host separation live in [Blur and Glass rules](rules/page-shell.md#blur-and-glass).
+Use this guide for a new Glass composition on the `0.9.5-beta02` baseline. For replacing existing components, a surface-only change, or keeping ordinary and Glass families, start with [Glass migration and coexistence](glass-migration.md). Ordinary blurred app bars follow [Top bar compositions](top-bar-compositions.md); they do not require Glass components. Mandatory recording, fallback, and host separation live in [Blur and Glass rules](rules/page-shell.md#blur-and-glass).
 
 ## Sampling relationship
 
@@ -20,6 +20,8 @@ The selected Glass family determines whether a popup belongs to the Scaffold hos
 Use `GlassTopAppBar(expandable = !isWideWindow)` with the shared window policy when the layout fits. Its compact title can stay visible without composing a second `SmallTopAppBar`. A custom hero header can retain its intentional structure; identify its visible title and scroll/material owner.
 
 `GlassNavigationRail` belongs in a full-space overlay outside recording. Its state morphs a side panel into a top capsule; page clearance and title overlap follow that progress. This differs from a width-reserving ordinary rail Row. The [migration guide](glass-migration.md#keep-ordinary-and-glass-navigation-together) explains the state/selection handoff, including secondary destinations.
+
+For full-screen search, use `GlassSearchOverlay` as an in-page layer above the shell rather than adding a search route or a second top bar. Keep query/results in one owner, pass the result list's `scrollOffset`, and keep the overlay outside the recorded Glass scene through its exit transition. Use `GlassTextField` only for a field inside an existing Glass surface; it does not replace the form or popup host.
 
 ## API and evidence handoff
 

@@ -23,6 +23,8 @@ Use these cues to reach the right family when the user describes behavior instea
 | User describes | Inspect first | Boundary confirmed by the pinned source |
 |---|---|---|
 | Search input that expands to show results | `SearchBar` and `InputField` in `miuix-ui/basic` | `SearchBar` renders the supplied expanded content and `InputField` exposes query/editing callbacks; a simple text field need not use the expanded container |
+| Full-screen search mode over a Glass page | `GlassSearchOverlay` in `miuix-glass` | The overlay owns query editing, focus, Back/Escape dismissal and the progressive header; do not rebuild it from a second route or a manually blurred full-screen Box |
+| Text input inside a translucent dialog or sheet | `GlassTextField` in `miuix-glass` | It mirrors `TextField` with Glass colors and keeps the field surface inside the dialog/sheet's material boundary |
 | Several destinations at the bottom | `NavigationBar` / `FloatingNavigationBar` in `miuix-ui/basic` | Both navigation-bar families document 2–5 items; shell and selected-destination ownership remains a page-composition decision |
 | A setting row that opens a value choice | `miuix-preference` preference/menu families | Complete row semantics, plain dropdown values, richer spinner items, and anchored menus are different roles; do not choose by the word “settings” alone |
 | A popup, dialog, or sheet | Overlay/Window families | Page lifetime and Scaffold ownership decide the host family; verify `renderInRootScaffold` for nested page hosts |
@@ -77,7 +79,7 @@ When the user asks about a component, first match it case-insensitively against 
 | SearchBar | `docs/components/basic/searchbar.md` | `docs/demo/SearchBarDemo.kt` | `miuix-ui/.../basic/SearchBar.kt` |
 | ColorPalette | `docs/components/basic/colorpalette.md` | `docs/demo/ColorPaletteDemo.kt` | `miuix-ui/.../basic/ColorPalette.kt` |
 | ColorPicker | `docs/components/basic/colorpicker.md` | `docs/demo/ColorPickerDemo.kt` | `miuix-ui/.../basic/ColorPicker.kt` |
-| VerticalScrollBar / HorizontalScrollBar | — (no dedicated doc/demo) | Integrated use: `example/shared/.../SettingsPage.kt`, `MainPage.kt` | `miuix-ui/.../basic/ScrollBar.kt` |
+| VerticalScrollBar / HorizontalScrollBar / `Modifier.*ScrollBar` | — (no dedicated doc/demo) | Integrated use: `example/shared/.../SettingsPage.kt`, `MainPage.kt` | `miuix-ui/.../basic/ScrollBar.kt` |
 | Tooltip | `docs/components/basic/tooltip.md` | `docs/demo/TooltipDemo.kt` | `miuix-ui/.../basic/Tooltip.kt` |
 | Badge | `docs/components/basic/badge.md` | `docs/demo/BadgeDemo.kt` | `miuix-ui/.../basic/Badge.kt` |
 
@@ -103,6 +105,8 @@ When the user asks about a component, first match it case-insensitively against 
 | GlassTopAppBar | `docs/components/glass/glasstopappbar.md` | `docs/demo/GlassTopAppBarDemo.kt` | `miuix-glass/.../glass/GlassTopAppBar.kt` | `contracts/glass.md` |
 | GlassNavigationBar | `docs/components/glass/glassnavigationbar.md` | `docs/demo/GlassNavigationBarDemo.kt` | `miuix-glass/.../glass/GlassNavigationBar.kt` | `contracts/glass.md` |
 | GlassNavigationRail | `docs/components/glass/glassnavigationrail.md` | `docs/demo/GlassNavigationRailDemo.kt` | `miuix-glass/.../glass/GlassNavigationRail.kt` | `contracts/glass.md` |
+| GlassSearchOverlay | `docs/components/glass/glasssearchoverlay.md` | `docs/demo/GlassSearchOverlayDemo.kt` | `miuix-glass/.../glass/GlassSearchOverlay.kt` | `contracts/glass.md` |
+| GlassTextField | `docs/components/glass/glasstextfield.md` | `docs/demo/GlassTextFieldDemo.kt` | `miuix-glass/.../glass/GlassTextField.kt` | `contracts/glass.md` |
 | GlassFloatingActionButton / GlassFloatingToolbar | `docs/components/glass/glassfloatingactionbutton.md`, `glassfloatingtoolbar.md` | matching `docs/demo/` files | `miuix-glass/.../glass/GlassFloatingActionButton.kt`, `GlassFloatingToolbar.kt` | `contracts/glass.md` |
 | GlassTabRow / GlassSegmentedTabRow | `docs/components/glass/glasstabrow.md` | `docs/demo/GlassTabRowDemo.kt` | `miuix-glass/.../glass/GlassTabRow.kt` | `contracts/glass.md` |
 | GlassIconButton | `docs/components/glass/glassiconbutton.md` | `docs/demo/GlassIconButtonDemo.kt` | `miuix-glass/.../glass/GlassIconButton.kt` | `contracts/glass.md` |
@@ -127,7 +131,7 @@ The table above is a catalog of public entry points. Supporting source paths are
 - `TextButton` is a public button API documented with the Button family; use that documentation instead of treating it as a separate module or inventing a wrapper.
 - `InputField` is the editable-field API nested in the SearchBar documentation/source. `SearchBar` itself does not expose every parameter accepted by `InputField`, including its color parameter.
 - `ProgressiveBlur` is a public effect descriptor used by modifier APIs in `miuix-blur`, not a general-purpose `miuix-ui` component; verify the target platform and the exact modifier overload in the blur source.
-- The [supporting-source index](source-verification.md#supporting-source-and-low-level-apis) includes public low-level APIs as well as implementation support. Beta01 exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent` and `rememberListPopupLayoutInfo`; prefer full preference/popup wrappers when their host and lifecycle behavior is needed. Do not infer visibility from `Impl` in a name.
+- The [supporting-source index](source-verification.md#supporting-source-and-low-level-apis) includes public low-level APIs as well as implementation support. Beta02 exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent` and `rememberListPopupLayoutInfo`; prefer full preference/popup wrappers when their host and lifecycle behavior is needed. Do not infer visibility from `Impl` in a name.
 
 ### SmallTitle and section labels
 
@@ -135,16 +139,18 @@ At the current source-audit snapshot there is no public Miuix `SectionHeader`. `
 
 ### Scrollbar integration
 
-`VerticalScrollBar` and `HorizontalScrollBar` are experimental (`ExperimentalScrollBarApi`). Pair the bar with the same `ScrollState`, `LazyListState`, or `LazyGridState` used by the scrollable through `rememberScrollBarAdapter(state)`. The Example overlays a vertical bar as a sibling of `LazyColumn` inside a `Box`, aligns it to the end edge, and forwards the list's `contentPadding` as `trackPadding`; this keeps the bar from becoming list content or covering padded regions. Prefer this pattern for long desktop/tablet-style content, and omit a visible scrollbar when the product does not need one.
+`VerticalScrollBar` and `HorizontalScrollBar` are experimental (`ExperimentalScrollBarApi`). Beta02's `rememberScrollBarAdapter` accepts a `ScrollableState` and supports lazy staggered grids, pagers and custom `ScrollIndicatorState` providers in addition to ordinary scroll/list/grid state. Prefer `Modifier.verticalScrollBar(state = ...)` or `Modifier.horizontalScrollBar(state = ...)` when the bar can be attached directly; keep the standalone adapter form for a custom overlay. The Example overlays a vertical bar as a sibling of `LazyColumn` inside a `Box`, aligns it to the end edge, and forwards the list's `contentPadding` as `trackPadding`; this keeps the bar from becoming list content or covering padded regions. The beta02 default touch target is `24.dp`; do not preserve the old `48.dp` assumption.
 
 ### TextField validation
 
-`TextField` has no `isError` or `supportingText` parameter at the current source-audit snapshot. For field, Preference-row, transient-network, and blocking-page failure composition, consult the `miuix-guidelines` Skill rather than inferring Material parameters.
+`TextField` has no `isError` or `supportingText` parameter at the current source-audit snapshot. Its state-based overload is canonical in beta02; the value-based overloads are deprecated. For field, Preference-row, transient-network, and blocking-page failure composition, consult the `miuix-guidelines` Skill rather than inferring Material parameters.
 
 ### Current snapshot additions and behavior notes
 
 - `Scaffold` hosts `floatingToolbar` and `floatingToolbarPosition`; use the scaffold slot instead of manually overlaying a toolbar, and rely on its snackbar spacing for a bottom toolbar.
 - `InputField` accepts `color`; the `SearchBar` wrapper does not. Pass `Color.Transparent` only when another surface, such as a backdrop blur, intentionally owns the capsule background.
+- `TextField(state = ...)` is the beta02 input path. Use `InputTransformation` for filtering and `OutputTransformation` for display formatting; treat `value`/`onValueChange` overloads as migration-only.
+- `LinearProgressIndicator` and `CircularProgressIndicator` expose lambda-based progress providers for draw-phase reads. Use them for high-frequency progress instead of forcing recomposition of the entire indicator subtree.
 - `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; keep one state owner instead of deriving a second refresh state. For official documentation and mixed top-bar/overscroll topology, read [Scroll and refresh notes](contracts/scroll-refresh-and-overscroll.md).
 - `NavigationRail` has a fixed-layout overload (`expanded = false/true`) and a separate expandable overload with required non-null `state`; `state = null` is not a valid current call shape.
 - `NavigationBarItem` and `FloatingNavigationBarItem` share `NavigationBarItemColors` through `NavigationBarDefaults.navigationBarItemColors()`; `colors` appears before `badge`; use named arguments for these options.
@@ -152,4 +158,5 @@ At the current source-audit snapshot there is no public Miuix `SectionHeader`. `
 - `PagerInterceptionMode` has only `Native` and `CrossAxis`. Cross-Axis requires the same `flingBehavior` on `Modifier.pagerGestureOverride` and `HorizontalPager`, `userScrollEnabled = false`, and `PagerGestureNestedScrollConnection`.
 - For ordinary tab declarations, exact pager configuration or `BreadcrumbBar(listState = ...)`, use the [Tab, pager and breadcrumb contract](contracts/pager-and-breadcrumb.md). Horizontal tab/breadcrumb rows use their own `LazyListState`.
 - Glass components are an optional family, not aliases for the basic components. Read [Glass components](glass.md) for the `Backdrop` recording boundary. `GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` use the `Scaffold` popup host; the `GlassPopup`/`GlassTransformPopup`/`GlassIconDropdownMenu` family is composed in the caller's root `BoxScope`.
+- `GlassSearchOverlay` is a full-screen in-page search surface with its own focus, Back/Escape dismissal and progressive header; `GlassTextField` is the state-based Glass wrapper for dialog/sheet input. Use their pinned docs instead of composing a second search route or translucent `TextField` wrapper by hand.
 - `LocalNavTransitionScope.current` is available only inside a `NavDisplay` entry; use its `isRunning` signal for coarse lifecycle decisions and deferred scope properties for frame-level effects.

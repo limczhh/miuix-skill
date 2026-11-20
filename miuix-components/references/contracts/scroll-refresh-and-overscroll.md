@@ -1,6 +1,6 @@
 # Scroll, Pull-to-Refresh, and Overscroll Integration Notes
 
-Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta01 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta02 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
 ## Public declarations
 
@@ -12,7 +12,7 @@ Read the selected official documentation for imports, full parameters/defaults a
 - `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/TopAppBar.kt`
 - `docs/guide/utils.md`
 
-Read the pinned documentation/source: [PullToRefresh / rememberPullToRefreshState](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/components/basic/pulltorefresh.md), [Modifier.overScrollVertical](https://raw.githubusercontent.com/compose-miuix-ui/miuix/6d2554a850b8960e2616c968263ff64beb5ffb03/docs/guide/utils.md).
+Read the pinned documentation/source: [PullToRefresh / rememberPullToRefreshState](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/basic/pulltorefresh.md), [Modifier.overScrollVertical](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/guide/utils.md).
 
 `TopAppBarState` exposes the visual overscroll bridge used by the official utility guide:
 
@@ -112,6 +112,29 @@ The current Miuix utility guide places the app-bar connection after `overScrollV
 | `TopAppBarState.overscrollOffset` | Damped visual displacement for bars/tabs/bands | Title collapse or saved scroll position |
 
 The explicit `overScrollVertical` modifier and the theme-provided Compose overscroll factory are separate mechanisms. If the target uses the explicit modifier as the only visual overscroll effect, follow the target's documented `overscrollEffect = null` boundary; do not disable or duplicate the theme effect without checking the actual source and existing helper.
+
+## Scrollbars
+
+Beta02's experimental scrollbar API is based on `ScrollableState.scrollIndicatorState`. `rememberScrollBarAdapter(scrollState: ScrollableState, reverseLayout = false)` supports `ScrollState`, lazy list/grid/staggered-grid state, `PagerState`, and custom scrollable states that expose an indicator state. Prefer the modifier forms when the scrollbar belongs to the scrollable container:
+
+```kotlin
+Box(
+    Modifier
+        .fillMaxSize()
+        .verticalScrollBar(
+            state = listState,
+            trackPadding = contentPadding,
+        ),
+) {
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = contentPadding,
+    ) { /* content */ }
+}
+```
+
+`Modifier.verticalScrollBar` and `Modifier.horizontalScrollBar` are beta02 additions. `VerticalScrollBar` and `HorizontalScrollBar` retain the adapter form for custom hosts; their `reverseLayout` parameter is compatibility-only because direction is resolved from `ScrollIndicatorState`. The default interactive touch target is `ScrollBarDefaults.TouchTargetWidth = 24.dp`, and `isFadeEnabled` plus `topAppBarScrollBehavior` control fade and app-bar coordination. Keep the bar as a sibling overlay, not as list content, and opt in to `ExperimentalScrollBarApi` explicitly.
 
 ## Verification boundary
 

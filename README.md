@@ -5,15 +5,16 @@
 - **miuix-components（路书）**：主动读取固定版本官方文档，解决组件选择、API、模块与宿主问题。组件介绍、完整参数表和常规示例交给官方文档；本地只维护有实际价值的接入差异、易错点和必要的组合示例，有疑义时再检查源码。
 - **miuix-guidelines（准则）**：回答页面“如何组织骨架、所有权、层级、Insets 和组件组合”。作为设计规范，严格区分 **强制性红线规范（rules）** 与 **非强制性启发指南（guides/workflows）**。
 
-仓库根目录只是源码仓库和维护说明，不是第三个 Skill。两个 Skill **仅服务 Miuix `0.9.5-beta01`**，固定标签 `v0.9.5-beta01`、提交 **6d2554a850b8960e2616c968263ff64beb5ffb03**。依赖示例使用完整 beta 版本号；不维护旧版本 API、兼容分支或历史迁移文档。目标依赖不符时说明范围差异，依赖升级仍按用户授权执行。
+仓库根目录只是源码仓库和维护说明，不是第三个 Skill。两个 Skill **仅服务 Miuix `0.9.5-beta02`**，固定标签 `v0.9.5-beta02`、提交 **66248bacc7be29ae6bdc0957de9458b42ac67732**。依赖示例使用完整 beta 版本号；不维护旧版本 API 或兼容分支，仅保留一份 beta01→beta02 的升级差异说明。目标依赖不符时说明范围差异，依赖升级仍按用户授权执行。
 
 ## 当前版本与 Glass
 
-- [依赖、主题与平台设置](./miuix-components/references/setup-and-theme.md)：beta01 模块选择、Android API 24/33 边界、主题与宿主。
+- [依赖、主题与平台设置](./miuix-components/references/setup-and-theme.md)：beta02 模块选择、Android API 24/33 边界、主题与宿主。
+- [Beta01 → Beta02 升级差异](./miuix-components/references/beta02-migration.md)：工具链、state-based 输入、ScrollBar、导航 Insets、TopAppBar 和新增 Glass 组件。
 - [Glass 替换与共存](./miuix-guidelines/references/glass-migration.md)：旧组件对应关系、仅替换 Overlay 表面、完整组件迁移、普通与 Glass 两套外观共享状态。
 - [Glass 组件与 API 边界](./miuix-components/references/glass.md)：新增侧栏、悬浮按钮/工具栏，以及采样、降级、宿主和参数差异。
 
-普通组件与 Glass 家族都使用 beta01。Glass 可选，运行时效果降级仍需保留；组件替换时遵循强制规范中的采样、交互、状态和宿主要求。文档只保留当前用法，过时内容直接修订或删除，避免追加成多版本百科。
+普通组件与 Glass 家族都使用 beta02。Glass 可选，运行时效果降级仍需保留；组件替换时遵循强制规范中的采样、交互、状态和宿主要求。文档只保留当前用法，过时内容直接修订或删除，避免追加成多版本百科。
 
 ## 两个 Skill
 
@@ -35,9 +36,9 @@
 
 ### 组件库流程
 
-1. 确认目标实际解析到 `0.9.5-beta01`，以及相关平台、宿主和本地替换；构建输入不变时复用这个结论。
+1. 确认目标实际解析到 `0.9.5-beta02`，以及相关平台、宿主和本地替换；构建输入不变时复用这个结论。
 2. 普通需求按语义选择组件；已知符号直接打开 [API 索引](./miuix-components/references/api-contracts.md) 中对应章节，不必先读库概览或组件目录。
-3. 标准 beta01 的已覆盖调用复用合同，标记 `catalog-verified`；未覆盖、源码被替换或行为仍不明确时，才按 [源码核验](./miuix-components/references/source-verification.md) 调查具体缺口。
+3. 标准 beta02 的已覆盖调用复用合同，标记 `catalog-verified`；未覆盖、源码被替换或行为仍不明确时，才按 [源码核验](./miuix-components/references/source-verification.md) 调查具体缺口。
 4. 写最小调用，在目标可用时编译；源码、编译、运行与设备效果分别报告。其他 Miuix 版本属于范围不符，不新增兼容分支，也不因此自动升级依赖。
 
 ### 页面规范流程
@@ -53,7 +54,7 @@
 
 普通可滚动页面按 [TopBar 强制规范](./miuix-guidelines/references/rules/page-shell.md#standard-top-app-bar) 采用共享模糊背景层和自适应顶栏：窄窗大标题随滚动收起，宽窗固定紧凑标题，模糊关闭或不可用时不透明降级。顶栏与底栏/侧栏共用实际窗口尺寸策略；特殊头图页面保留有依据的结构。普通模糊与可选的 Glass 组件家族分别路由。
 
-标准刷新页由列表统一持有顶栏滚动连接。公共边距按各边所需安全距离合并，并明确侧栏已占用的起始侧，不要求复制完整的 Example Insets 架构。普通滚动联动与 beta01 回弹视觉通道分别核验，不添加反射或重复控制器。弹层保留到退出结束，关闭中的按下态与新打开会话的草稿分别处理；搜索恢复查询和稳定展开状态。
+标准刷新页由列表统一持有顶栏滚动连接。公共边距按各边所需安全距离合并，并明确侧栏已占用的起始侧，不要求复制完整的 Example Insets 架构。普通滚动联动与 beta02 回弹视觉通道分别核验，不添加反射或重复控制器。弹层保留到退出结束，关闭中的按下态与新打开会话的草稿分别处理；搜索恢复查询和稳定展开状态。
 
 规范以本套设计系统自身的条款表述。项目代码用于核对实际写法，示例用于解释组合；二者都不意味着把专用 helper、业务名词、偶发写法或某个版本的 API 当成通用要求。
 
@@ -210,8 +211,8 @@ Skill 会先把这些描述转换成页面骨架、组件语义和需要核对�
 
 ## 证据范围
 
-- 当前开发基线：发布标签 `v0.9.5-beta01`，提交 `6d2554a850b8960e2616c968263ff64beb5ffb03`
+- 当前开发基线：发布标签 `v0.9.5-beta02`，提交 `66248bacc7be29ae6bdc0957de9458b42ac67732`
 - 上游仓库：[compose-miuix-ui/miuix](https://github.com/compose-miuix-ui/miuix)
-- 当前源码文档源：[Miuix 0.9.5-beta01 docs](https://github.com/compose-miuix-ui/miuix/tree/6d2554a850b8960e2616c968263ff64beb5ffb03/docs)
+- 当前源码文档源：[Miuix 0.9.5-beta02 docs](https://github.com/compose-miuix-ui/miuix/tree/66248bacc7be29ae6bdc0957de9458b42ac67732/docs)
 
-源码检查、目标编译、设备效果分别记录。确认目标实际解析到 beta01，并核对本地替换或修改；固定版本合同不能直接当成目标项目已验证 API。其他 Miuix 版本不在本仓库维护范围内。
+源码检查、目标编译、设备效果分别记录。确认目标实际解析到 beta02，并核对本地替换或修改；固定版本合同不能直接当成目标项目已验证 API。其他 Miuix 版本不在本仓库维护范围内。

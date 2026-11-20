@@ -1,6 +1,6 @@
 # Glass Migration and Coexistence
 
-Use when replacing existing ordinary components with the optional Glass family, adopting only a Glass surface, or supporting both presentations. This guide targets **`0.9.5-beta01`**, not a future stable release. Confirm the [beta01 dependency and platform setup](../../miuix-components/references/setup-and-theme.md) first. Ordinary and Glass components below both use this one library version; this guide does not maintain older-release APIs. Mandatory visual/ownership requirements remain in [page-shell rules](rules/page-shell.md#blur-and-glass) and [popup rules](rules/settings-and-overlays.md#popup-family-and-lifetime); this file supplies migration decisions and examples.
+Use when replacing existing ordinary components with the optional Glass family, adopting only a Glass surface, or supporting both presentations. This guide targets **`0.9.5-beta02`**, not a future stable release. Confirm the [beta02 dependency and platform setup](../../miuix-components/references/setup-and-theme.md) first. Ordinary and Glass components below both use this one library version; this guide does not maintain older-release APIs. Mandatory visual/ownership requirements remain in [page-shell rules](rules/page-shell.md#blur-and-glass) and [popup rules](rules/settings-and-overlays.md#popup-family-and-lifetime); this file supplies migration decisions and examples.
 
 Contents: [scope](#choose-the-migration-boundary) · [replacement map](#replacement-map) · [sampling](#record-the-right-scene) · [bars](#replace-a-top-bar) · [navigation](#keep-ordinary-and-glass-navigation-together) · [floating components](#migrate-floating-action-components) · [overlays](#adapt-an-existing-overlay-surface) · [menus](#migrate-menus-and-setting-rows) · [coexistence](#own-coexistence-policy-once) · [acceptance](#acceptance).
 
@@ -10,7 +10,7 @@ Start from [Brownfield evolution](brownfield-evolution.md): locate the real call
 
 | Intent | Smallest useful scope |
 |---|---|
-| Keep the current ordinary appearance | Use beta01 ordinary components; adopting Glass is optional |
+| Keep the current ordinary appearance | Use beta02 ordinary components; adopting Glass is optional |
 | Give one dialog/sheet a Glass surface | Keep the existing Overlay host and content; use its new typed `surface` slot |
 | Change an entire chrome family | Use Glass app bar/navigation/tab/action components, preserving route and scroll owners |
 | Offer ordinary and Glass styles | Put one presentation policy above render branches; share state, callbacks and content |
@@ -29,7 +29,9 @@ These are migration candidates, not aliases or mandatory replacements. Follow th
 | `NavigationBar` / `FloatingNavigationBar` | `GlassNavigationBar` | One destination model, selection and route callbacks; convert item models and revise component-owned bottom spacing. |
 | Ordinary `NavigationRail` | `GlassNavigationRail` | Same destination owner, but a **different overlay/morph layout** and separate Glass rail state; revise content clearance and title overlap. |
 | `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Keep the same selection coordinator; arguments become `selectedIndex` / `onSelect`. Hold pending click targets before pager movement; see [selection coordination](navigation-compositions.md#tab-selection-and-page-switching). For segmented tabs, keep the required non-null backdrop and set `surfaceAlpha = 0f` when sampling is disabled; the default opaque track/indicator remain, without the material stroke. See [blur controls](../../miuix-components/references/blur-behavior.md#disable-tab-material-explicitly). |
-| `IconButton` | `GlassIconButton` | Same action/description. Inside `GlassTopAppBar`, inherit its material by default; outside it, supply the intended backdrop. Beta01 has no `enabled` parameter: retain an ordinary control or a verified semantic adapter when disabling is required; a no-op callback alone does not preserve disabled semantics. |
+| `IconButton` | `GlassIconButton` | Same action/description. Inside `GlassTopAppBar`, inherit its material by default; outside it, supply the intended backdrop. Beta02 has no `enabled` parameter: retain an ordinary control or a verified semantic adapter when disabling is required; a no-op callback alone does not preserve disabled semantics. |
+| `TextField` on a Glass dialog/sheet | `GlassTextField` | Prefer the beta02 `TextFieldState` overload; value overloads are deprecated. Keep validation, focus owner and form state in the existing host. |
+| Full-screen search over a Glass page | `GlassSearchOverlay` | Keep one query/result owner and one page route; let the overlay own focus/Back/Escape and pass the result scroll offset for its progressive header. |
 | `FloatingActionButton` / `FloatingToolbar` | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Keep Scaffold slots and action ownership; adopt the built-in Glass material, bloom rim and separate shadow. See [floating-action migration](#migrate-floating-action-components) before retaining an application border or blur wrapper. |
 | `OverlayDialog` | Keep it with `glassDialogSurface`, or use `GlassDialog` | Existing show/draft/confirm/finished state and dialog geometry; Glass defaults include their own material/scrim. |
 | Dialog action buttons | `GlassDialogButton` | Preserve confirm/cancel actions and enabled state; select the appropriate role/colors. It is an action-row component, not a separate sampled Glass panel. |

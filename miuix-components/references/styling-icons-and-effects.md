@@ -22,7 +22,7 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 ## Icons
 
 - `miuix-ui` includes seven basic icons under `MiuixIcons.Basic`: `ArrowRight`, `ArrowUpDown`, `Check`, `Close`, `Search`, `SearchCleanup`, and `Sidebar`. Import their extensions from `top.yukonga.miuix.kmp.icon.basic`; the Basic namespace is separate from extended Regular-weight icons and Glass icons.
-- Extended icons require `top.yukonga.miuix.kmp:miuix-icons:0.9.5-beta01` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-beta01` for Android-only projects.
+- Extended icons require `top.yukonga.miuix.kmp:miuix-icons:0.9.5-beta02` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-beta02` for Android-only projects.
 - Glass icons require the separate `miuix-glass-icons` dependency and are exposed through `MiuixIcons.Glass`. The source package is `top.yukonga.miuix.kmp.icon.glass`; import the requested extension from that package after confirming the icon name exists.
 - Verify every requested name in `docs/guide/icons.md` and its source file. Use `MiuixIcons.Name` for Regular; use `MiuixIcons.Light.Name`, `MiuixIcons.Normal.Name`, `MiuixIcons.Medium.Name`, or `MiuixIcons.Demibold.Name` only when that weight exists in the pinned source.
 - Prefer an existing semantic icon. Do not invent a Material icon name or add a custom vector before checking the basic and extended sets.

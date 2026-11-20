@@ -1,6 +1,6 @@
 # Documentation and Integration Index
 
-Use when the component is known but its documentation/note route is not. Each linked section points to official Markdown at `v0.9.5-beta01` / `6d2554a850b8960e2616c968263ff64beb5ffb03` and retains only integration distinctions. Read the selected official doc for imports, complete parameters and basic usage; skip this index when that path is already known.
+Use when the component is known but its documentation/note route is not. Each linked section points to official Markdown at `v0.9.5-beta02` / `66248bacc7be29ae6bdc0957de9458b42ac67732` and retains only integration distinctions. Read the selected official doc for imports, complete parameters and basic usage; skip this index when that path is already known.
 
 ## Select one contract guide
 
@@ -39,6 +39,7 @@ Use when the component is known but its documentation/note route is not. Each li
 | Switch / Checkbox / RadioButton | [Switch](contracts/inputs-and-actions.md#switch) / [checkbox](contracts/inputs-and-actions.md#checkbox) / [radio](contracts/inputs-and-actions.md#radiobutton) |
 | Slider / RangeSlider | [Slider](contracts/inputs-and-actions.md#slider) / [range](contracts/inputs-and-actions.md#rangeslider) |
 | NumberPicker / SearchBar / InputField | [Picker](contracts/inputs-and-actions.md#numberpicker) / [search and field](contracts/inputs-and-actions.md#searchbar--inputfield) |
+| Progress indicators / ScrollBar | [Progress](contracts/inputs-and-actions.md#progress-indicators) / [scrollbars](contracts/scroll-refresh-and-overscroll.md#scrollbars) |
 
 ## Overlays
 
@@ -55,6 +56,7 @@ Use when the component is known but its documentation/note route is not. Each li
 |---|---|
 | Backdrop recording | [Sampling](contracts/glass.md#sampling-primitives) |
 | GlassTopAppBar | [Behavior-driven](contracts/glass.md#overload-1-scrollbehavior-driven) / [explicit overlap](contracts/glass.md#overload-2-explicit-iscontentscrolled-state) |
+| GlassSearchOverlay / GlassTextField | [Search overlay](contracts/glass.md#glasssearchoverlay) / [field](contracts/glass.md#glasstextfield) |
 | GlassNavigationBar / GlassNavigationRail | [Bar](contracts/glass.md#glassnavigationbar) / [rail](contracts/glass.md#glassnavigationrail) |
 | GlassTabRow / GlassSegmentedTabRow | [Tabs](contracts/glass.md#glasstabrow) / [segmented tabs](contracts/glass.md#glasssegmentedtabrow) |
 | GlassDialog / GlassDialogButton | [Dialog](contracts/glass.md#glassdialog) / [dialog button](contracts/glass.md#glassdialogbutton) |
