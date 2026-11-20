@@ -28,7 +28,8 @@ An outer shell plus page host can represent two real responsibilities. A direct 
 | Ordinary/settings page | Which existing shell owns routing, and what content belongs to the page? | Greenfield or Brownfield after inspection |
 | System-settings appearance | Which content forms a semantic group, and which rows are actual preferences? | [Design language](design-language.md), then [content](content-and-overlays.md) |
 | Large title reacting to scroll | Where is the page's bar/material/scroll integration boundary? | [Top bar](top-bar-compositions.md) |
-| Bottom destinations or a rail | Which shell owns selection and width/orientation policy? | [Navigation](navigation-compositions.md) |
+| Several peer destinations with a bottom/floating bar | Is this a pager-backed shell or an explicit route-stack flow? Which shell owns selection and width/orientation policy? | [Greenfield app shell](greenfield-app-shell.md), then [Navigation](navigation-compositions.md) |
+| Bottom destinations or a rail in an existing shell | Which shell owns selection and width/orientation policy? | [Navigation](navigation-compositions.md) |
 | Dialog or selection popup | Which page/window lifetime and anchor does this surface need? | [Content and overlays](content-and-overlays.md) |
 | Search input and results | Does search filter this content or own an expanded result surface? | [Content and overlays](content-and-overlays.md) |
 | Multiple gesture participants | Which path actually installs each connection? | [Gesture dynamics](gesture-dynamics.md) |

@@ -1,6 +1,6 @@
 # Navigation, Tabs and Action Composition Guide
 
-Use this guide to choose the placement of persistent navigation or host-owned actions. Mandatory state, material, spacing, and adaptive behavior live in [Navigation rules](rules/page-shell.md#navigation-and-adaptive-layout); [page-host rules](rules/page-shell.md#page-hosts-and-shared-wrappers) own slot responsibilities.
+Use this guide to choose the placement of persistent navigation or host-owned actions. For a new app with several peer destinations and a bottom/floating bar, start with the [Greenfield app shell](greenfield-app-shell.md), then use this guide for the selected navigation family. Mandatory state, material, spacing, and adaptive behavior live in [Navigation rules](rules/page-shell.md#navigation-and-adaptive-layout); [page-host rules](rules/page-shell.md#page-hosts-and-shared-wrappers) own slot responsibilities.
 
 ## Destination or action?
 

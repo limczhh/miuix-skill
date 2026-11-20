@@ -1,6 +1,6 @@
 ---
 name: miuix-guidelines
-description: "Use to design, compose, review or refactor Miuix 0.9.5-beta01 pages: ownership, hierarchy, spacing, insets, adaptive navigation, settings/overlays, UI state and scroll/refresh coordination. Includes vague page requests such as '普通页面' or '页面太乱'. Leave isolated API lookups and compile errors to miuix-components."
+description: "Use to design, compose, review or refactor Miuix 0.9.5-beta01 pages and greenfield app shells: ownership, hierarchy, spacing, insets, adaptive navigation, pager-backed destinations, route boundaries, settings/overlays, UI state and scroll/refresh coordination. Includes vague page requests such as '普通页面', '页面太乱', or '几个页面加底部悬浮导航'. Leave isolated API lookups and compile errors to miuix-components."
 ---
 
 # Miuix UI Guidelines
@@ -35,6 +35,7 @@ Resolve semantic content after the boundary: a page label alone does not mandate
 
 | Task | Primary guide |
 |---|---|
+| New app shell with several destinations and bottom/floating navigation | [Greenfield app shell](references/greenfield-app-shell.md), then [Greenfield](references/greenfield-page.md) |
 | New page / first shell | [Greenfield](references/greenfield-page.md) |
 | Existing page, component or shared-helper change | [Brownfield](references/brownfield-evolution.md) |
 | Unclear ordinary/settings page or combined layout | [Page structure](references/page-structure.md) |
@@ -51,7 +52,7 @@ Start with one guide plus applicable rules; open another only for an unresolved 
 
 ## Implement and review
 
-Reuse existing route, state, inset and host owners. For coupled gestures, trace actual modifier connections and the wrapper's callers before changing order or adding a bridge. Apply the chosen composition using the component skill's documentation-first path, escalating only uncertain library facts to source inspection. Avoid repeating API declarations or component tutorials in design guides.
+Reuse existing route, state, inset and host owners. For a greenfield app shell, complete the [first-pass delivery contract](references/greenfield-app-shell.md#delivery-contract-for-a-first-pass) with real routes, a real shell host, placeholder pages, and one selection owner before filling in page-specific content. For coupled gestures, trace actual modifier connections and the wrapper's callers before changing order or adding a bridge. Apply the chosen composition using the component skill's documentation-first path, escalating only uncertain library facts to source inspection. Avoid repeating API declarations or component tutorials in design guides.
 
 Check the affected rules, behavior continuity and exceptions within the changed scope. Compile the affected target when available and verify the relevant visual/interaction states separately. Stop when the requested result is handled; report unrelated defects without turning them into an unsolicited rewrite.
 

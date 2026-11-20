@@ -1,7 +1,7 @@
 {
   "name": "miuix-skills",
   "version": "0.9.5-beta01",
-  "description": "Miuix 0.9.5-beta01 skills for source-verified library contracts and page composition.",
+  "description": "Miuix 0.9.5-beta01 skills for source-verified library contracts, greenfield app shells, and page composition.",
   "repository": "https://github.com/limczhh/miuix-skill",
   "keywords": [
     "android",
@@ -17,7 +17,7 @@
   "interface": {
     "displayName": "Miuix Skills",
     "shortDescription": "Source-grounded Miuix Compose UI skills.",
-    "longDescription": "Two complementary skills for Miuix Compose UI: one verifies library contracts against pinned source, and one guides page skeleton and composition.",
+    "longDescription": "Two complementary skills for Miuix Compose UI: one verifies library contracts against pinned source, and one guides complete page and greenfield app-shell composition, including pager-backed destinations, route boundaries, and floating navigation.",
     "developerName": "miuix-skill",
     "category": "Developer Tools",
     "capabilities": [
@@ -26,7 +26,8 @@
     "websiteURL": "https://github.com/limczhh/miuix-skill",
     "defaultPrompt": [
       "Verify the exact Miuix API and module for this component.",
-      "Design this Miuix page from its skeleton and ownership boundaries."
+      "Design this Miuix page from its skeleton and ownership boundaries.",
+      "Build a complete greenfield Miuix app shell with peer pages, typed routes, and a floating bottom navigation bar."
     ]
   }
 }

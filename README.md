@@ -29,6 +29,8 @@
 - 同时涉及设计和实现时，先由 **miuix-guidelines** 确定页面结构，再由 **miuix-components** 核对实际调用到的 Miuix 符号。
 - 不需要为了一个组件问题读取另一个 Skill 的全部 Reference。
 
+新应用如果包含几个顶层页面和底部/悬浮导航，先读取 [从零应用壳规范](./miuix-guidelines/references/greenfield-app-shell.md)。它先固定 Pager、导航栏、路由和透明背景的边界，再进入具体页面和组件选择。
+
 ## Skill 的实际流程
 
 ### 组件库流程
@@ -57,7 +59,7 @@
 
 `references/rules/` 是 UI 强制条款的唯一维护位置。其余 reference 保留流程、决策方法、诊断和示例，通过链接应用规范；`miuix-components` 负责从官方文档和源码解析 API，不另行维护一套完整 API 手册。
 
-1. 先确认已有主题、路由 owner、页面边界、页面 host、平台和 source set。
+1. 先确认已有主题、路由 owner、页面边界、页面 host、平台和 source set。新应用若包含多个顶层页面与底部/悬浮导航，先读 [从零应用壳规范](./miuix-guidelines/references/greenfield-app-shell.md) 并固定一套壳层架构。
 2. 新页面或结构改动先明确页面骨架与所有权；局部修改只检查受影响的 owner、调用方及条款，不强制填写整页工作表。
 3. 再按语义选择组件；页面是设置页、列表页还是表单页，不会自动决定组件。
 4. 只把最终确实要调用的 Miuix 符号交给 **miuix-components** 核对。
@@ -88,6 +90,7 @@ miuix-skill/
 └── miuix-guidelines/
     ├── SKILL.md                       # 任务识别和流程路由
     └── references/
+        ├── greenfield-app-shell.md    # 从零应用壳、底部/悬浮导航和路由边界
         ├── design-language.md         # 设计决策指南（其余指南同级）
         └── rules/
             ├── design-system.md       # 共享规范、视觉规则和主题路由

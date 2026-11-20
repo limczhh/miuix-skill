@@ -2,7 +2,7 @@
 
 Mandatory when changing page hosts, navigation, bars, pagers, insets, scroll/refresh integration, blur, or adaptive layout. Apply the [scope, strength, and exceptions](design-system.md#scope-and-rule-strength) from the shared specification. Read only the sections matching the changed boundary.
 
-Contents: [hosts](#page-hosts-and-shared-wrappers) · [top bar](#standard-top-app-bar) · [routing](#routes-and-back) · [navigation](#navigation-and-adaptive-layout) · [tabs](#tabs-and-pagers) · [insets](#insets-and-content-padding) · [scroll](#scroll-refresh-and-haptics) · [blur](#blur-and-glass) · [validation](#validation).
+Contents: [hosts](#page-hosts-and-shared-wrappers) · [greenfield shell](#greenfield-app-shell-invariants) · [top bar](#standard-top-app-bar) · [routing](#routes-and-back) · [navigation](#navigation-and-adaptive-layout) · [tabs](#tabs-and-pagers) · [insets](#insets-and-content-padding) · [scroll](#scroll-refresh-and-haptics) · [blur](#blur-and-glass) · [validation](#validation).
 
 ## Page hosts and shared wrappers
 
@@ -12,6 +12,21 @@ Contents: [hosts](#page-hosts-and-shared-wrappers) · [top bar](#standard-top-ap
 - Reuse shared page wrappers for repeated bar, padding, refresh, backdrop, or loading behavior. Preserve their callable boundary and inspect callers before changing it. A custom-content slot receives the existing effective padding and scroll behavior instead of creating parallel owners.
 - A page that emits operation feedback supplies or receives a usable Snackbar host. A separate popup window may need its own visible feedback surface; a covered page host is not sufficient.
 - Keep feature content split by coherent section/interaction boundaries. Do not duplicate an entire page skeleton to add another settings section or visual variant.
+
+## Greenfield app shell invariants
+
+When a new app request contains several peer destinations and a bottom or floating navigation bar, apply the complete [Greenfield app shell guide](../greenfield-app-shell.md) before implementing page content.
+
+- Use one shell-owned selection coordinator for the peer destinations. A pager-backed shell uses one `HorizontalPager` and one selected index for its pages and every presentation of the destination bar.
+- Use one route-stack owner for secondary routes. The destination bar changes the shell selection. It does not push a route for every peer destination. A detail or subflow action pushes a typed route through the existing navigator.
+- Each destination is a full-size sibling page inside the pager. A page may own a vertical list or scroll column. Do not place all destinations in a single outer column or list.
+- Keep the persistent destination bar in the shell `Scaffold.bottomBar` slot. A page-owned `Scaffold` may own that page's app bar or popup lifetime after the shell boundary is established.
+- The shell surface fills the complete window and owns the backdrop. A floating-bar wrapper supplies layout and alignment only. It MUST NOT paint a full-width rectangular background or clip around the visible bar.
+- The floating bar's own shape owns its visible surface, blur mask, stroke, and clipping boundary. The shell container is transparent when the page surface is drawn by the content layer. The content layer remains visible behind the floating bar.
+- Apply the shell `PaddingValues` handoff once at the pager or page primary-content boundary. Keep the full-window surface outside that padding so the background remains continuous around the bar.
+- Keep selection and route state above ordinary/Glass/rail presentation branches. Render one active interactive navigation surface per role and preserve destination identity during adaptive changes.
+
+The example's integrated boundary is `example/shared/src/commonMain/kotlin/AppContent.kt`: its route host, pager state, compact shell, and navigation bar share the ownership described here. `navigation/Route.kt` and `navigation/Navigator.kt` show the route side of the boundary. Example-specific settings and helpers remain optional.
 
 ## Standard top app bar
 

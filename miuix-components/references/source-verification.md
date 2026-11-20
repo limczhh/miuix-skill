@@ -139,7 +139,8 @@ These files underpin multiple components and are read on demand. This is a suppo
 |------|---------------|
 | `docs/demo/src/commonMain/kotlin/<Component>Demo.kt` | Minimal, isolated usage for one component |
 | `example/shared/.../App.kt`, `AppState.kt`, `ui/Theme.kt` | Application theme, theme inputs, and cross-tree state setup |
-| `example/shared/.../AppContent.kt` | Adaptive app shell, compact/wide navigation, and shared controls |
+| `example/shared/.../AppContent.kt` | Adaptive app shell, compact/wide navigation, pager-backed destinations, and shared controls |
+| `example/shared/.../navigation/Route.kt`, `navigation/Navigator.kt` | Typed route identities and the single stack mutation owner used by the shell |
 | `example/shared/.../MainPage.kt` | Integrated home page with Scaffold, app bar actions, search, scrolling sections, and popup menus |
 | `example/shared/.../SettingsPage.kt` | Integrated settings page with titled Cards, Preference groups, dependent settings, and adaptive padding |
 | `example/shared/.../component/` | `LazyListScope` sections and popup examples composed into `MainPage`; these are sections, not one screen per component |
