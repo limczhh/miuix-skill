@@ -1,6 +1,6 @@
 # Glass Composition Guide
 
-Use this guide for a new Glass composition on the `0.9.5-beta02` baseline. For replacing existing components, a surface-only change, or keeping ordinary and Glass families, start with [Glass migration and coexistence](glass-migration.md). Ordinary blurred app bars follow [Top bar compositions](top-bar-compositions.md); they do not require Glass components. Mandatory recording, fallback, and host separation live in [Blur and Glass rules](rules/page-shell.md#blur-and-glass).
+Use this guide for a new Glass composition on the `0.9.5-beta03` baseline. For replacing existing components, a surface-only change, or keeping ordinary and Glass families, start with [Glass migration and coexistence](glass-migration.md). Ordinary blurred app bars follow [Top bar compositions](top-bar-compositions.md); they do not require Glass components. Mandatory recording, fallback, and host separation live in [Blur and Glass rules](rules/page-shell.md#blur-and-glass).
 
 ## Sampling relationship
 

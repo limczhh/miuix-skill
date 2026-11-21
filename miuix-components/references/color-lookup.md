@@ -1,6 +1,6 @@
 # Color Semantics and Visual Lookup
 
-Use this reference when a user describes a color visually—“蓝色主按钮”“浅色卡片背景”“灰色摘要文字”“红色警告”，但还不知道对应的 Miuix 参数或 Token 名称。证据仅对应 `v0.9.5-beta02`，提交 `66248bacc7be29ae6bdc0957de9458b42ac67732`；先确认目标解析到该版本，并核对本地替换或修改。
+Use this reference when a user describes a color visually—“蓝色主按钮”“浅色卡片背景”“灰色摘要文字”“红色警告”，但还不知道对应的 Miuix 参数或 Token 名称。证据仅对应 `v0.9.5-beta03`，提交 `3526cfe2ca0779c5a2eab99af8737a96c9a8a885`；先确认目标解析到该版本，并核对本地替换或修改。
 
 Read the matching visual lookup or component-defaults section only; do not load the entire token table for a single color role.
 
@@ -124,7 +124,7 @@ Do not invent `warning`, `alert`, `success`, `info`, `blue`, or `gray` propertie
 - `MiuixTheme.colorScheme` exposes the current `Colors` object inside `MiuixTheme`; it is not a fixed palette.
 - `lightColorScheme()` and `darkColorScheme()` provide the fixed non-Monet defaults shown above.
 - `ThemeController(ColorSchemeMode.MonetSystem/MonetLight/MonetDark)` can generate roles from a key color or system wallpaper. In Monet mode, `primary` may no longer be blue and `error`/surface roles may also change tone.
-- With a non-null seed in a Monet mode, beta02's `ThemePaletteStyle.Cmf` internally selects spec 2026; do not invent `ThemeColorSpec.Spec2026`. Glass component material/fill presets are separate from flat semantic colors: use [Glass components](glass.md) for the sampled surface and retain semantic foreground contrast.
+- With a non-null seed in a Monet mode, the beta03 snapshot's `ThemePaletteStyle.Cmf` internally selects spec 2026; do not invent `ThemeColorSpec.Spec2026`. Glass component material/fill presets are separate from flat semantic colors: use [Glass components](glass.md) for the sampled surface and retain semantic foreground contrast.
 - Palette style/spec affect the explicit-seed Monet path. With no `keyColor`, Monet uses `platformDynamicColors(dark)` without forwarding the chosen palette/spec; ordinary System/Light/Dark modes use their provided schemes. Remembering a different palette choice alone does not establish that those paths will render differently.
 - If the user wants a fixed brand blue rather than a theme role, configure `lightColorScheme(primary = ...)` and `darkColorScheme(primary = ...)` or a custom `Colors` scheme, then verify contrast and every paired `on*` role. Do not silently replace a semantic role with a literal color.
 - If source and rendered documentation disagree, the declaration at the pinned audit commit wins; do not copy a rendered-doc hex value when the target source computes the role differently.

@@ -1,6 +1,6 @@
 # Preference and Dropdown Menu Integration Notes
 
-Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta02 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta03 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
 These families belong to `miuix-preference`: rows use `top.yukonga.miuix.kmp.preference`, menu wrappers use `.menu`, while `DropdownItem` / `DropdownEntry` use `.basic`. Overlay variants use the Miuix Scaffold popup host; Window variants do not. Choose the model and host through [preference/menu decisions](../preferences-and-menus.md) rather than transferring arguments between wrappers.
 
@@ -11,19 +11,19 @@ These families belong to `miuix-preference`: rows use `top.yukonga.miuix.kmp.pre
 
 ### SwitchPreference
 
-Read the pinned documentation/source: [SwitchPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/switchpreference.md).
+Read the pinned documentation/source: [SwitchPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/switchpreference.md).
 
 ### ArrowPreference
 
-Read the pinned documentation/source: [ArrowPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/arrowpreference.md).
+Read the pinned documentation/source: [ArrowPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/arrowpreference.md).
 
 ### CheckboxPreference
 
-Read the pinned documentation/source: [CheckboxPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/checkboxpreference.md).
+Read the pinned documentation/source: [CheckboxPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/checkboxpreference.md).
 
 ### RadioButtonPreference
 
-Read the pinned documentation/source: [RadioButtonPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/radiobuttonpreference.md).
+Read the pinned documentation/source: [RadioButtonPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/radiobuttonpreference.md).
 > [!NOTE]
 > `RadioButtonPreference` uses `colors: RadioButtonPreferenceColors` instead of separate `titleColor`/`summaryColor` parameters.
 
@@ -36,11 +36,11 @@ Read the pinned documentation/source: [RadioButtonPreference](https://raw.github
 
 ### SliderPreference
 
-Read the pinned documentation/source: [SliderPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/sliderpreference.md).
+Read the pinned documentation/source: [SliderPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/sliderpreference.md).
 
 ### RangeSliderPreference
 
-Read the pinned documentation/source: [RangeSliderPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/rangesliderpreference.md).
+Read the pinned documentation/source: [RangeSliderPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/rangesliderpreference.md).
 
 ---
 
@@ -51,15 +51,15 @@ Read the pinned documentation/source: [RangeSliderPreference](https://raw.github
 
 ### Dropdown Models
 
-Read the pinned documentation/source: [DropdownItem / DropdownEntry](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/overlaydropdownpreference.md).
+Read the pinned documentation/source: [DropdownItem / DropdownEntry](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/overlaydropdownpreference.md).
 
 ### OverlayDropdownPreference & WindowDropdownPreference (String List)
 
-Read the pinned documentation/source: [OverlayDropdownPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/overlaydropdownpreference.md), [WindowDropdownPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/windowdropdownpreference.md).
+Read the pinned documentation/source: [OverlayDropdownPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/overlaydropdownpreference.md), [WindowDropdownPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/windowdropdownpreference.md).
 
 ### OverlaySpinnerPreference & WindowSpinnerPreference (Rich DropdownItem)
 
-Read the pinned documentation/source: [OverlaySpinnerPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/overlayspinnerpreference.md), [WindowSpinnerPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/windowspinnerpreference.md).
+Read the pinned documentation/source: [OverlaySpinnerPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/overlayspinnerpreference.md), [WindowSpinnerPreference](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/windowspinnerpreference.md).
 
 ---
 
@@ -70,15 +70,15 @@ Read the pinned documentation/source: [OverlaySpinnerPreference](https://raw.git
 
 ### OverlayDropdownMenu & WindowDropdownMenu (Row Anchor)
 
-Read the pinned documentation/source: [OverlayDropdownMenu](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/overlaydropdownmenu.md).
+Read the pinned documentation/source: [OverlayDropdownMenu](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/overlaydropdownmenu.md).
 
 ### OverlayIconDropdownMenu & WindowIconDropdownMenu (IconButton Anchor)
 
-Read the pinned documentation/source: [OverlayIconDropdownMenu](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/overlayicondropdownmenu.md).
+Read the pinned documentation/source: [OverlayIconDropdownMenu](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/overlayicondropdownmenu.md).
 
 ### OverlayIconCascadingDropdownMenu & WindowIconCascadingDropdownMenu (Submenu Cascading)
 
-Read the pinned documentation/source: [OverlayIconCascadingDropdownMenu](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/extended/overlayiconcascadingdropdownmenu.md).
+Read the pinned documentation/source: [OverlayIconCascadingDropdownMenu](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/extended/overlayiconcascadingdropdownmenu.md).
 The surface-taking overload adds required `surface: (@Composable (Shape) -> Modifier)?` immediately after `entry`. The surface receives a `Shape`, not `DialogSurfaceScope`; omitting `surface` selects the base overload in the official declaration. Both `entry: DropdownEntry` and `entries: List<DropdownEntry>` overloads exist; Window variants omit `renderInRootScaffold`. Check the specific overload instead of merging their parameter lists.
 
 > [!TIP]

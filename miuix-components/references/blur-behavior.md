@@ -1,6 +1,6 @@
 # Blur Controls and Fallbacks
 
-Use when implementing a blur setting, reviewing effects-off behavior, or diagnosing why a component still looks blurred. Evidence is pinned to Miuix **0.9.5-beta02**, commit `66248bacc7be29ae6bdc0957de9458b42ac67732`. These are library facts and Example integration choices, not additional visual requirements.
+Use when implementing a blur setting, reviewing effects-off behavior, or diagnosing why a component still looks blurred. Evidence is pinned to Miuix **0.9.5-beta03**, commit `3526cfe2ca0779c5a2eab99af8737a96c9a8a885`. These are library facts and Example integration choices, not additional visual requirements.
 
 Contents: [controls](#separate-the-controls) · [behavior matrix](#component-behavior) · [transitions](#foreground-blur-is-a-separate-control) · [custom effects](#custom-effect-boundaries) · [tabs](#disable-tab-material-explicitly) · [inheritance](#resolve-inherited-sampling) · [verification](#verification-and-source-routes).
 
@@ -14,7 +14,7 @@ There is no universal library `enableBlur` switch. Example's `AppState.enableBlu
 - **Foreground transition blur:** Glass titles, navigation visibility and popup morph/exit effects have separate controls; see [transition boundaries](#foreground-blur-is-a-separate-control).
 - **Decoration:** strokes, shadows, fills and opacity have their own policies. Disabling sampling does not automatically remove these or change component family.
 
-Define whether a product setting means “background blur” or “all blur effects.” Beta02 Glass popups and navigation visibility do not expose a universal switch for their transition blur; `backdrop = null` cannot promise the latter meaning.
+Define whether a product setting means “background blur” or “all blur effects.” Beta03 Glass popups and navigation visibility do not expose a universal switch for their transition blur; `backdrop = null` cannot promise the latter meaning.
 
 ## Component behavior
 
@@ -33,7 +33,7 @@ Define whether a product setting means “background blur” or “all blur effe
 | `GlassIconButton` | Samples its resolved backdrop and follows inherited top-bar material progress | With no effective backdrop, uses `fill` as its material appears; retains press response, shadow and supported stroke | Fill/press behavior remains; shader stroke is skipped and shadow has a non-shader fallback |
 | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Own sampled material and decoration | Null backdrop uses `fill` (FAB default: primary); geometry, actions and supported rim/shadow remain | Fill and shadow fallback remain; no shader bloom rim |
 | `GlassNavigationBar` / `GlassNavigationRail` | Own sampled panel and navigation interaction | Null backdrop uses `surfaceContainer`; selection, morph/expansion and supported decoration remain. The bar's `visible` transition can still blur the whole group | Panel fill and shadow fallback remain; no shader bloom rim. Visibility-transition blur uses a separate capability |
-| `GlassTabRow` | Each tab uses material and selected/resting color ramps | Null effective backdrop stops sampling and gives colored tabs; `surfaceAlpha = 0f` selects the resting visual ramp but alone does not disable this component's sampling pipeline. Selected color, label and press behavior remain | No sampled material; resting rim/shadow behavior follows its own code and colors, not an identical Glass rendering |
+| `GlassTabRow` | Each tab uses material and selected/resting color ramps | `surfaceAlpha = 0f` disables the tab material pipeline and restores the resting tab visuals; selected color, label, semantics and press behavior remain. A null effective backdrop also removes the sampling input | No sampled material; resting rim/shadow behavior follows its own code and colors, not an identical Glass rendering |
 | `GlassSegmentedTabRow` | Track material fades in with `surfaceAlpha`; indicator and interaction are separate | Keep required non-null backdrop; set `surfaceAlpha = 0f` to disable its material and restore the default opaque resting track. Indicator, drag and press remain; the material stroke is disabled too | Internally forces the material ramp to zero, retaining track/indicator and fallback shadow |
 | `GlassDialog`, `GlassBottomSheet`, typed surface helpers | **Both support background blur** with a valid recorded backdrop and shader support; sample the scrim-adjusted page scene while foreground content stays sharp | Null backdrop gives `containerColor` (default: theme `background`); host, exit animation and sheet drag remain | Same fill fallback; shader stroke absent. Sheet overscroll extension omits stroke even with effects on |
 | `GlassPopup`, `GlassDropdownPopup`, `GlassTransformPopup`, `GlassSecondaryPopup`, `GlassIconDropdownMenu`, `GlassDropdownPreference` popup, `glassSurface` | Use the resolved scene and popup material | No resolved backdrop gives `visuals.containerColor`; supported stroke can remain. Morph/exit foreground blur is independent | Container fill remains; shader stroke absent. Do not infer transition-effect support solely from the shader check |
@@ -41,7 +41,7 @@ Define whether a product setting means “background blur” or “all blur effe
 | `GlassTextField` | Delegates to `TextField` with translucent Glass colors | State, editing, line limits and IME behavior remain; only field visual defaults change | Use the state-based overload; deprecated value overloads do not change the hosting/validation contract |
 | Custom `glassPanel` / low-level `glass` | Apply selected Glass pipeline | `glassPanel(backdrop = null)` uses caller `fallback`, or only clips if omitted. `glass(enabled = false)` bypasses the effect | `glassPanel` takes fallback; `glass` bypasses. Neither invents an opaque fill |
 
-`blurRadius = 0f` removes the blur radius, not color blending/noise or backdrop processing. `alpha = 0f` is not a general effect bypass. Both tab components use **`surfaceAlpha`** as a material/resting-state ramp, but only `GlassSegmentedTabRow` forwards `enabled = ramp > 0f` to its material pipeline. `GlassTabRow` needs a null effective backdrop to bypass sampling; zero `surfaceAlpha` alone is not an equivalent off switch. Do not generalize the segmented-tab contract to other controls.
+`blurRadius = 0f` removes the blur radius, not color blending/noise or backdrop processing. `alpha = 0f` is not a general effect bypass. In beta03 both tab components use **`surfaceAlpha`** as a material/resting-state ramp and gate their material pipeline when the ramp reaches the off endpoint. `GlassTabRow` also accepts a nullable backdrop, while `GlassSegmentedTabRow` still requires a non-null backdrop. Do not generalize this tab-specific contract to other controls.
 
 ## Foreground blur is a separate control
 
@@ -49,7 +49,7 @@ Define whether a product setting means “background blur” or “all blur effe
 |---|---|---|
 | Ordinary `TopAppBar` / `SmallTopAppBar` | Ordinary top-bar title path uses zero title-blur radius | Turning on an external background effect does not turn on Glass title transitions |
 | `GlassTopAppBar` | Small/large title and subtitle transition blur | `backdrop = null` and `progressiveBlur = false` do not disable it; use `titleBlurRadius = 0.dp` when required |
-| `GlassNavigationBar` | Changing `visible` shrinks/fades/blurs the navigation group, including its trailing action, using a `graphicsLayer` `BlurEffect` | Independent of backdrop and material. `visible` controls the whole transition; beta02 has no separate public visibility-blur radius/switch. Do not claim null backdrop disables all blur |
+| `GlassNavigationBar` | Changing `visible` shrinks/fades/blurs the navigation group, including its trailing action, using a `graphicsLayer` `BlurEffect` | Independent of backdrop and material. `visible` controls the whole transition; beta03 has no separate public visibility-blur radius/switch. Do not claim null backdrop disables all blur |
 | `GlassPopup`, `GlassDropdownPopup`, `GlassTransformPopup` | Internal `BlurEffect` softens content during morph/exit; transform also handles copied anchor content | Null backdrop changes the background material, not these effects. Composed menus/preferences inherit the renderer's behavior |
 
 The latter foreground effects use Compose/RenderEffect paths rather than the sampled-backdrop pipeline. Their platform support must be considered separately from `isRuntimeShaderSupported()`. Keep the product setting's scope explicit; do not invent an unsupported all-effects-off parameter.
@@ -62,9 +62,9 @@ Default texture blur leaves foreground content sharp. `contentBlendMode = BlendM
 
 ## Disable tab material explicitly
 
-The beta02 `GlassSegmentedTabRow` code computes its ramp from shader support and `surfaceAlpha`; it does **not** check whether the backdrop was recorded. Its `resolvedBackdrop` is null only when shaders are unsupported, since the argument is non-null. An unrecorded dummy backdrop alone therefore does not select the resting track.
+The beta03 `GlassTabRow` and `GlassSegmentedTabRow` code compute their material ramp from shader support and `surfaceAlpha`; the ramp's zero endpoint gates the material pipeline while retaining the row's resting visuals. `GlassTabRow` accepts a nullable backdrop, whereas the segmented row still requires a non-null backdrop. For either row, an unrecorded dummy backdrop is not the policy switch; pass the intended `surfaceAlpha` and resolve the backdrop according to the component contract.
 
-The pinned [Example IconPage](https://github.com/compose-miuix-ui/miuix/blob/66248bacc7be29ae6bdc0957de9458b42ac67732/example/shared/src/commonMain/kotlin/IconPage.kt) demonstrates material gating through `surfaceAlpha`. Adapt that gating to the application's coordinated selection:
+The pinned [Example IconPage](https://github.com/compose-miuix-ui/miuix/blob/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/example/shared/src/commonMain/kotlin/IconPage.kt) demonstrates material gating through `surfaceAlpha`. Adapt that gating to the application's coordinated selection:
 
 ```kotlin
 val samplingActive = backgroundBlurEnabled && isRuntimeShaderSupported()
@@ -78,7 +78,7 @@ GlassSegmentedTabRow(
 )
 ```
 
-`sceneBackdrop`, the setting and `selection` are application-owned; `selection` follows the [tab/pager coordination pattern](../../miuix-guidelines/references/navigation-compositions.md#tab-selection-and-page-switching), not a Miuix type. The backdrop can stay remembered; record the intended opaque scene when sampling is active. A custom `trackColor` must preserve readability at the resting endpoint. If a top bar supplies its own material ramp, combine it with the setting so the off branch remains zero. Keep selection/state above presentation branches rather than replacing segmented tabs just to turn material off.
+`sceneBackdrop`, the setting and `selection` are application-owned; `selection` follows the [tab/pager coordination pattern](../../miuix-guidelines/references/navigation-compositions.md#tab-selection-and-page-switching), not a Miuix type. Apply the same `surfaceAlpha` gate to `GlassTabRow` when using that variant; its `backdrop` may be nullable, while the segmented row's remains required. The backdrop can stay remembered; record the intended opaque scene when sampling is active. A custom `trackColor` must preserve readability at the resting endpoint. If a top bar supplies its own material ramp, combine it with the setting so the off branch remains zero. Keep selection/state above presentation branches rather than replacing tabs just to turn material off.
 
 ## Resolve inherited sampling
 
@@ -104,6 +104,6 @@ Read only the source family needed for the change, under the pinned commit:
 | Overlay and popup resolution | `GlassDialogSurface.kt`, `GlassBottomSheetSurface.kt`, `GlassPopupSurface.kt`, `GlassTransformPopup.kt`, `GlassSecondaryPopup.kt`, `GlassIconDropdownMenu.kt`, `GlassDropdownPreference.kt` in the same package |
 | Rim and shadow capability | `miuix-material/.../material/internal/EdgeStrokeDrawing.kt`; `miuix-glass/.../glass/Glass.kt` |
 
-Coverage is the beta02 component sampling/fallback branches, the foreground blur entry points in `miuix-ui` / `miuix-glass`, and the custom-pipeline boundaries above. Ordinary components without a sampler are distinguished from Glass containers and their non-sampling child rows. Shader formulas, every effect-helper overload and application-specific effects remain source-routed rather than copied here.
+Coverage is the beta03 component sampling/fallback branches, the foreground blur entry points in `miuix-ui` / `miuix-glass`, and the custom-pipeline boundaries above. Ordinary components without a sampler are distinguished from Glass containers and their non-sampling child rows. Shader formulas, every effect-helper overload and application-specific effects remain source-routed rather than copied here.
 
 Source inspection establishes branch behavior, not a device screenshot or performance result. Check enabled/disabled sampling **on a supported runtime**, unsupported runtime separately, light/dark themes, scrolling/resting states and popup enter/exit. A disabled-setting test on a supported device does not prove the unsupported path.

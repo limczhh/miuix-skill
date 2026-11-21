@@ -1,6 +1,6 @@
 # Surface and Navigation Integration Notes
 
-Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta02 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta03 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
 ## Card and section title
 
@@ -11,7 +11,7 @@ Read the selected official documentation for imports, full parameters/defaults a
 
 `Card` has a non-clickable overload and a clickable/long-press overload. The two overloads share the first parameters; use named arguments when selecting the interactive form.
 
-Read the pinned documentation/source: [Card / Card](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/basic/card.md), [SmallTitle](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/basic/smalltitle.md).
+Read the pinned documentation/source: [Card / Card](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/card.md), [SmallTitle](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/smalltitle.md).
 
 Pinned defaults that are safe to quote for this version:
 
@@ -30,7 +30,7 @@ These defaults do not make `Card` mandatory for every page. Select it only when 
 
 The source documents `NavigationBar` for 2–5 items. `NavigationBarItem` is a `RowScope` extension, so it must be called inside the bar content lambda.
 
-Read the pinned documentation/source: [NavigationBar / RowScope.NavigationBarItem](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/basic/navigationbar.md).
+Read the pinned documentation/source: [NavigationBar / RowScope.NavigationBarItem](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/navigationbar.md).
 
 `itemIcon` must be an actual `ImageVector`; do not replace it with a Material icon unless that dependency and icon choice are intentional. The `colors` parameter appears before `badge`; name `badge` instead of relying on positional arguments. The navigation bar presents the route owner's state; it must not create a second back stack.
 
@@ -41,9 +41,9 @@ Read the pinned documentation/source: [NavigationBar / RowScope.NavigationBarIte
 **Documentation:** `docs/components/basic/navigationbar.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/NavigationBarDemo.kt`
 
-`FloatingNavigationBar` is still bottom navigation, not a generic overlay. Put it in the owning `Scaffold`'s `bottomBar` slot so the page content receives the correct bottom `PaddingValues`. The documented navigation pattern supports two to five icon items. In beta02, `defaultWindowInsetsPadding = true` applies horizontal display-cutout/navigation-bar insets to the group and combines navigation-bar and animated caption-bar values for its own bottom spacing; disabling it transfers both horizontal and component-owned bottom inset responsibility to the caller. It does not mean that every surrounding bottom inset is transferred to the caller.
+`FloatingNavigationBar` is still bottom navigation, not a generic overlay. Put it in the owning `Scaffold`'s `bottomBar` slot so the page content receives the correct bottom `PaddingValues`. The documented navigation pattern supports two to five icon items. In beta03, `defaultWindowInsetsPadding = true` applies horizontal display-cutout/navigation-bar insets to the group and computes navigation-bar/caption bottom spacing during layout; disabling it transfers both horizontal and component-owned bottom inset responsibility to the caller. It does not mean that every surrounding bottom inset is transferred to the caller.
 
-Read the pinned documentation/source: [FloatingNavigationBar / FloatingNavigationBarItem](https://raw.githubusercontent.com/compose-miuix-ui/miuix/66248bacc7be29ae6bdc0957de9458b42ac67732/docs/components/basic/navigationbar.md).
+Read the pinned documentation/source: [FloatingNavigationBar / FloatingNavigationBarItem](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/navigationbar.md).
 
 Minimal host shape:
 

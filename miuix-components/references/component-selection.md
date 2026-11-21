@@ -131,7 +131,7 @@ The table above is a catalog of public entry points. Supporting source paths are
 - `TextButton` is a public button API documented with the Button family; use that documentation instead of treating it as a separate module or inventing a wrapper.
 - `InputField` is the editable-field API nested in the SearchBar documentation/source. `SearchBar` itself does not expose every parameter accepted by `InputField`, including its color parameter.
 - `ProgressiveBlur` is a public effect descriptor used by modifier APIs in `miuix-blur`, not a general-purpose `miuix-ui` component; verify the target platform and the exact modifier overload in the blur source.
-- The [supporting-source index](source-verification.md#supporting-source-and-low-level-apis) includes public low-level APIs as well as implementation support. Beta02 exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent` and `rememberListPopupLayoutInfo`; prefer full preference/popup wrappers when their host and lifecycle behavior is needed. Do not infer visibility from `Impl` in a name.
+- The [supporting-source index](source-verification.md#supporting-source-and-low-level-apis) includes public low-level APIs as well as implementation support. Beta03 exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent` and `rememberListPopupLayoutInfo`; prefer full preference/popup wrappers when their host and lifecycle behavior is needed. Do not infer visibility from `Impl` in a name.
 
 ### SmallTitle and section labels
 
@@ -139,17 +139,17 @@ At the current source-audit snapshot there is no public Miuix `SectionHeader`. `
 
 ### Scrollbar integration
 
-`VerticalScrollBar` and `HorizontalScrollBar` are experimental (`ExperimentalScrollBarApi`). Beta02's `rememberScrollBarAdapter` accepts a `ScrollableState` and supports lazy staggered grids, pagers and custom `ScrollIndicatorState` providers in addition to ordinary scroll/list/grid state. Prefer `Modifier.verticalScrollBar(state = ...)` or `Modifier.horizontalScrollBar(state = ...)` when the bar can be attached directly; keep the standalone adapter form for a custom overlay. The Example overlays a vertical bar as a sibling of `LazyColumn` inside a `Box`, aligns it to the end edge, and forwards the list's `contentPadding` as `trackPadding`; this keeps the bar from becoming list content or covering padded regions. The beta02 default touch target is `24.dp`; do not preserve the old `48.dp` assumption.
+`VerticalScrollBar` and `HorizontalScrollBar` are experimental (`ExperimentalScrollBarApi`). Beta03's `rememberScrollBarAdapter` accepts a `ScrollableState` and supports lazy staggered grids, pagers and custom `ScrollIndicatorState` providers in addition to ordinary scroll/list/grid state. Prefer `Modifier.verticalScrollBar(state = ...)` or `Modifier.horizontalScrollBar(state = ...)` when the bar can be attached directly; keep the standalone adapter form for a custom overlay. The Example overlays a vertical bar as a sibling of `LazyColumn` inside a `Box`, aligns it to the end edge, and forwards the list's `contentPadding` as `trackPadding`; this keeps the bar from becoming list content or covering padded regions. The beta03 default touch target is `24.dp`; do not preserve the old `48.dp` assumption.
 
 ### TextField validation
 
-`TextField` has no `isError` or `supportingText` parameter at the current source-audit snapshot. Its state-based overload is canonical in beta02; the value-based overloads are deprecated. For field, Preference-row, transient-network, and blocking-page failure composition, consult the `miuix-guidelines` Skill rather than inferring Material parameters.
+`TextField` has no `isError` or `supportingText` parameter at the current source-audit snapshot. Its state-based overload is canonical in beta03; the value-based overloads are deprecated. For field, Preference-row, transient-network, and blocking-page failure composition, consult the `miuix-guidelines` Skill rather than inferring Material parameters.
 
 ### Current snapshot additions and behavior notes
 
 - `Scaffold` hosts `floatingToolbar` and `floatingToolbarPosition`; use the scaffold slot instead of manually overlaying a toolbar, and rely on its snackbar spacing for a bottom toolbar.
 - `InputField` accepts `color`; the `SearchBar` wrapper does not. Pass `Color.Transparent` only when another surface, such as a backdrop blur, intentionally owns the capsule background.
-- `TextField(state = ...)` is the beta02 input path. Use `InputTransformation` for filtering and `OutputTransformation` for display formatting; treat `value`/`onValueChange` overloads as migration-only.
+- `TextField(state = ...)` is the beta03 input path. Use `InputTransformation` for filtering and `OutputTransformation` for display formatting; treat `value`/`onValueChange` overloads as migration-only.
 - `LinearProgressIndicator` and `CircularProgressIndicator` expose lambda-based progress providers for draw-phase reads. Use them for high-frequency progress instead of forcing recomposition of the entire indicator subtree.
 - `PullToRefresh` supports `rememberPullToRefreshState(refreshThreshold = ...)` and `onPullProgress`; keep one state owner instead of deriving a second refresh state. For official documentation and mixed top-bar/overscroll topology, read [Scroll and refresh notes](contracts/scroll-refresh-and-overscroll.md).
 - `NavigationRail` has a fixed-layout overload (`expanded = false/true`) and a separate expandable overload with required non-null `state`; `state = null` is not a valid current call shape.

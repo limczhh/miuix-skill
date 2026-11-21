@@ -1,13 +1,13 @@
 ---
 name: miuix-guidelines
-description: "Use to design, compose, review or refactor Miuix 0.9.5-beta02 pages and greenfield app shells: ownership, hierarchy, spacing, insets, adaptive navigation, pager-backed destinations, route boundaries, settings/overlays, UI state and scroll/refresh coordination. Includes vague page requests such as '普通页面', '页面太乱', or '几个页面加底部悬浮导航'. Leave isolated API lookups and compile errors to miuix-components."
+description: "Use to design, compose, review or refactor Miuix 0.9.5-beta03 pages and greenfield app shells: ownership, hierarchy, spacing, insets, adaptive navigation, pager-backed destinations, route boundaries, settings/overlays, UI state and scroll/refresh coordination. Includes vague page requests such as '普通页面', '页面太乱', or '几个页面加底部悬浮导航'. Leave isolated API lookups and compile errors to miuix-components."
 ---
 
 # Miuix UI Guidelines
 
 ## Scope
 
-Serve only **Miuix `0.9.5-beta02`**, pinned to `v0.9.5-beta02` / `66248bacc7be29ae6bdc0957de9458b42ac67732`. Do not introduce older-version recipes. Report dependency mismatches; changing dependencies still needs task authorization. Runtime/platform fallbacks remain applicable and Glass is optional.
+Serve only **Miuix `0.9.5-beta03`**, pinned to `v0.9.5-beta03` / `3526cfe2ca0779c5a2eab99af8737a96c9a8a885`. Do not introduce older-version recipes. Report dependency mismatches; changing dependencies still needs task authorization. Runtime/platform fallbacks remain applicable and Glass is optional.
 
 This skill owns page composition and a chosen design profile. `miuix-components`, when available, resolves selected APIs through pinned official docs, integration notes and source when needed. For work involving both, settle structure here, resolve selected calls there, then check their composition. An isolated API question needs only the component skill.
 

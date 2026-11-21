@@ -1,6 +1,6 @@
 # Documentation and Integration Index
 
-Use when the component is known but its documentation/note route is not. Each linked section points to official Markdown at `v0.9.5-beta02` / `66248bacc7be29ae6bdc0957de9458b42ac67732` and retains only integration distinctions. Read the selected official doc for imports, complete parameters and basic usage; skip this index when that path is already known.
+Use when the component is known but its documentation/note route is not. Each linked section points to official Markdown at `v0.9.5-beta03` / `3526cfe2ca0779c5a2eab99af8737a96c9a8a885` and retains only integration distinctions. Read the selected official doc for imports, complete parameters and basic usage; skip this index when that path is already known.
 
 ## Select one contract guide
 

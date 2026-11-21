@@ -1,6 +1,6 @@
 # Glass Migration and Coexistence
 
-Use when replacing existing ordinary components with the optional Glass family, adopting only a Glass surface, or supporting both presentations. This guide targets **`0.9.5-beta02`**, not a future stable release. Confirm the [beta02 dependency and platform setup](../../miuix-components/references/setup-and-theme.md) first. Ordinary and Glass components below both use this one library version; this guide does not maintain older-release APIs. Mandatory visual/ownership requirements remain in [page-shell rules](rules/page-shell.md#blur-and-glass) and [popup rules](rules/settings-and-overlays.md#popup-family-and-lifetime); this file supplies migration decisions and examples.
+Use when replacing existing ordinary components with the optional Glass family, adopting only a Glass surface, or supporting both presentations. This guide targets **`0.9.5-beta03`**, not a future stable release. Confirm the [beta03 dependency and platform setup](../../miuix-components/references/setup-and-theme.md) first. Ordinary and Glass components below both use this one library version; this guide does not maintain older-release APIs. Mandatory visual/ownership requirements remain in [page-shell rules](rules/page-shell.md#blur-and-glass) and [popup rules](rules/settings-and-overlays.md#popup-family-and-lifetime); this file supplies migration decisions and examples.
 
 Contents: [scope](#choose-the-migration-boundary) · [replacement map](#replacement-map) · [sampling](#record-the-right-scene) · [bars](#replace-a-top-bar) · [navigation](#keep-ordinary-and-glass-navigation-together) · [floating components](#migrate-floating-action-components) · [overlays](#adapt-an-existing-overlay-surface) · [menus](#migrate-menus-and-setting-rows) · [coexistence](#own-coexistence-policy-once) · [acceptance](#acceptance).
 
@@ -10,7 +10,7 @@ Start from [Brownfield evolution](brownfield-evolution.md): locate the real call
 
 | Intent | Smallest useful scope |
 |---|---|
-| Keep the current ordinary appearance | Use beta02 ordinary components; adopting Glass is optional |
+| Keep the current ordinary appearance | Use beta03 ordinary components; adopting Glass is optional |
 | Give one dialog/sheet a Glass surface | Keep the existing Overlay host and content; use its new typed `surface` slot |
 | Change an entire chrome family | Use Glass app bar/navigation/tab/action components, preserving route and scroll owners |
 | Offer ordinary and Glass styles | Put one presentation policy above render branches; share state, callbacks and content |
@@ -28,9 +28,9 @@ These are migration candidates, not aliases or mandatory replacements. Follow th
 | Wide fixed header / custom `SmallTopAppBar` composition | `GlassTopAppBar(expandable = false)` when its layout fits | Fixed-title intent and content inset. Keep a special hero header if its structure matters. |
 | `NavigationBar` / `FloatingNavigationBar` | `GlassNavigationBar` | One destination model, selection and route callbacks; convert item models and revise component-owned bottom spacing. |
 | Ordinary `NavigationRail` | `GlassNavigationRail` | Same destination owner, but a **different overlay/morph layout** and separate Glass rail state; revise content clearance and title overlap. |
-| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Keep the same selection coordinator; arguments become `selectedIndex` / `onSelect`. Hold pending click targets before pager movement; see [selection coordination](navigation-compositions.md#tab-selection-and-page-switching). For segmented tabs, keep the required non-null backdrop and set `surfaceAlpha = 0f` when sampling is disabled; the default opaque track/indicator remain, without the material stroke. See [blur controls](../../miuix-components/references/blur-behavior.md#disable-tab-material-explicitly). |
-| `IconButton` | `GlassIconButton` | Same action/description. Inside `GlassTopAppBar`, inherit its material by default; outside it, supply the intended backdrop. Beta02 has no `enabled` parameter: retain an ordinary control or a verified semantic adapter when disabling is required; a no-op callback alone does not preserve disabled semantics. |
-| `TextField` on a Glass dialog/sheet | `GlassTextField` | Prefer the beta02 `TextFieldState` overload; value overloads are deprecated. Keep validation, focus owner and form state in the existing host. |
+| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Keep the same selection coordinator; arguments become `selectedIndex` / `onSelect`. Hold pending click targets before pager movement; see [selection coordination](navigation-compositions.md#tab-selection-and-page-switching). For either Glass row, set `surfaceAlpha = 0f` when sampling is disabled so the material pipeline turns off while selection, semantics and resting visuals remain. `GlassSegmentedTabRow` still requires a non-null backdrop; `GlassTabRow` may use a null effective backdrop. See [blur controls](../../miuix-components/references/blur-behavior.md#disable-tab-material-explicitly). |
+| `IconButton` | `GlassIconButton` | Same action/description. Inside `GlassTopAppBar`, inherit its material by default; outside it, supply the intended backdrop. Beta03 has no `enabled` parameter: retain an ordinary control or a verified semantic adapter when disabling is required; a no-op callback alone does not preserve disabled semantics. |
+| `TextField` on a Glass dialog/sheet | `GlassTextField` | Prefer the beta03 `TextFieldState` overload; value overloads are deprecated. Keep validation, focus owner and form state in the existing host. |
 | Full-screen search over a Glass page | `GlassSearchOverlay` | Keep one query/result owner and one page route; let the overlay own focus/Back/Escape and pass the result scroll offset for its progressive header. |
 | `FloatingActionButton` / `FloatingToolbar` | `GlassFloatingActionButton` / `GlassFloatingToolbar` | Keep Scaffold slots and action ownership; adopt the built-in Glass material, bloom rim and separate shadow. See [floating-action migration](#migrate-floating-action-components) before retaining an application border or blur wrapper. |
 | `OverlayDialog` | Keep it with `glassDialogSurface`, or use `GlassDialog` | Existing show/draft/confirm/finished state and dialog geometry; Glass defaults include their own material/scrim. |
@@ -116,27 +116,22 @@ Scaffold(
 
 Here `isWideWindow` comes from the shared application width policy. For a real shell, retain its effective safe padding and bottom breathing room from the [inset contract](rules/page-shell.md#insets-and-content-padding). If a shared scroll helper already installs overscroll/haptics/bar linkage, update that helper instead of appending this second chain. A refresh wrapper must not also install the same bar connection.
 
-Use explicit `isContentScrolled` when real list overlap/programmatic movement must drive floating state. The visual displacement bridge supplies elastic motion; it is not a replacement for actual list position. `progressiveBlur` is an optional band effect, independent of title blur. Glass owns its button material and band; remove the old ordinary bar background where the Glass bar replaces it. `expandable = false` avoids stacking a hidden large Glass title behind another visible small-title component.
+Use explicit `isContentScrolled` when real list overlap/programmatic movement must drive floating state. Beta03 no longer accepts `visualContentOffset` on either public `GlassTopAppBar` overload; the bar reads `ScrollBehavior` content/overscroll state and uses `collapsedFraction` for an expandable bar's progressive band. The visual displacement bridge supplies elastic motion; it is not a replacement for actual list position. `progressiveBlur` is an optional band effect, independent of title blur. Glass owns its button material and band; remove the old ordinary bar background where the Glass bar replaces it. `expandable = false` avoids stacking a hidden large Glass title behind another visible small-title component.
 
 ### Child controls, overscroll motion, and Pager state linkage
 
 When placing `GlassTabRow`, `GlassSegmentedTabRow`, or custom pill actions inside `GlassTopAppBar(bottomContent = ...)` or as a pinned header strip:
 
-1. **Overscroll rebound linkage**: Mirror `GlassTopAppBar`'s internal material float by taking the maximum of scrolled state and overscroll ramp:
+1. **Overscroll rebound linkage**: Drive child material from the same boolean overlap boundary as beta03's bar, then let the child animate its own transition:
    ```kotlin
-   val ramp = GlassTopAppBarDefaults.collapseRamp(scrollBehavior)
+   val contentScrolled = listState.canScrollBackward ||
+       (scrollBehavior?.state?.overscrollOffset ?: 0f) < -1f
    val scrolledProgress by animateFloatAsState(
-       targetValue = if (listState.canScrollBackward) 1f else 0f,
+       targetValue = if (contentScrolled) 1f else 0f,
        animationSpec = GlassMotion.topBarButtonFloat(),
    )
-   val surfaceAlpha by remember(scrolledProgress, scrollBehavior, ramp) {
-       derivedStateOf {
-           val elastic = if (scrollBehavior?.state?.overscrollOffset != 0f) ramp.value else 0f
-           maxOf(scrolledProgress, elastic)
-       }
-   }
    ```
-   This ensures child glass controls spring and reveal their stroke and material dynamically during vertical pull-down overscroll, rather than remaining flat or snapping abruptly.
+   Pass `scrolledProgress` as the child control's `surfaceAlpha`/material progress as appropriate. This follows beta03's thresholded overlap state and avoids using `collapseRamp` to recreate the built-in bar's removed `visualContentOffset` path. The child still needs the verified overscroll bridge and its own animation policy.
 
 2. **Pager selection and indicator stability**: Feed ordinary/Glass tabs and bottom navigation from the same [selection coordinator](navigation-compositions.md#tab-selection-and-page-switching). The segmented row settles its independently moving indicator toward the supplied selection on release. A synchronously selected click target stays under the intent lock through requested movement; unlocked gesture feedback follows `currentPage`, avoiding predictive `targetPage` changes. Keep the shared motion policy, fixed pager-edge policy and selection lifecycle when changing material.
 
@@ -235,7 +230,7 @@ Distinguish **presentation family** from **effect capability**:
 
 - Ordinary/Glass selection belongs to the shell/shared presentation owner. Add a saved user option only when the product asks for one; otherwise a scoped fixed policy is enough.
 - Map effect permission/support to the [component-specific blur controls](../../miuix-components/references/blur-behavior.md). Fill-based Glass controls retain geometry; the top bar retains its gradient band. Custom `glassPanel` needs a readable fallback. Gate parent/anchor sampling too when children inherit it.
-- Segmented tabs keep their required backdrop and use `surfaceAlpha = 0f` for the resting track/indicator; do not depend on an empty recording. This tab-specific material switch is not a universal opacity recipe. Decide separately whether title/transition blur belongs to the product setting; nullable backdrops and `progressiveBlur = false` do not disable every foreground effect.
+- Both Glass tab rows use `surfaceAlpha = 0f` for their material-off endpoint while retaining selection and resting visuals. `GlassSegmentedTabRow` keeps its required backdrop; `GlassTabRow` may use a null effective backdrop. Do not depend on an empty recording or generalize this tab-specific material switch to arbitrary controls. Decide separately whether title/transition blur belongs to the product setting; nullable backdrops and `progressiveBlur = false` do not disable every foreground effect.
 - Keep one canonical selected route, pager, scroll behavior, form model, draft and loading owner. Keep family-specific visual state only where required, for example Glass rail expansion.
 - For an open popup, latch its chosen family/host for the current session through dismissal completion. A style change must not recreate the editor, discard its draft, or move it between Window and Overlay mid-animation. Apply the new policy at the next session, or explicitly close then switch after completion.
 - Remove superseded blur/press/layout copies once all callers have moved; keep the ordinary implementation only when it still serves the chosen fallback/coexistence branch. Avoid maintaining two entire page trees.
