@@ -2,7 +2,7 @@
 
 Use this reference when the task is about the shape of Miuix as a library: what it provides, how its modules relate, which capability layer fits a requirement, or which dependency is likely needed. This is an orientation document, not an API contract. Do not derive a package, overload, default, or host requirement from this overview alone.
 
-The overview is based on the current Miuix source-audit snapshot, release tag `v0.9.5-beta03` at commit `3526cfe2ca0779c5a2eab99af8737a96c9a8a885` (a published prerelease). The repository is a Compose Multiplatform library and marks its APIs as experimental. Only `0.9.5-beta03` is supported. Confirm its actual resolution and inspect local overrides; do not adapt this map into a different-release catalog.
+The overview is based on the current Miuix source-audit snapshot, release tag `v0.9.5-rc01` at commit `542463a0863b393a3d6052237daae6c3da217e70` (a published prerelease). The repository is a Compose Multiplatform library and marks its APIs as experimental. Only `0.9.5-rc01` is supported. Confirm its actual resolution and inspect local overrides; do not adapt this map into a different-release catalog.
 
 ## The library in layers
 

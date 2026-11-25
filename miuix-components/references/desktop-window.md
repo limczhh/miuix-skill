@@ -2,7 +2,7 @@
 
 Use this reference only for Miuix's Desktop JVM window frame, native caption bar, dragging, resize, or platform backdrop integration. Do not use it for `WindowDialog`, `WindowBottomSheet`, or `WindowListPopup` from `miuix-ui`; those are common Miuix popup components and remain in [Overlay and Window Components](overlays-and-windows.md).
 
-The current source evidence is Miuix `v0.9.5-beta03` at `3526cfe2ca0779c5a2eab99af8737a96c9a8a885`.
+The current source evidence is Miuix `v0.9.5-rc01` at `542463a0863b393a3d6052237daae6c3da217e70`.
 
 ## Module and platform boundary
 
@@ -12,13 +12,13 @@ The current source evidence is Miuix `v0.9.5-beta03` at `3526cfe2ca0779c5a2eab99
 kotlin {
     sourceSets {
         desktopMain.dependencies {
-            implementation("top.yukonga.miuix.kmp:miuix-window:0.9.5-beta03")
+            implementation("top.yukonga.miuix.kmp:miuix-window:0.9.5-rc01")
         }
     }
 }
 ```
 
-The module depends on `miuix-core`, `miuix-squircle`, and `miuix-ui`, and uses JNA for native integrations. Read the upstream [Window & Title Bar guide](https://github.com/compose-miuix-ui/miuix/blob/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/guide/miuix-window.md) for Linux JVM module-open and release-packaging requirements.
+The module depends on `miuix-core`, `miuix-squircle`, and `miuix-ui`, and uses JNA for native integrations. Desktop window frames automatically provide `LocalWindowComponentFrame` (`WindowComponentFrame` with client insets and frame corner radii) so `Window*` dialogs, sheets, list popups, and `Tooltip` stay bounded within custom frame chrome. Read the upstream [Window & Title Bar guide](https://github.com/compose-miuix-ui/miuix/blob/542463a0863b393a3d6052237daae6c3da217e70/docs/guide/miuix-window.md) for Linux JVM module-open and release-packaging requirements.
 
 ## Public family
 

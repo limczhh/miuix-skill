@@ -1,6 +1,6 @@
 # Input, Control, and Action Integration Notes
 
-Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta03 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain rc01 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
 ## Buttons & Action Bars
 
@@ -9,15 +9,15 @@ Read the selected official documentation for imports, full parameters/defaults a
 
 ### Button & TextButton
 
-Read the pinned documentation/source: [Button / TextButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/button.md).
+Read the pinned documentation/source: [Button / TextButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/button.md).
 
 ### IconButton
 
-Read the pinned documentation/source: [IconButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/iconbutton.md).
+Read the pinned documentation/source: [IconButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/iconbutton.md).
 
 ### FloatingActionButton & FloatingToolbar
 
-Read the pinned documentation/source: [FloatingActionButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/floatingactionbutton.md), [FloatingToolbar](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/floatingtoolbar.md).
+Read the pinned documentation/source: [FloatingActionButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/floatingactionbutton.md), [FloatingToolbar](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/floatingtoolbar.md).
 
 ---
 
@@ -26,20 +26,20 @@ Read the pinned documentation/source: [FloatingActionButton](https://raw.githubu
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/TextField.kt`
 
-Read the pinned documentation/source: [TextField](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/textfield.md).
+Read the pinned documentation/source: [TextField](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/textfield.md).
 > [!WARNING]
 > Miuix `TextField` has NO `isError` or `supportingText` parameter. Validation styling and error text must be composed externally.
 
-The `TextField(state = ...)` overload is the beta03 source-of-truth. The `value: String` and `value: TextFieldValue` overloads remain available only as deprecated migration surfaces. For new code prefer `rememberTextFieldState`, `InputTransformation`, `OutputTransformation`, `TextFieldLineLimits`, and `onKeyboardAction`; do not copy an older value-based recipe into a beta03 implementation without calling out the deprecation.
+The `TextField(state = ...)` overload is the rc01 source-of-truth. The `value: String` and `value: TextFieldValue` overloads remain available only as deprecated migration surfaces. For new code prefer `rememberTextFieldState`, `InputTransformation`, `OutputTransformation`, `TextFieldLineLimits`, and `onKeyboardAction`; do not copy an older value-based recipe into an rc01 implementation without calling out the deprecation.
 
 ## Progress indicators
 
 **Module:** `miuix-ui`
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/ProgressIndicator.kt`
 
-Read the pinned documentation/source: [ProgressIndicator](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/progressindicator.md).
+Read the pinned documentation/source: [ProgressIndicator](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/progressindicator.md).
 
-The beta03 snapshot exposes `progress: () -> Float` overloads for both `LinearProgressIndicator` and `CircularProgressIndicator`. Use the lambda overload when progress changes every frame so the indicator reads it in the draw phase; use the `Float`/nullable overload for ordinary state updates and indeterminate circular progress.
+The rc01 snapshot exposes `progress: () -> Float` overloads for both `LinearProgressIndicator` and `CircularProgressIndicator`. Use the lambda overload when progress changes every frame so the indicator reads it in the draw phase; use the `Float`/nullable overload for ordinary state updates and indeterminate circular progress.
 
 ---
 
@@ -50,17 +50,19 @@ The beta03 snapshot exposes `progress: () -> Float` overloads for both `LinearPr
 
 ### Switch
 
-Read the pinned documentation/source: [Switch](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/switch.md).
+Read the pinned documentation/source: [Switch](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/switch.md).
+
+Thumb dragging uses `folmeSpring` position tracking with drag-cancellation arbitration.
 
 ### Checkbox
 
-Read the pinned documentation/source: [Checkbox](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/checkbox.md).
+Read the pinned documentation/source: [Checkbox](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/checkbox.md).
 > [!IMPORTANT]
 > The basic `Checkbox` takes `state: ToggleableState` and `onClick: (() -> Unit)?`, NOT a `checked: Boolean` or `onCheckedChange` lambda. For simple boolean toggles, pass `ToggleableState(checked)` and update your state in `onClick`. (In contrast, `CheckboxPreference` accepts `checked: Boolean`).
 
 ### RadioButton
 
-Read the pinned documentation/source: [RadioButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/radiobutton.md).
+Read the pinned documentation/source: [RadioButton](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/radiobutton.md).
 
 ---
 
@@ -71,11 +73,13 @@ Read the pinned documentation/source: [RadioButton](https://raw.githubuserconten
 
 ### Slider
 
-Read the pinned documentation/source: [Slider](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/slider.md).
+Read the pinned documentation/source: [Slider](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/slider.md).
 
 ### RangeSlider
 
-Read the pinned documentation/source: [RangeSlider](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/slider.md).
+Read the pinned documentation/source: [RangeSlider](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/slider.md).
+
+`Slider`, `VerticalSlider`, and `RangeSlider` all support tap-to-seek gestures in addition to dragging.
 
 ---
 
@@ -84,7 +88,7 @@ Read the pinned documentation/source: [RangeSlider](https://raw.githubuserconten
 **Module:** `miuix-ui`  
 **Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/NumberPicker.kt`
 
-Read the pinned documentation/source: [NumberPicker](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/numberpicker.md).
+Read the pinned documentation/source: [NumberPicker](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/numberpicker.md).
 > [!NOTE]
 > `visibleItemCount` must be odd and at least 3 (default is 5). `range` must not be empty.
 
@@ -93,9 +97,11 @@ Read the pinned documentation/source: [NumberPicker](https://raw.githubuserconte
 ## SearchBar & InputField
 
 **Module:** `miuix-ui`  
-**Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/SearchBar.kt`
+**Source:** `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/SearchBar.kt`, `SearchClearButton.kt`
 
-Read the pinned documentation/source: [SearchBar / InputField](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/searchbar.md).
+Read the pinned documentation/source: [SearchBar / InputField](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/searchbar.md).
+
+`SearchClearButton` (`top.yukonga.miuix.kmp.basic`) is also publicly exported for search-input clear actions.
 
 Minimal composition pattern:
 

@@ -1,6 +1,6 @@
 # Theme and Page Host Integration Notes
 
-Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta03 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain rc01 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
 ## Theme
 
@@ -10,11 +10,11 @@ Read the selected official documentation for imports, full parameters/defaults a
 
 The controller overload is the normal application-root call. `ThemeController` is remembered by the root owner; it is not recreated by each page.
 
-Read the pinned documentation/source: [MiuixTheme / ThemeController](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/guide/theme.md).
+Read the pinned documentation/source: [MiuixTheme / ThemeController](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/guide/theme.md).
 
 Do not add a second page-level `MiuixTheme` only to obtain colors or text styles.
 
-The beta03 snapshot's seed-generated Monet colors use spec 2026 for `ThemePaletteStyle.Cmf`; `ThemeColorSpec` has no `Spec2026` member. Palette style/spec are used by `colorsFromSeed` only when a Monet mode has a non-null `keyColor`. With a null key, Monet delegates to `platformDynamicColors(dark)` without those arguments; System/Light/Dark use the supplied light/dark schemes instead. Do not promise a palette change in those other paths. The theme installs `ProvideDisplayCutoutFix`, controlled through `LocalDisplayCutoutFixEnabled`. These are version-specific behaviors, not extra required arguments on `MiuixTheme` or `ThemeController`.
+The rc01 snapshot's seed-generated Monet colors use spec 2026 for `ThemePaletteStyle.Cmf`; `ThemeColorSpec` has no `Spec2026` member. Palette style/spec are used by `colorsFromSeed` only when a Monet mode has a non-null `keyColor`. With a null key, Monet delegates to `platformDynamicColors(dark)` without those arguments; System/Light/Dark use the supplied light/dark schemes instead. Do not promise a palette change in those other paths. The theme installs `ProvideDisplayCutoutFix`, controlled through `LocalDisplayCutoutFixEnabled`, and configures `MiuixIndication` with theme-aware press/hover/focus alphas (`MiuixIndication` itself also draws before content and holds brief taps for ~200 ms). These are version-specific behaviors, not extra required arguments on `MiuixTheme` or `ThemeController`.
 
 ## Page host
 
@@ -23,7 +23,7 @@ The beta03 snapshot's seed-generated Monet colors use spec 2026 for `ThemePalett
 **Documentation:** `docs/components/basic/scaffold.md`
 **Demo:** `docs/demo/src/commonMain/kotlin/ScaffoldDemo.kt`
 
-Read the pinned documentation/source: [Scaffold](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/scaffold.md).
+Read the pinned documentation/source: [Scaffold](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/scaffold.md).
 
 Minimal content call:
 

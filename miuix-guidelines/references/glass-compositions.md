@@ -1,6 +1,6 @@
 # Glass Composition Guide
 
-Use this guide for a new Glass composition on the `0.9.5-beta03` baseline. For replacing existing components, a surface-only change, or keeping ordinary and Glass families, start with [Glass migration and coexistence](glass-migration.md). Ordinary blurred app bars follow [Top bar compositions](top-bar-compositions.md); they do not require Glass components. Mandatory recording, fallback, and host separation live in [Blur and Glass rules](rules/page-shell.md#blur-and-glass).
+Use this guide for a new Glass composition on the `0.9.5-rc01` baseline. For replacing existing components, a surface-only change, or keeping ordinary and Glass families, start with [Glass migration and coexistence](glass-migration.md). Ordinary blurred app bars follow [Top bar compositions](top-bar-compositions.md); they do not require Glass components. Mandatory recording, fallback, and host separation live in [Blur and Glass rules](rules/page-shell.md#blur-and-glass).
 
 ## Sampling relationship
 
@@ -21,7 +21,7 @@ Use `GlassTopAppBar(expandable = !isWideWindow)` with the shared window policy w
 
 `GlassNavigationRail` belongs in a full-space overlay outside recording. Its state morphs a side panel into a top capsule; page clearance and title overlap follow that progress. This differs from a width-reserving ordinary rail Row. The [migration guide](glass-migration.md#keep-ordinary-and-glass-navigation-together) explains the state/selection handoff, including secondary destinations.
 
-For full-screen search, use `GlassSearchOverlay` as an in-page layer above the shell rather than adding a search route or a second top bar. Keep query/results in one owner, pass the result list's `scrollOffset`, and keep the overlay outside the recorded Glass scene through its exit transition. Use `GlassTextField` only for a field inside an existing Glass surface; it does not replace the form or popup host.
+For full-screen search, use `GlassSearchOverlay` as an in-page layer above the shell rather than adding a search route or a second top bar. Keep query/results in one owner, pass the result list's `scrollOffset`, and keep the overlay outside the recorded Glass scene through its exit transition. Use `GlassTextField` only for a field inside an existing Glass surface; it does not replace the form or popup host. For grouping content inside `GlassBottomSheet` or `GlassDialog`, use `GlassCard` (translucent fill without separate backdrop sampling), and remember `GlassBottomSheet` passes header `PaddingValues` to its `content` lambda when `progressiveBlur = true`.
 
 ## API and evidence handoff
 

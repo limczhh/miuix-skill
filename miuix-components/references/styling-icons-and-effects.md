@@ -22,8 +22,8 @@ Do not use the unversioned rendered docs site or generated online Dokka to infer
 ## Icons
 
 - `miuix-ui` includes seven basic icons under `MiuixIcons.Basic`: `ArrowRight`, `ArrowUpDown`, `Check`, `Close`, `Search`, `SearchCleanup`, and `Sidebar`. Import their extensions from `top.yukonga.miuix.kmp.icon.basic`; the Basic namespace is separate from extended Regular-weight icons and Glass icons.
-- Extended icons require `top.yukonga.miuix.kmp:miuix-icons:0.9.5-beta03` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-beta03` for Android-only projects.
-- Glass icons require the separate `miuix-glass-icons` dependency and are exposed through `MiuixIcons.Glass`. The source package is `top.yukonga.miuix.kmp.icon.glass`; import the requested extension from that package after confirming the icon name exists.
+- Extended icons require `top.yukonga.miuix.kmp:miuix-icons:0.9.5-rc01` for commonMain or `top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-rc01` for Android-only projects.
+- Glass icons require the separate `miuix-glass-icons` dependency and are exposed through `MiuixIcons.Glass`. The source package is `top.yukonga.miuix.kmp.icon.glass`; import the requested extension from that package after confirming the icon name exists (note `rc01` renamed `XiaominListen` to `XiaomiListen` and `CeditSelection` to `CheckSelection`).
 - Verify every requested name in `docs/guide/icons.md` and its source file. Use `MiuixIcons.Name` for Regular; use `MiuixIcons.Light.Name`, `MiuixIcons.Normal.Name`, `MiuixIcons.Medium.Name`, or `MiuixIcons.Demibold.Name` only when that weight exists in the pinned source.
 - Prefer an existing semantic icon. Do not invent a Material icon name or add a custom vector before checking the basic and extended sets.
 
@@ -69,7 +69,7 @@ Modifier
 
 The `BackdropEffectScope.blur` call above takes pixels; multiplying by density expresses a 20 dp radius. `Modifier.textureBlur(blurRadius = ...)` takes dp directly.
 
-`material.rememberTiltLight(base: EdgeLightSource, sensitivity: Float = 0.1f)` returns an `EdgeLightSource`. Use the theme-appropriate preset or verified custom light data; these optical values do not belong in per-page copies.
+`material.rememberTiltLightState(base: EdgeLightSource, sensitivity: Float = 0.1f)` returns a `State<EdgeLightSource>` whose deferred read in `edgeStroke(shape, stroke = { ... })`, `Modifier.glass(..., stroke = { ... })`, or `Modifier.glassPanel(..., stroke = { ... })` avoids 50Hz recomposition during device tilt (`rememberTiltLight` remains available when a plain composition-time value is needed). `material.ShaderBrushCache` is also exposed for custom shader draw loops. Use the theme-appropriate preset or verified custom light data; these optical values do not belong in per-page copies.
 
 ### Progressive blur
 
@@ -80,6 +80,6 @@ Use progressive blur for navigation bars and narrow edge bands. Its pixel-sharp 
 ## Squircle
 
 - `miuix-squircle` is already brought in by `miuix-ui`; add it explicitly only when using it without `miuix-ui`.
-- Use the public modifiers `Modifier.squircleBackground`, `squircleClip`, `squircleSurface`, and `squircleBorder`. Do not invent a `SquircleShape` API.
-- Shader-backed modifiers fall back to matching rounded-corner rendering below Android API 33. Keep the same corner parameters so the fallback preserves geometry.
+- Use the public modifiers `Modifier.squircleBackground`, `squircleClip`, `squircleSurface`, `squircleBorder` (including deferred `() -> Dp` / `() -> Color` stroke overloads), their `absoluteSquircle*` physical-corner counterparts, and low-level `Path.addSquircleRect` (including the per-corner `topLeft`/`topRight`/`bottomRight`/`bottomLeft` overload). Do not invent a `SquircleShape` API.
+- Shader-backed modifiers fall back to matching rounded-corner rendering below Android API 33; pure capsules bypass offscreen layers with hardware `CircleShape` clipping, and oversized nodes (`> 4096 px` edge or `> 4096 × 2160` area) fall back to cached `Path` clipping. Keep the same corner parameters so the fallback preserves geometry.
 - Prefer component Defaults before applying a custom squircle modifier. Add custom surface, clipping, or border behavior only for an explicit visual requirement.

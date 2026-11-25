@@ -1,6 +1,6 @@
 # Tab, Pager and Breadcrumb Integration Notes
 
-Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain beta03 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
+Read the selected official documentation for imports, full parameters/defaults and basic usage. These notes retain rc01 integration pitfalls and selected composition examples; they are not a replacement API manual. Follow the [documentation-first workflow](../source-verification.md#documentation-first-path).
 
 ## Ordinary tab rows
 
@@ -10,15 +10,15 @@ Read the selected official documentation for imports, full parameters/defaults a
 
 **Docs/Demo:** `docs/components/basic/tabrow.md`, `docs/demo/src/commonMain/kotlin/TabRowDemo.kt`
 
-Read the pinned documentation/source: [TabRow / TabRowWithContour](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/tabrow.md).
+Read the pinned documentation/source: [TabRow / TabRowWithContour](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/tabrow.md).
 
 Both expose controlled selection: callbacks report an index; the caller supplies `selectedTabIndex`. Supply non-empty tabs with a valid index when composing this page pattern; render an empty-content branch instead of calling pager/selection APIs with no valid page. `listState` controls only the horizontally scrolling strip, not the pager or any page's vertical list. `itemSpacing` is the internal tab gap; application header gutters and bottom spacing are separate.
 
 For an ordinary row inside already blurred chrome, `TabRowDefaults.tabRowColors(backgroundColor = Color.Transparent)` removes its unselected fill while retaining the default selected fill and text roles. This factory also accepts `contentColor`, `selectedBackgroundColor`, and `selectedContentColor`; these are separate roles, not one blanket alpha applied to the whole strip.
 
-In beta03, ordinary `TabRow` positions its selected background directly from `selectedTabIndex`; its selected-item reveal in the horizontal list can animate. `TabRowWithContour` animates its indicator offset from that external index with a 200 ms linear tween. Neither commits an optimistic selected index inside its click callback. `GlassTabRow` uses separately selectable pills; `GlassSegmentedTabRow` instead has a draggable shared indicator and release-time settling. Do not assume a common internal spring/click-selection implementation across these variants.
+In rc01, ordinary `TabRow` positions its selected background directly from `selectedTabIndex`; its selected-item reveal in the horizontal list can animate. `TabRowWithContour` animates its indicator offset from that external index with a 200 ms linear tween. Neither commits an optimistic selected index inside its click callback. `GlassTabRow` uses separately selectable pills; `GlassSegmentedTabRow` instead has a draggable shared indicator and release-time settling. Do not assume a common internal spring/click-selection implementation across these variants.
 
-Beta03's ordinary rows derive tab width and indicator placement from the live measured available width, so resize and contour padding changes remain in the row's layout owner. Keep selection external and do not copy the previous fixed-width/parent-constraint calculation into an application wrapper.
+Ordinary rows derive tab width and indicator placement from the live measured available width, so resize and contour padding changes remain in the row's layout owner. Keep selection external and do not copy older fixed-width/parent-constraint calculations into an application wrapper.
 
 These APIs do not require a pager or impose a page-count animation policy. For pager-backed pages, use the application-owned [selection coordination pattern](../../../miuix-guidelines/references/navigation-compositions.md#tab-selection-and-page-switching) and its scoped design rules. Glass-specific notes are in [Glass tabs](glass.md#glass-tabs-tabrow--segmentedtabrow).
 
@@ -32,7 +32,7 @@ These APIs do not require a pager or impose a page-count animation policy. For p
 
 The enum has only `PagerInterceptionMode.Native` and `PagerInterceptionMode.CrossAxis`. Read the modifier overloads and imports in the utility guide:
 
-Read the pinned documentation/source: [Modifier.pagerGestureOverride](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/guide/utils.md).
+Read the pinned documentation/source: [Modifier.pagerGestureOverride](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/guide/utils.md).
 
 The other overload takes the same required `pagerState` and `flingBehavior`, with required `mode: Int`; `enabled` and `onTriggered` match the enum overload. Invalid ordinals resolve to Native. Persist semantic mode identities when possible; normalize unsupported saved values to the product's chosen current mode and update pager configuration together. This overload does not accept a fling tracker.
 
@@ -73,7 +73,7 @@ Ordinary `TabRow` / `TabRowWithContour` consume horizontal nested scroll and fli
 
 `HorizontalPager` and its `overscrollEffect` parameter belong to Compose Foundation, not Miuix. The [Foundation declaration](https://developer.android.com/reference/kotlin/androidx/compose/foundation/pager/HorizontalPager.composable) defaults this parameter to `rememberOverscrollEffect()`; verify the resolved Foundation version in the consumer project.
 
-In pinned beta03, `MiuixTheme.kt` supplies `MiuixOverscrollFactory` through `LocalOverscrollFactory`. `utils/OverscrollFactory.kt` creates the effect and applies its X/Y offsets as layer translation during placement. Under that theme, a pager using the default effect can move its content at the first/last edge. The example above chooses `overscrollEffect = null` for fixed page edges, matching the [peer-page design profile](../../../miuix-guidelines/references/rules/page-shell.md#tabs-and-pagers).
+In pinned rc01, `MiuixTheme.kt` supplies `MiuixOverscrollFactory` through `LocalOverscrollFactory`. `utils/OverscrollFactory.kt` creates the effect and applies its X/Y offsets as layer translation during placement. Under that theme, a pager using the default effect can move its content at the first/last edge. The example above chooses `overscrollEffect = null` for fixed page edges, matching the [peer-page design profile](../../../miuix-guidelines/references/rules/page-shell.md#tabs-and-pagers).
 
 The null argument disables only that pager effect. Explicit `overScrollHorizontal`, an ancestor overscroll node or a custom transform remains a separate owner. Child vertical-list overscroll, refresh and app-bar motion are separate too; do not null the entire theme's factory to implement this local recipe. Selection coordination and edge-effect gating solve different feedback paths.
 
@@ -85,7 +85,7 @@ The null argument disables only that pager effect. Explicit `overScrollHorizonta
 
 **Docs/Demo:** `docs/components/basic/breadcrumbbar.md`, `docs/demo/src/commonMain/kotlin/BreadcrumbBarDemo.kt`
 
-Read the pinned documentation/source: [BreadcrumbBar](https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/docs/components/basic/breadcrumbbar.md).
+Read the pinned documentation/source: [BreadcrumbBar](https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/docs/components/basic/breadcrumbbar.md).
 
 Use `top.yukonga.miuix.kmp.basic.BreadcrumbBar` / `BreadcrumbItem`, with Compose Foundation `rememberLazyListState` when owning the row position. `listState` is optional and dedicated to the horizontal breadcrumb; it is not the page's vertical list state. The callback index selects a breadcrumb, not a navigation route by itself. Existing `ScrollState` pixel offsets are not drop-in `LazyListState` positions.
 

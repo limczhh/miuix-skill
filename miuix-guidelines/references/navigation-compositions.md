@@ -14,7 +14,7 @@ Use this guide to choose the placement of persistent navigation or host-owned ac
 | Related page action group | Host `floatingToolbar` slot | Page action group and position policy |
 | Transient operation message | Host `snackbarHost` path | Active page/window feedback owner |
 
-The [standard bar material policy](rules/page-shell.md#blur-and-glass) applies to normal bottom/floating navigation. Existing component Defaults determine the actual bar shape and inset behavior after target verification.
+The [standard bar material policy](rules/page-shell.md#blur-and-glass) applies to normal bottom/floating navigation. Existing component Defaults determine the actual bar shape and inset behavior after target verification. For route-to-route page container expansion (bound via `Modifier.navTransitionSource` and `NavTransitions.Expansion` in `miuix-nav`), verify destination container color, corner matching, and live-source fallback behavior through [miuix-nav](../../miuix-components/references/miuix-nav.md#component-expansion).
 
 ## Shell placement
 

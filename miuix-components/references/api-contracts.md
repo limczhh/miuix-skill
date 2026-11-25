@@ -1,6 +1,6 @@
 # Documentation and Integration Index
 
-Use when the component is known but its documentation/note route is not. Each linked section points to official Markdown at `v0.9.5-beta03` / `3526cfe2ca0779c5a2eab99af8737a96c9a8a885` and retains only integration distinctions. Read the selected official doc for imports, complete parameters and basic usage; skip this index when that path is already known.
+Use when the component is known but its documentation/note route is not. Each linked section points to official Markdown at `v0.9.5-rc01` / `542463a0863b393a3d6052237daae6c3da217e70` and retains only integration distinctions. Read the selected official doc for imports, complete parameters and basic usage; skip this index when that path is already known.
 
 ## Select one contract guide
 
@@ -62,6 +62,7 @@ Use when the component is known but its documentation/note route is not. Each li
 | GlassDialog / GlassDialogButton | [Dialog](contracts/glass.md#glassdialog) / [dialog button](contracts/glass.md#glassdialogbutton) |
 | glassDialogSurface / glassBottomSheetSurface | [Typed surface adapters](contracts/glass.md#typed-surface-adapters-for-standard-overlays) |
 | GlassBottomSheet | [Sheet](contracts/glass.md#glassbottomsheet) |
+| GlassCard | [Card](contracts/glass.md#glasscard) |
 | GlassDropdownPreference | [Preference](contracts/glass.md#glassdropdownpreference-scaffold-hosted) |
 | GlassPopup / GlassDropdownPopup / GlassTransformPopup | [BoxScope popups](contracts/glass.md#boxscope-glass-popup-components) |
 | GlassIconDropdownMenu | [Composed cascading icon menu](contracts/glass.md#boxscope-glass-popup-components) |

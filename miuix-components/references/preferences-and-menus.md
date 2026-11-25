@@ -9,7 +9,7 @@ Use this reference to choose between Preference rows, basic controls, dropdown/s
 | Binary/value control inside a form or custom layout | Basic `Switch`, `Checkbox`, `RadioButton`, or `Slider` | The surrounding layout owns the label and grouping |
 | Complete settings row with title, summary, and row interaction | Matching `*Preference` component | The component owns HyperOS-style row structure, enabled state, and trailing control/value |
 | Plain text option selection in a settings row | `OverlayDropdownPreference` or `WindowDropdownPreference` | Direct `List<String>` + selected-index API and current-value display |
-| Rich options with icons/summaries | `OverlaySpinnerPreference` or `WindowSpinnerPreference` | Uses richer `DropdownItem` content; beta03 has no `dialogMode` parameter. A requested selection dialog is a separate dialog composition |
+| Rich options with icons/summaries | `OverlaySpinnerPreference` or `WindowSpinnerPreference` | Uses richer `DropdownItem` content; rc01 has no `dialogMode` parameter. A requested selection dialog is a separate dialog composition |
 | The same selection row must use the optional Glass visual family | `GlassDropdownPreference` | It is supplied by `miuix-glass`, samples a `Backdrop`, and still requires a `Scaffold` popup host; it is not a drop-in alias for every preference |
 | Standalone anchored action menu rather than a settings row | `*DropdownMenu` family | The caller owns the anchor and menu action semantics |
 

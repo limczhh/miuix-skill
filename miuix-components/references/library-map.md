@@ -2,7 +2,7 @@
 
 Use this reference when the task names an unfamiliar source package, asks where a behavior is implemented, or requires a tour of the pinned source tree. For a general explanation of what Miuix provides or which module to use, start with the [Library overview](library-overview.md) instead. This is a source locator, not a component catalog or API contract. Read the row that matches the task, then follow its focused reference; do not read the whole map and every linked document by default.
 
-The map covers the current source areas in the eleven library modules included by Miuix `v0.9.5-beta03` at commit `3526cfe2ca0779c5a2eab99af8737a96c9a8a885`: `miuix-core`, `miuix-ui`, `miuix-preference`, `miuix-material`, `miuix-blur`, `miuix-glass`, `miuix-glass-icons`, `miuix-squircle`, `miuix-icons`, `miuix-nav`, and `miuix-window`. It is complete as a source-area index, not as a symbol catalog. A source directory is not automatically a public import boundary: confirm visibility, package, overload, platform source set, and opt-in requirements before writing code.
+The map covers the current source areas in the eleven library modules included by Miuix `v0.9.5-rc01` at commit `542463a0863b393a3d6052237daae6c3da217e70`: `miuix-core`, `miuix-ui`, `miuix-preference`, `miuix-material`, `miuix-blur`, `miuix-glass`, `miuix-glass-icons`, `miuix-squircle`, `miuix-icons`, `miuix-nav`, and `miuix-window`. It is complete as a source-area index, not as a symbol catalog. A source directory is not automatically a public import boundary: confirm visibility, package, overload, platform source set, and opt-in requirements before writing code.
 
 ## How to use the map
 

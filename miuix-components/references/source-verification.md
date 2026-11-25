@@ -6,7 +6,7 @@ Contents: [documentation first](#documentation-first-path) · [acquire source](#
 
 ## Documentation-first path
 
-Confirm the target resolves `0.9.5-beta03`, its platform/source set, and whether substitution/local changes affect the needed API. Reuse this context until build inputs or source change. A declaration-version string alone does not establish resolution.
+Confirm the target resolves `0.9.5-rc01`, its platform/source set, and whether substitution/local changes affect the needed API. Reuse this context until build inputs or source change. A declaration-version string alone does not establish resolution.
 
 1. Locate the selected component through the [component map](component-selection.md#component-reference-table) or the [documentation and notes index](api-contracts.md). Skip these routers when the doc path is already known.
 2. Read its official Markdown at the pinned commit, using a matching local checkout or the raw URL in [Path convention](#path-convention). Read just the relevant API/usage section. The agent retrieves and applies the documentation; a list of links alone does not complete an implementation request.
@@ -15,11 +15,11 @@ Confirm the target resolves `0.9.5-beta03`, its platform/source set, and whether
 
 If remote docs are unavailable, try the matching checkout's `git show <commit>:<doc-path>` or the target artifact's attached sources. Existing integration facts remain usable, but a note cannot establish unlisted parameters. If the needed evidence is still inaccessible, state exactly which call or behavior is unresolved and continue independent work. Do not guess an exact signature or silently switch to `main`.
 
-Only this version is maintained. Another release is a scope mismatch; dependency upgrades require task authorization. A local beta03 customization needs the source gate below for the affected symbols, not an alternate multi-version catalog.
+Only this version is maintained. Another release is a scope mismatch; dependency upgrades require task authorization. A local rc01 customization needs the source gate below for the affected symbols, not an alternate multi-version catalog.
 
 ## Acquire source evidence
 
-Use a target artifact's attached source for a customized target claim. For catalog gaps, use the pinned commit `3526cfe2ca0779c5a2eab99af8737a96c9a8a885`: inspect a matching clean checkout, use `git show <commit>:<path>` when the checkout has moved, or open the [pinned raw URL](#path-convention). Do not replace it with rolling rendered docs, untagged snippets, or remembered Material APIs.
+Use a target artifact's attached source for a customized target claim. For catalog gaps, use the pinned commit `542463a0863b393a3d6052237daae6c3da217e70`: inspect a matching clean checkout, use `git show <commit>:<path>` when the checkout has moved, or open the [pinned raw URL](#path-convention). Do not replace it with rolling rendered docs, untagged snippets, or remembered Material APIs.
 
 Read one declaration and the implementation needed for the uncertain behavior. Pinned docs support normal usage; declarations resolve exact API conflicts and implementation resolves behavioral conflicts. Demo/Example explain composition, not extra public parameters. If source cannot be reached, keep established integration facts usable, but leave the uncertain/customized claim unresolved. `API verification blocked` applies only to that missing evidence, not the whole task.
 
@@ -38,7 +38,7 @@ For a complex investigation, record only the necessary facts: resolved source, s
 
 | Label | Evidence required | Does not prove |
 |---|---|---|
-| `catalog-verified` | Maintained integration fact checked against the pinned beta03 source | Every parameter of an unlisted call, target customization, compilation or runtime behavior |
+| `catalog-verified` | Maintained integration fact checked against the pinned rc01 source | Every parameter of an unlisted call, target customization, compilation or runtime behavior |
 | `target-source-verified` | The affected declaration/behavior in the target's actual resolved source, including relevant substitutions or changes, was inspected | Compilation or device behavior |
 | `compile-verified` | The affected target compiled with the delivered call | Visual, input, platform or performance outcomes |
 | `runtime-verified` | The named runtime/device behavior was exercised | Unexercised configurations or platforms |
@@ -50,7 +50,7 @@ A pinned documentation lookup can be reported as such without inventing a source
 
 | Evidence role | Pinned snapshot |
 |---|---|
-| Current catalog and source-audit target | release tag `v0.9.5-beta03` at commit `3526cfe2ca0779c5a2eab99af8737a96c9a8a885` (published prerelease) |
+| Current catalog and source-audit target | release tag `v0.9.5-rc01` at commit `542463a0863b393a3d6052237daae6c3da217e70` (published prerelease) |
 
 This table describes the Skill's maintained evidence scope. It is not a substitute for checking a target project's actual dependency version.
 
@@ -60,10 +60,10 @@ All file paths in the tables below are relative to the Miuix repository root. Re
 
 | Source | URL pattern |
 |--------|------------|
-| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/<file-path>` |
-| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/3526cfe2ca0779c5a2eab99af8737a96c9a8a885/<dir-path>` |
+| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/<file-path>` |
+| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/542463a0863b393a3d6052237daae6c3da217e70/<dir-path>` |
 
-The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the pinned `docs/**/*.md` file during a version-sensitive task. Only the pinned beta03 contract is maintained; the beta02 mention in the migration note is a delta record, not an alternate historical API contract.
+The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the pinned `docs/**/*.md` file during a version-sensitive task. Only the pinned rc01 contract is maintained; the beta03 mention in the migration note is a delta record, not an alternate historical API contract.
 
 | Abbreviation | Relative path |
 |---|---|
@@ -104,15 +104,17 @@ The repository Markdown file is the documentation evidence. The rendered site ma
 
 ## Supporting source and low-level APIs
 
-These files underpin multiple components and are read on demand. This is a supporting-source index, **not a visibility classification**: beta03 publicly exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent` and `rememberListPopupLayoutInfo`. They are lower-level building blocks, so ordinary application flows usually start with the complete preference/popup wrappers. Names containing `Impl` are not automatically internal; inspect the declaration.
+These files underpin multiple components and are read on demand. This is a supporting-source index, **not a visibility classification**: rc01 publicly exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent`, `rememberListPopupLayoutInfo`, `BottomSheetOverlayLayout`, `SearchClearButton`, `DialogMotion`, `SheetMotion`, and `WindowComponentFrame`/`LocalWindowComponentFrame`. They are lower-level building blocks, so ordinary application flows usually start with the complete preference/popup wrappers. Names containing `Impl` are not automatically internal; inspect the declaration.
 
 | File | Role |
 |------|------|
 | `miuix-ui/.../basic/Component.kt` | `BasicComponent` — universal base for all preference and overlay components |
+| `miuix-ui/.../basic/SearchClearButton.kt` | Shared clear icon button for search inputs |
 | `miuix-ui/.../utils/MiuixPopupUtils.kt` | Popup position/anchor utilities for all overlay and window popups |
 | `miuix-ui/.../utils/WindowNavigationEventScope.kt` | Rebinds predictive/system back handling to a focused platform window |
-| `miuix-ui/.../layout/DialogContentLayout.kt` | Shared dialog content layout, including `maxWidth`, large-screen mode, and corner-radius resolution |
-| `miuix-ui/.../layout/BottomSheetContentLayout.kt` | Shared bottom sheet content layout |
+| `miuix-ui/.../window/WindowComponentHost.kt` | `WindowComponentFrame` / `LocalWindowComponentFrame` window geometry constraint for floating layers |
+| `miuix-ui/.../layout/DialogContentLayout.kt`, `DialogMotion.kt` | Shared dialog content layout and `DialogMotion` presets (`Default` / `Glass`) |
+| `miuix-ui/.../layout/BottomSheetContentLayout.kt`, `SheetMotion.kt` | Shared bottom sheet layout, public `BottomSheetOverlayLayout`, and `SheetMotion` presets (`Default` / `Glass`) |
 | `miuix-ui/.../layout/ListPopupLayout.kt` | Shared list popup content layout |
 | `miuix-ui/.../layout/CascadingListPopupLayout.kt` | Shared cascading list popup layout |
 | `miuix-ui/.../layout/CascadingMorphContent.kt` | Shared cascading morph content |
@@ -129,6 +131,7 @@ These files underpin multiple components and are read on demand. This is a suppo
 | `miuix-ui/.../utils/OverscrollFactory.kt` | Theme-level `MiuixOverscrollFactory` / `MiuixOverscrollEffect` behavior |
 | `miuix-ui/.../utils/PagerGestureUtils.kt` | Horizontal pager conflict modes, nested-list interception, and spring page navigation |
 | `miuix-nav/.../core/LocalNavTransitionScope.kt` | Entry-local live transition scope CompositionLocal |
+| `miuix-nav/.../transition/NavTransitionSource.kt`, `NavTransitionAnchor.kt` | Route-bound `Modifier.navTransitionSource` and `NavTransitionCorners` for `NavTransitions.Expansion` |
 | `miuix-nav/.../state/NavEntryViewModel.kt` | Entry ViewModel stores and saved-state creation context |
 
 ## Example App

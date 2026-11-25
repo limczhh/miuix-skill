@@ -50,7 +50,7 @@ item {
 
 The child settings remain visible but disabled while the parent is off; their stored values are retained. Hide a dependent group only when the selected product behavior or capability makes it irrelevant. This snippet shows composition; the existing settings owner supplies and persists the values.
 
-The dimensions illustrate the [group rules](rules/design-system.md#grouped-content-cards). Page padding belongs to the primary content boundary described by [Page shell rules](rules/page-shell.md#insets-and-content-padding).
+The dimensions illustrate the [group rules](rules/design-system.md#grouped-content-cards). Page padding belongs to the primary content boundary described by [Page shell rules](rules/page-shell.md#insets-and-content-padding). For grouped content inside a `GlassBottomSheet` or `GlassDialog`, use `GlassCard` via [Glass notes](../../miuix-components/references/contracts/glass.md#glasscard).
 
 ## Surface placement
 

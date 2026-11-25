@@ -14,7 +14,7 @@ When theme inputs such as color mode, key color, palette style, or color specifi
 
 ## Quick Start
 
-All Miuix coordinates below use `0.9.5-beta03`. The pinned upstream build uses Kotlin `2.4.21`, Compose Multiplatform `1.13.0-rc01`, serialization `1.13.0`, navigation-event `1.2.0`, AGP `9.5.2`, Gradle `9.9.2`, and JDK 21. Check the consumer's resolved compiler/dependency metadata; these upstream versions do not require copying Example-only tooling into an application. Beta03's Example also adds `androidx.metrics:metrics-performance:1.0.0` for its Android `JankStats` monitor; add it only when the consumer actually uses that monitor.
+All Miuix coordinates below use `0.9.5-rc01`. The pinned upstream build uses Kotlin `2.4.21`, Compose Multiplatform `1.13.0-rc01`, serialization `1.13.0`, navigation-event `1.2.0`, AGP `9.5.2`, Gradle `9.9.2`, and JDK 21. Check the consumer's resolved compiler/dependency metadata; these upstream versions do not require copying Example-only tooling into an application. Example also adds `androidx.metrics:metrics-performance:1.0.0` for its Android `JankStats` monitor; add it only when the consumer actually uses that monitor.
 
 **Compose Multiplatform project** (most common — Android, iOS, Desktop, Web):
 
@@ -24,18 +24,18 @@ All Miuix coordinates below use `0.9.5-beta03`. The pinned upstream build uses K
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.5-beta03")
-            implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.5-beta03") // optional
-            implementation("top.yukonga.miuix.kmp:miuix-icons:0.9.5-beta03") // optional
-            implementation("top.yukonga.miuix.kmp:miuix-glass-icons:0.9.5-beta03") // optional Glass icons
-            implementation("top.yukonga.miuix.kmp:miuix-material:0.9.5-beta03") // optional direct material types
-            implementation("top.yukonga.miuix.kmp:miuix-blur:0.9.5-beta03") // optional; Android artifact requires API 33
-            implementation("top.yukonga.miuix.kmp:miuix-squircle:0.9.5-beta03") // optional direct shape use
-            implementation("top.yukonga.miuix.kmp:miuix-glass:0.9.5-beta03") // optional Glass family
-            implementation("top.yukonga.miuix.kmp:miuix-nav:0.9.5-beta03") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.5-rc01")
+            implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.5-rc01") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-icons:0.9.5-rc01") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-glass-icons:0.9.5-rc01") // optional Glass icons
+            implementation("top.yukonga.miuix.kmp:miuix-material:0.9.5-rc01") // optional direct material types
+            implementation("top.yukonga.miuix.kmp:miuix-blur:0.9.5-rc01") // optional; Android artifact requires API 33
+            implementation("top.yukonga.miuix.kmp:miuix-squircle:0.9.5-rc01") // optional direct shape use
+            implementation("top.yukonga.miuix.kmp:miuix-glass:0.9.5-rc01") // optional Glass family
+            implementation("top.yukonga.miuix.kmp:miuix-nav:0.9.5-rc01") // optional
         }
         desktopMain.dependencies {
-            implementation("top.yukonga.miuix.kmp:miuix-window:0.9.5-beta03") // optional; Desktop JVM only
+            implementation("top.yukonga.miuix.kmp:miuix-window:0.9.5-rc01") // optional; Desktop JVM only
         }
     }
 }
@@ -57,13 +57,13 @@ android {
 }
 
 dependencies {
-    implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.5-beta03")
-    implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.5-beta03") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-beta03") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-glass-icons-android:0.9.5-beta03") // optional Glass icons
-    implementation("top.yukonga.miuix.kmp:miuix-material-android:0.9.5-beta03") // optional direct material types
-    implementation("top.yukonga.miuix.kmp:miuix-glass-android:0.9.5-beta03") // optional Glass family
-    implementation("top.yukonga.miuix.kmp:miuix-nav-android:0.9.5-beta03") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.5-rc01")
+    implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.5-rc01") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-rc01") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-glass-icons-android:0.9.5-rc01") // optional Glass icons
+    implementation("top.yukonga.miuix.kmp:miuix-material-android:0.9.5-rc01") // optional direct material types
+    implementation("top.yukonga.miuix.kmp:miuix-glass-android:0.9.5-rc01") // optional Glass family
+    implementation("top.yukonga.miuix.kmp:miuix-nav-android:0.9.5-rc01") // optional
     // miuix-blur-android and the Android blur dependency of miuix-glass declare minSdk 33;
     // add them only when that target boundary is acceptable.
 }
@@ -85,7 +85,7 @@ Use this only for the `minSdk < 33` compatibility decision above; it does not ma
 
 ### Android compile SDK requirements
 
-The published beta03 `miuix-ui-android`, `miuix-blur-android`, and `miuix-glass-android` AAR metadata was checked directly. Each declares `minCompileSdk=37` and **`minCompileMinorSdk=2`**, not a decimal-valued `minCompileSdk=37.2`. Use SDK 37 minor API 2 (or a compatible newer compile SDK) and an AGP/SDK installation that supports it. The Android-only snippet above uses the same expanded `compileSdk { version = release(37) { minorApiLevel = 2 } }` shape as the pinned upstream build; place it in the matching Android target DSL for a multiplatform project.
+The checked `miuix-ui-android`, `miuix-blur-android`, and `miuix-glass-android` AAR metadata (unchanged in toolchain between beta03 and rc01) declares `minCompileSdk=37` and **`minCompileMinorSdk=2`**, not a decimal-valued `minCompileSdk=37.2`. Use SDK 37 minor API 2 (or a compatible newer compile SDK) and an AGP/SDK installation that supports it. The Android-only snippet above uses the same expanded `compileSdk { version = release(37) { minorApiLevel = 2 } }` shape as the pinned upstream build; place it in the matching Android target DSL for a multiplatform project.
 
 See [Android SDK configuration](https://developer.android.com/build#module-level) for the minor-API DSL. Do not substitute an invented `compileSdkMinor` property or warning suppression for satisfying dependency metadata. If the existing toolchain cannot express or provide that SDK, report the exact build constraint before proposing a scoped toolchain change. Compile SDK, runtime `minSdk`, and the blur manifest override are separate boundaries; the override above does not resolve a compile-SDK mismatch.
 
@@ -113,9 +113,9 @@ fun App() {
 
 `ColorSchemeMode` options: `System` / `Light` / `Dark` / `MonetSystem` / `MonetLight` / `MonetDark`.
 
-In the beta03 snapshot's explicit-seed Monet path, `ThemePaletteStyle.Cmf` internally uses spec 2026; palette/spec do not override the ordinary or seedless platform-dynamic paths. See the [theme contract](contracts/theme-and-host.md#theme). `ThemeColorSpec` still has only `Spec2021` and `Spec2025`; there is no public `ThemeColorSpec.Spec2026`. Keep effective-spec labels and exhaustive palette handling consistent with the selected style. Both theme overloads install `ProvideDisplayCutoutFix`; inspect any older application cutout workaround before retaining it. `LocalDisplayCutoutFixEnabled` controls that behavior at the actual theme/window boundary.
+In the rc01 snapshot's explicit-seed Monet path, `ThemePaletteStyle.Cmf` internally uses spec 2026; palette/spec do not override the ordinary or seedless platform-dynamic paths. See the [theme contract](contracts/theme-and-host.md#theme). `ThemeColorSpec` still has only `Spec2021` and `Spec2025`; there is no public `ThemeColorSpec.Spec2026`. Keep effective-spec labels and exhaustive palette handling consistent with the selected style. Both theme overloads install `ProvideDisplayCutoutFix`; inspect any older application cutout workaround before retaining it. `LocalDisplayCutoutFixEnabled` controls that behavior at the actual theme/window boundary.
 
-> **Supported version**: Only `0.9.5-beta03`, tag `v0.9.5-beta03` at `3526cfe2ca0779c5a2eab99af8737a96c9a8a885`. Verify target resolution, including local substitutions, even when the declared coordinate matches. This Skill does not supply other-release compatibility paths.
+> **Supported version**: Only `0.9.5-rc01`, tag `v0.9.5-rc01` at `542463a0863b393a3d6052237daae6c3da217e70`. Verify target resolution, including local substitutions, even when the declared coordinate matches. This Skill does not supply other-release compatibility paths.
 
 ## Android Studio Preview
 
