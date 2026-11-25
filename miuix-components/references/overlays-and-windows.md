@@ -1,66 +1,52 @@
-# Overlay and Window Components
+# Overlays, Popups, and Windows
 
-Use this reference only for Overlay versus common `miuix-ui` Window host, dismissal, back behavior, and popup lifecycle. It does not define page structure or exact signatures. For the separate Desktop JVM native window frame module, use [Desktop Window Components](desktop-window.md). For the optional Glass popup family, use [Glass Components](glass.md).
+Use for `Overlay*` vs `Window*` lifecycle/host decisions, `DialogMotion`/`SheetMotion`, `ListPopup`, `Snackbar`, `WindowComponentFrame`, and Desktop JVM `miuix-window` frames.
 
-## Choose the Host First
+Contents: [Overlay vs Window](#overlay-vs-window-host) · [back, lifecycle & frame bounds](#back-lifecycle-and-frame-bounds) · [Dialogs & Sheets](#dialogs-and-bottom-sheets) · [ListPopups & Snackbars](#list-popups-and-snackbars) · [Desktop miuix-window](#desktop-window-frames-miuix-window)
 
-| Required lifetime/host | Choose | Integration rule |
-|---|---|---|
-| Page-scoped popup that follows the current page and its bounds | `Overlay*` | Require the intended ancestor `Scaffold`; reuse it rather than creating an accidental nested host. If that host is nested, verify or set `renderInRootScaffold = false` |
-| Popup independent of the current page's Scaffold, including cross-page/global UI | `Window*` | Use the Window counterpart; no Scaffold popup host is required |
+## Overlay vs Window Host
 
-Use the table above to choose the host family. For page ownership, use the `miuix-guidelines` Skill; open an API reference only if the task contains an exact-signature question.
+| Required scope/lifetime | Family | Source & Docs | Integration rule |
+|---|---|---|---|
+| Scoped to current page & bounds | `Overlay*` | `miuix-ui/.../overlay/`, `docs/components/basic/overlay*.md` | Requires ancestor `Scaffold` popup host; reuse existing host, and set `renderInRootScaffold = false` if nested locally (`true` is default -> root `Scaffold`) |
+| Independent of page `Scaffold` / cross-page global UI | `Window*` | `miuix-ui/.../window/`, `docs/components/basic/window*.md` | Standalone platform window/popup layer; no `Scaffold` host required |
 
-In the current source-audit snapshot, Overlay components that expose `renderInRootScaffold` default it to `true`, which routes their popup state to the root Scaffold. That default is appropriate for a full-screen application overlay, but it is not a safe assumption for a page-local overlay below nested Scaffolds. Confirm the declaration for the target version and set the flag explicitly when the page host must own the surface.
+Keep all `Overlay*`/`Window*` composables **composed** while `show` becomes `false` so hide animations and `onDismissFinished` complete. (`GlassDialog`, `GlassBottomSheet`, `GlassDropdownPreference` are `Scaffold`-hosted `miuix-glass` components, not `Window*` replacements; see [Glass & blur](glass-and-blur.md)).
 
-## Dismissal and System Back
+## Back, Lifecycle, and Frame Bounds
 
-- At the current source-audit snapshot, dialog, bottom-sheet, and list-popup layouts route system back dismissal to `onDismissRequest`; common `Window*` variants also use their platform window host where applicable. The caller must update the controlled `show` state. Always provide the callback for a dismissible popup.
-- A manual `BackHandler`/`NavigationBackHandler` is normally unnecessary and can compete with the component's own handler. Add one only for an explicit product rule such as a non-dismissible confirmation, and verify that it does not double-handle back or predictive-back gestures.
-- `onDismissFinished` runs after the hide animation completes, not when dismissal is merely requested, and may be skipped if the hide is cancelled by showing the popup again. Use it for delayed cleanup; use `onDismissRequest` for the state transition.
-- Do not depend on undocumented stacking order. Prefer one active page popup; if a deliberate parent/child flow uses two, close the child first and test back, focus, scrim, and accessibility on every target platform.
-- The current source provides `WindowNavigationEventScope` in `miuix-ui/.../utils/`. Common Window dialogs, sheets, and list/cascading popups apply it automatically so `NavigationBackHandler`/predictive-back handlers resolve against the focused platform window. Wrap custom separate-window hosts that contain the same handlers. `LocalWindowComponentFrame` (`WindowComponentFrame` in `miuix-ui/.../window/WindowComponentHost.kt`) also constrains `Window*` overlays, `Tooltip`, and list popups to custom desktop/window insets and corners when provided.
-- `WindowListPopup` and `WindowCascadingListPopup` always clamp menu height to the available safe-area space after margins, even when an explicit `maxHeight` is passed.
-- Animated dialog, sheet, and list-popup layouts place their library `graphicsLayer` before the caller's `modifier`; caller draw/transform modifiers therefore follow the component animation. Keep this ordering when building a wrapper and do not add a second corrective transform. Dialog and sheet layouts reset predictive-back progress on open/close and release touch blocking before the exit tail completes.
+- **System back & `onDismissRequest`**: Dialog, bottom-sheet, and list-popup layouts route back dismissal to `onDismissRequest`. Let the caller update controlled `show`; avoid adding a competing manual `BackHandler`/`NavigationBackHandler` unless non-dismissible confirmation requires it.
+- **`onDismissFinished`**: Invoked after exit animation completes, skipped if hide is cancelled mid-flight by reopening. Use for delayed cleanup/draft reset, not state transitions.
+- **`WindowNavigationEventScope`** (`miuix-ui/.../utils/`): Common `Window*` popups apply it automatically so predictive/system back binds to the focused window; wrap custom separate window hosts with it when needed.
+- **`LocalWindowComponentFrame` / `WindowComponentFrame`** (`miuix-ui/.../window/WindowComponentHost.kt`): Constrains `Window*` popups/dialogs/sheets, `Tooltip`, and list popups inside custom window client insets and rounded corners.
+- **Animation layering & touch**: Layouts apply library `graphicsLayer` before caller `modifier`. Dialog/sheet layouts reset predictive-back progress on open/close and release touch blocking before the exit tail completes. Avoid stacking multiple simultaneous page popups.
 
-## Overlay Components (require Scaffold wrapper)
+## Dialogs and Bottom Sheets
 
-| Component | Doc | Demo | Source |
-|-----------|-----|------|--------|
-| OverlayDialog | `docs/components/basic/overlaydialog.md` | `docs/demo/OverlayDialogDemo.kt` | `miuix-ui/.../overlay/OverlayDialog.kt` |
-| OverlayBottomSheet | `docs/components/basic/overlaybottomsheet.md` | `docs/demo/OverlayBottomSheetDemo.kt` | `miuix-ui/.../overlay/OverlayBottomSheet.kt` |
-| OverlayListPopup | `docs/components/basic/overlaylistpopup.md` | `docs/demo/OverlayListPopupDemo.kt` | `miuix-ui/.../overlay/OverlayListPopup.kt` |
-| OverlayCascadingListPopup | `docs/components/basic/overlaycascadinglistpopup.md` | `docs/demo/OverlayCascadingListPopupDemo.kt` | `miuix-ui/.../overlay/OverlayCascadingListPopup.kt` |
+- **Dialog sizing (`OverlayDialog` / `WindowDialog`)**:
+  - `maxWidth: Dp = DialogDefaults.MaxWidth` bounds tablet/desktop stretch.
+  - `largeScreen: Boolean? = null` overrides centered scale/fade vs bottom-attached slide (`null` auto-detects at `840.dp` wide × `480.dp` high). Centered uses `DialogDefaults.CornerRadius` (`32.dp`); bottom-attached derives screen corner radius clamped to `32..48 dp` unless `cornerRadius: Dp?` is set.
+- **Motion presets (`rc01`)**:
+  - `OverlayDialog` & `WindowDialog` accept `motion: DialogMotion = DialogMotion.Default` (`Default` or `Glass`).
+  - `OverlayBottomSheet`, `WindowBottomSheet`, and public `BottomSheetOverlayLayout` (`miuix-ui/.../layout/BottomSheetContentLayout.kt`) accept `motion: SheetMotion = SheetMotion.Default` (`Default` or `Glass`). Bottom sheets extend directly on upward overscroll.
+- **Sheet header rule**: On `OverlayBottomSheet`, `WindowBottomSheet`, and `GlassBottomSheet`, the header reserves vertical space if **any** of `title`, `startAction`, or `endAction` is non-null (including `title = ""`); the drag handle is unaffected.
+- **Typed `surface` slots (`Overlay*` only)**: `OverlayDialog` (`dimColor`, `DialogSurfaceScope`) and `OverlayBottomSheet` (`dimColor`, `BottomSheetSurfaceScope` with `isOverscroll`) support custom surface adapters; `Window*` counterparts do **not** expose `surface` slots. Pair `glassDialogSurface`/`glassBottomSheetSurface` with `motion = DialogMotion.Glass`/`SheetMotion.Glass`. Cascading list popups & icon cascading menus use separate `(Shape) -> Modifier` surface overloads.
 
-## Window Components (standalone popups, no Scaffold needed)
+## List Popups and Snackbars
 
-| Component | Doc | Demo | Source |
-|-----------|-----|------|--------|
-| WindowDialog | `docs/components/basic/windowdialog.md` | `docs/demo/WindowDialogDemo.kt` | `miuix-ui/.../window/WindowDialog.kt` |
-| WindowBottomSheet | `docs/components/basic/windowbottomsheet.md` | `docs/demo/WindowBottomSheetDemo.kt` | `miuix-ui/.../window/WindowBottomSheet.kt` |
-| WindowListPopup | `docs/components/basic/windowlistpopup.md` | `docs/demo/WindowListPopupDemo.kt` | `miuix-ui/.../window/WindowListPopup.kt` |
-| WindowCascadingListPopup | `docs/components/basic/windowcascadinglistpopup.md` | `docs/demo/WindowCascadingListPopupDemo.kt` | `miuix-ui/.../window/WindowCascadingListPopup.kt` |
+- **`ListPopupColumn` sizing**: Public in `miuix-ui/.../basic/ListPopup.kt`. Measures intrinsic widths from **up to the first 8 children** only, clamped to `200..288 dp` within parent constraints — check long labels beyond item 8.
+- **Safe-area height cap**: On `WindowListPopup` and `WindowCascadingListPopup`, available safe-area space after margins always caps menu height even when `maxHeight` is explicitly supplied.
+- **Snackbar**: `docs/components/basic/snackbar.md` (`miuix-ui/.../basic/Snackbar.kt`). Keep the host outside covered popups/bars.
 
-## Dialog sizing and large screens
+## Desktop Window Frames (`miuix-window`)
 
-In the current source-audit snapshot, `OverlayDialog` and `WindowDialog` both accept:
+Guide: `docs/guide/miuix-window.md`, sources: `miuix-window/src/desktopMain/kotlin/top/yukonga/miuix/kmp/window/`.
 
-- `maxWidth: Dp = DialogDefaults.MaxWidth` to prevent dialogs from stretching across tablet/desktop windows.
-- `largeScreen: Boolean? = null` to override the centered scale/fade versus bottom-attached presentation; `null` uses the window-size detection.
-- `cornerRadius: Dp? = null` to override the centered radius or bottom-attached screen-radius-derived value.
-
-The public `maxWidth` parameter exposes `DialogDefaults.MaxWidth` as the default limit for both dialog wrappers. Use `DialogDefaults.MaxWidth` and `DialogDefaults.CornerRadius` when a product does not have a deliberate design value. Keep the dialog's content and dismissal state controlled by the caller; these parameters do not remove the need for a `Scaffold` ancestor for `OverlayDialog`.
-
-The default large-screen breakpoint is 840 dp wide and 480 dp high. Centered dialogs use the 32 dp `CornerRadius`; bottom-attached dialogs derive a radius from the screen corner and clamp it to 32..48 dp unless `cornerRadius` is supplied.
-
-`OverlayDialog` / `WindowDialog` accept `motion: DialogMotion = DialogMotion.Default` (`Default` or `Glass`), and `OverlayBottomSheet` / `WindowBottomSheet` / public `BottomSheetOverlayLayout` accept `motion: SheetMotion = SheetMotion.Default` (`Default` or `Glass`). On bottom sheets, the header reserves space whenever any of `title`, `startAction`, or `endAction` is non-null (including `title = ""`), while the drag handle is unaffected.
-
-`OverlayDialog` / `OverlayBottomSheet` expose `dimColor` and typed `surface` slots. `DialogSurfaceScope` provides radius, animated scrim and scale; `BottomSheetSurfaceScope` provides radius, animated scrim and overscroll-extension status. Their Window counterparts do not expose these slots. Cascading list popups and icon cascading menus have separate Overlay/Window surface overloads taking `(Shape) -> Modifier`. Use the matching [Glass surface helper](glass.md#glass-overlays-and-setting-dropdowns) (paired with `motion = DialogMotion.Glass` / `SheetMotion.Glass`) when adopting Glass without changing the host.
-
-## Glass overlay boundary
-
-`GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` are not common `Overlay*` aliases. They are in `miuix-glass`, accept a `Backdrop?`, and use the same `Scaffold` popup host boundary while replacing the panel surface with Glass material. Keep the recorded page behind the surface, exclude the popup host and scrim, and use [Glass Components](glass.md) for the exact call shape.
-
-## Common Window versus Desktop Window
-
-The `WindowDialog`/`WindowBottomSheet`/`WindowListPopup` rows above are common Miuix popup components in `miuix-ui/window`. `miuix-window` is a different Desktop JVM module that replaces Compose `Window`/`DialogWindow` and provides native caption bars; use [Desktop Window Components](desktop-window.md) for that API.
+- **`desktopMain` JVM only** (Windows, macOS, Linux via JNA; depends on `miuix-core`, `miuix-squircle`, `miuix-ui`). Read the upstream guide for Linux JVM module-open and packaging flags. Desktop frames automatically provide `LocalWindowComponentFrame` so `Window*` overlays stay inside custom client bounds/corners.
+- **Public APIs**: `MiuixWindow`, `MiuixDialogWindow`, `MiuixCaptionBar`, `WindowDraggableArea`, `MiuixWindowProperties`, `MiuixWindowBackgroundType`, `MiuixCaptionButton*`.
+- **Host hard rules**:
+  1. Wrap `MiuixTheme` **outside** `MiuixWindow` / `MiuixDialogWindow` so frame and caption buttons share the theme.
+  2. `WindowDraggableArea` throws outside `MiuixWindow` / `MiuixDialogWindow`; allow at most **one** active `WindowDraggableArea` per window (keep outside overlapping `AnimatedContent` / `Crossfade` / `AnimatedVisibility`).
+  3. `MiuixCaptionBar` reserves native caption-button clearance via `LocalMiuixWindowInfo`.
+  4. Preserve `MiuixWindowProperties.captionButtonHeight <= captionBarHeight`.
+  5. Mica / Acrylic / Vibrancy depend on OS capability; keep `None` / opaque fallback readable.

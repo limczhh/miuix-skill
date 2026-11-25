@@ -1,30 +1,14 @@
 # `miuix-nav` Routing and Transitions
 
-Use this reference for route/back-stack architecture in `v0.9.5-rc01` at `542463a0863b393a3d6052237daae6c3da217e70`. `miuix-nav` is a self-contained Compose Multiplatform runtime with its own `NavKey`, back stack, display and transitions; use its declared APIs rather than Navigation3 scene APIs.
+Self-contained Compose Multiplatform routing runtime for `0.9.5-rc01` (`docs/guide/miuix-nav.md`, `miuix-nav/.../`). Do not confuse with AndroidX Navigation3 APIs.
 
-Contents: [route model](#dependency-and-route-model) · [basic display](#minimal-navdisplay) · [state and lifecycle](#saveable-identity-and-lifecycle) · [transitions and gestures](#transitions-and-back-gestures) · [component expansion](#component-expansion) · [navigation chrome](#keep-routing-separate-from-navigation-chrome) · [v1 boundaries](#v1-boundaries) · [evidence](#evidence-paths)
+Contents: [dependency & keys](#dependency-and-route-keys) · [NavDisplay & stack](#navdisplay-and-lifecycle) · [transitions & Expansion](#transitions-expansion-and-back-gestures) · [navigation chrome](#routing-vs-navigation-chrome) · [v1 boundaries](#v1-boundaries)
 
-## Dependency and route model
+## Dependency and Route Keys
 
-Add `top.yukonga.miuix.kmp:miuix-nav:0.9.5-rc01` to `commonMain` or the matching platform source set. A persisted stack uses `kotlinx.serialization`, so annotate the complete route hierarchy and every concrete route key with `@Serializable`.
-
-The consumer project must also enable the Kotlin Serialization compiler plugin; the Miuix library's runtime dependency does not apply that compiler plugin to the application. Use the syntax that matches the target project's plugin management:
+Add `top.yukonga.miuix.kmp:miuix-nav:0.9.5-rc01` (`miuix-nav-android` for Android-only). Persistent stack saving (`rememberNavBackStack`) uses `kotlinx.serialization`, so the **consumer module must apply the Kotlin Serialization compiler plugin** matching its Kotlin version (`kotlin("plugin.serialization")` or catalog alias).
 
 ```kotlin
-plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization") // use the same Kotlin version as the project
-}
-```
-
-With a version catalog, use the project's `kotlin.serialization` plugin alias instead. Do not add a second Kotlin version just for `miuix-nav`. If the app uses an in-memory `navBackStackOf(...)` and no `@Serializable` route keys, the save/restore contract below does not apply; state that limitation explicitly.
-
-```kotlin
-import kotlinx.serialization.Serializable
-import top.yukonga.miuix.kmp.nav.core.NavDisplay
-import top.yukonga.miuix.kmp.nav.core.NavKey
-import top.yukonga.miuix.kmp.nav.core.rememberNavBackStack
-
 @Serializable
 sealed interface Route : NavKey {
     @Serializable data object Home : Route
@@ -32,118 +16,40 @@ sealed interface Route : NavKey {
 }
 ```
 
-`NavKey` is only a route marker. Keep business state and screen state in the application or screen owner; use route values for navigation identity.
+- All keys in `rememberNavBackStack` must be `@Serializable` (`data object` / `data class`, unique `toString()` / `contentKey` — duplicate equal keys cannot be pushed twice).
+- If non-serializable keys use `navBackStackOf(...)`, process-death restoration does not apply.
 
-## Minimal `NavDisplay`
-
-`rememberNavBackStack<Route>(...)` returns a mutable `NavBackStack`. The `NavDisplay` content lambda is an entry-registration DSL, and matching is by the concrete runtime route type, so register every concrete route type that can appear in the stack.
+## `NavDisplay` and Lifecycle
 
 ```kotlin
-@Composable
-fun App() {
-    val backStack = rememberNavBackStack<Route>(Route.Home)
+val backStack = rememberNavBackStack<Route>(Route.Home)
 
-    NavDisplay(
-        backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
-    ) {
-        entry<Route.Home> {
-            HomeScreen(onOpen = { id -> backStack.add(Route.Detail(id)) })
-        }
-        entry<Route.Detail> { route ->
-            DetailScreen(route.id)
-        }
-    }
+NavDisplay(backStack = backStack, onBack = { backStack.removeLastOrNull() }) {
+    entry<Route.Home> { HomeScreen(onOpen = { backStack.add(Route.Detail(it)) }) }
+    entry<Route.Detail> { route -> DetailScreen(route.id) }
 }
 ```
 
-For direct list operations use `add`, `removeLastOrNull`, `removeAt`, or replace the top entry. `NavController` is an optional thin wrapper with `push`, `pop`, `replace`, and `popUntil`; `pop()` keeps the root entry. `rememberNavController<Route>(Route.Home)` combines it with the remembered serializable stack.
+- `NavBackStack` supports `add`, `removeLastOrNull`, `removeAt`, or top replacement; `NavController` (`rememberNavController`) is a thin wrapper (`push`, `pop`, `replace`, `popUntil` retaining root).
+- Entries get per-entry lifecycles (`RESUMED` on settled top, `STARTED` when covered, cleared when popped) and `SavedStateHandle`/ViewModel stores via `NavEntryViewModel.kt`.
+- **Focus clearing (`rc01`)**: `NavDisplay` clears focus whenever the top entry key changes (including while covered entries stay composed) — attach IME/search focus restoration to active entries rather than adding duplicate hacks.
 
-## Saveable identity and lifecycle
+## Transitions, Expansion, and Back Gestures
 
-- `@Serializable` is a hard requirement for every key in `rememberNavBackStack`. If keys cannot be serialized, use the in-memory `navBackStackOf(...)` factory and do not claim process-death restoration.
-- Use `data object` / `data class` routes or a value-derived `contentKey`. Equal route/content keys cannot be pushed twice, and distinct keys whose `toString()` collides are rejected.
-- `entry<T>(contentKey = { route -> ... })` controls the identity used for each entry's `rememberSaveable` state. Keep it stable across recompositions and process death.
-- Each entry has its own lifecycle and ViewModel store. A settled top entry is `RESUMED`; covered entries remain `STARTED`; a popped entry is cleared after removal. Entry ViewModels inherit the parent creation extras and factory, and use the surrounding `SavedStateRegistryOwner` when available, so `SavedStateHandle` and integrations such as Hilt can work without a custom owner bridge.
+- **Built-in presets (`NavTransitions`)**: `MiuixDefault` (full-width slide + 1/4 covered parallax), `Modal` (bottom-up sheet-like slide), `Expansion` / `NavTransitions.expansion(containerColor, cornerRadius = 28.dp, motion = NavMotion.Default)`, and `None`. Override per route via `entry(transition = ...)`.
+- **Component Expansion (`NavTransitions.Expansion`)**:
+  - Bind source card/item to its destination route: `Modifier.navTransitionSource(route, cornerRadius = 16.dp, containerColor = Color.Unspecified, corners = NavTransitionCorners(cornerRadius), shape = null, sourceKey = null)`.
+  - Attach `navTransitionSource` **after outer padding and before surface/background/clip**; match its fill color and single-contour outline (no holes). When multiple sources bind the same route, the pressed one wins.
+  - Destination page must paint an opaque background matching the resolved container color (resolved in order: `expansion(containerColor)`, `NavDisplayEffects.backdropColor`, source `containerColor`). Missing live same-window source or opaque color falls back to `MiuixDefault`.
+  - On pop/return, the source needs visible area inside the container (otherwise centered shrink/fade). Provide a unique stable `sourceKey` per source inside the same origin->destination pair if recomposed while covered.
+- **`NavDisplayEffects`**: `enableCornerClip`, `cornerClipRadius` (`rememberNavSystemCornerRadius()` for full-screen host; keep `0.dp` on interior multi-pane `NavDisplay`), `cornerClipMode`, `dimAmount`, `blockInputDuringTransition`, `backdropColor`. Transitions whose `NavTransition.handlesCornerClip(scope)` is `true` (like `Expansion`) own their animated clip and automatically skip `enableCornerClip` while preserving `dimAmount`.
+- **Custom transitions & scopes**: `navDirectionalTransition(push, pop, predictivePop)` and `navGraphicsTransition(...)`. `LocalNavTransitionScope.current` (valid only inside a `NavDisplay` entry) provides coarse `isRunning` for composition plus `relativeDepth`, `role`, `change`, `gesture`, `settle`, `layoutSize`, `layoutDirection`, `density`, `entryKey`, `layoutPositionInWindow`, and `windowToLocal(...)` for deferred draw/graphicsLayer reads. `NavTransition` also offers `Modifier.transformContent(scope)`.
+- **Swipe-to-dismiss**: Opt-in per entry via `entry(swipeDismiss = NavSwipeDirection.LeftToRight)` (`None` by default; physical finger motion, not RTL-mirrored). Consumed pointer release cancels dismissal. Disable outer swipe (`None`) on nested `NavDisplay` routes. In separate platform windows, wrap content in `WindowNavigationEventScope`.
 
-## Transitions and back gestures
+## Routing vs Navigation Chrome
 
-The built-in presets are `NavTransitions.MiuixDefault`, `NavTransitions.Modal`, `NavTransitions.Expansion` (or `NavTransitions.expansion(containerColor, cornerRadius, motion)`), and `NavTransitions.None`. Set a global transition on `NavDisplay` or override one route in `entry(transition = ...)`.
+`NavigationBar` / `NavigationRail` display destinations and should **not** own a separate back stack. Keep destination/pager selection above compact/wide layout branching; use `NavDisplay` for route transitions (`docs/demo/NavExpandDemo.kt` shows Expansion usage).
 
-Swipe-to-dismiss is opt-in. None of the built-in presets enables it automatically. Use the route override when the gesture matches the transition:
+## v1 Boundaries
 
-```kotlin
-import top.yukonga.miuix.kmp.nav.transition.NavSwipeDirection
-import top.yukonga.miuix.kmp.nav.transition.NavTransitions
-
-NavDisplay(backStack, transition = NavTransitions.MiuixDefault) {
-    entry<Route.Home>(swipeDismiss = NavSwipeDirection.LeftToRight) {
-        HomeScreen()
-    }
-    entry<Route.Detail>(
-        transition = NavTransitions.Modal,
-        swipeDismiss = NavSwipeDirection.TopToBottom,
-    ) { route ->
-        DetailScreen(route.id)
-    }
-}
-```
-
-`NavSwipeDirection` describes physical finger motion and is not mirrored automatically for RTL. Use `LeftToRight` for the usual LTR back swipe and `RightToLeft` for the RTL counterpart. Pass `NavSwipeDirection.None` to disable a gesture on a route. For custom effects, use `navGraphicsTransition { scope -> ... }`; read `relativeDepth`, `gesture`, `settle`, `layoutSize`, and `layoutDirection` inside its graphics-layer block.
-
-`NavDisplayEffects` owns cross-cutting effects rather than the transition itself: `enableCornerClip`, `cornerClipRadius`, `cornerClipMode`, `dimAmount`, `blockInputDuringTransition`, and `backdropColor`. Its default input blocking is off; `NavDisplayEffects.None` disables the clip/dim/input effects. Sliding presets use the host corner clip, whereas transitions where `NavTransition.handlesCornerClip(scope)` returns `true` (such as `Expansion`) skip `enableCornerClip` and own their animated clip while retaining `dimAmount`. In a multi-pane layout, clip the `NavDisplay` pane and normally use `cornerClipRadius = 0.dp`; the physical device corner belongs to the screen edge, not the middle pane boundary.
-
-For asymmetric push/pop/predictive visuals, use `navDirectionalTransition(push, pop, predictivePop)`. For custom graphics-layer or container transitions, `navGraphicsTransition(...)` exposes `opaqueDepth`, `dismissDirection`, `motion`, an optional `scrim` curve, and `NavTransitionScope` (`relativeDepth`, `role`, `change`, `gesture`, `settle`, `isRunning`, `layoutSize`, `layoutDirection`, `density`, `entryKey`, `layoutPositionInWindow`, and `windowToLocal(position)`); `NavTransition` also offers `Modifier.transformContent(scope)` and `handlesCornerClip(scope)`. Read animated properties inside a deferred `graphicsLayer` or draw block.
-
-## Component expansion
-
-Use `NavTransitions.Expansion` or `NavTransitions.expansion(containerColor = Color.Unspecified, cornerRadius = 28.dp, motion = NavMotion.Default)` globally or per entry, and bind the source component with `Modifier.navTransitionSource(route, cornerRadius = 16.dp, containerColor = Color.Unspecified, corners = NavTransitionCorners(cornerRadius), shape = null, sourceKey = null)`:
-
-- Attach `navTransitionSource` after outer padding and before the component's background/clip; match the source's `containerColor` and outline (`cornerRadius`, `corners`, or single-contour `shape` without holes). When multiple components bind the same route, the pressed source wins.
-- Supply an opaque destination background matching the resolved container color (taken in order from `expansion(containerColor = ...)`, `NavDisplayEffects.backdropColor`, or the source's `containerColor`). Opening a page without a live same-window source or an opaque container color falls back to `MiuixDefault`.
-- On return, the source needs visible area within the navigation container (otherwise it uses centered shrink and fade). Pass a stable, unique `sourceKey` among sources for the same destination in the same origin entry if the source can recompose after being covered.
-- `cornerClipRadius` on `NavDisplayEffects` supplies the final moving-frame radius; settled pages have no transition clip.
-
-Entry content can read the live scope through the stable `LocalNavTransitionScope`:
-
-```kotlin
-import top.yukonga.miuix.kmp.nav.core.LocalNavTransitionScope
-
-@Composable
-fun EntryContent() {
-    val scope = LocalNavTransitionScope.current
-    if (scope.isRunning) {
-        // Coarse composition-time transition state.
-    }
-    // Read scope.relativeDepth / gesture / settle in a graphicsLayer block for per-frame effects.
-}
-```
-
-The CompositionLocal is provided only inside a `NavDisplay` entry. Accessing it
-outside an entry is an error. `isRunning` is the composition-safe lifecycle
-signal; it remains true for an interactive gesture and the settle that follows.
-
-For lower-level hosts, the stable runtime also exposes `PredictiveBackHandler`/`NavBackEvent` for a custom predictive-back consumer, `Modifier.navSwipeDismiss` for a standalone swipe surface, and `rememberNavSystemCornerRadius()` for platform-reported screen-corner clipping. These are lower-level escape hatches; prefer `NavDisplay` and its `effects`/`entry(swipeDismiss = ...)` options for ordinary routing.
-
-The built-in `NavDisplay` installs the shared navigation-event bridge. If a custom host needs the lower-level stream, `PredictiveBackHandler` is in `nav/gesture`; if the host is a separate platform window, wrap its content in `miuix-ui`'s `WindowNavigationEventScope` so the focused window owns back dispatch.
-
-## Keep routing separate from navigation chrome
-
-In the rc01 snapshot, `NavDisplay` clears focus when the top entry key changes, including while covered entries remain composed. Keep search/IME restoration attached to the active entry and review any older focus-clearing workaround before retaining a duplicate. A consumed pointer release also cancels swipe dismissal rather than completing a route pop.
-
-Use `NavigationBar` or `NavigationRail` for persistent destination chrome, and use `NavDisplay` for the route stack. Hoist the selected destination/back stack before compact/wide branching so resizing does not create two sources of truth. A nested `NavDisplay` is supported, but disable the outer route's swipe with `entry(swipeDismiss = NavSwipeDirection.None)` when the inner stack must own the gesture.
-
-## v1 boundaries
-
-The current runtime is deliberately a single flat stack. It does not provide dialog/bottom-sheet scene strategies, multi-element shared-content matching (`Expansion` supports page-container expansion only), KSP route registration, or a built-in `navigateForResult`/`setResult` channel. Layer those behaviors in application code only after confirming the target version.
-
-## Evidence paths
-
-- Guide: `docs/guide/miuix-nav.md`
-- Core API: `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/core/` (including `LocalNavTransitionScope.kt`)
-- Transitions: `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/transition/` (including `NavTransitionSource.kt`, `NavTransitionAnchor.kt`)
-- Gesture handling: `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/gesture/`
-- Entry state: `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/state/NavEntryViewModel.kt`
-- Integrated example: `example/shared/src/commonMain/kotlin/navigation/` and `AppContent.kt`
-
-The paths above are the evidence boundary for this guide. Open [Source verification](source-verification.md) only when rc01 source is locally modified or a declaration in this guide is insufficient; do not infer APIs from another Navigation library.
+Single flat stack only: no dialog/bottom-sheet scene strategies, no multi-element shared content matching (`Expansion` handles page-container expansion only), no KSP annotation routing, and no built-in `navigateForResult` channel.

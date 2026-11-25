@@ -1,152 +1,51 @@
-# Source Verification
+# Source Verification and Example Map
 
-Use to resolve the selected component's pinned documentation and escalate uncertain facts to source. Official docs supply ordinary usage; local integration notes preserve verified distinctions. Read this workflow when lookup/source resolution is unclear, not as an extra stop for every call.
+Use only when pinned docs lack a needed declaration, source is locally modified/overridden, or Kotlin implementation details decide runtime behavior (`0.9.5-rc01` at `542463a0863b393a3d6052237daae6c3da217e70`).
 
-Contents: [documentation first](#documentation-first-path) · [acquire source](#acquire-source-evidence) · [source gate](#api-verification-gate) · [labels](#verification-labels) · [snapshot](#snapshot-scope) · [paths](#path-convention) · [supporting source](#supporting-source-and-low-level-apis) · [Example](#example-app).
+Contents: [escalation gate](#api-verification-gate) · [evidence labels](#verification-labels) · [supporting source](#supporting-source-index) · [Example app](#example-app-map)
 
-## Documentation-first path
+## API Verification Gate
 
-Confirm the target resolves `0.9.5-rc01`, its platform/source set, and whether substitution/local changes affect the needed API. Reuse this context until build inputs or source change. A declaration-version string alone does not establish resolution.
+1. **Docs first**: Check [Catalog](catalog.md) and read the component's official `docs/...` Markdown before touching Kotlin source. Reuse verified evidence while target build inputs stay unchanged.
+2. **Escalate selectively**: Inspect only the conflicting/missing Kotlin declaration and required implementation branch via pinned raw URL, `git show v0.9.5-rc01:<path>`, or attached `-sources.jar` (prefer the target's actual resolved source if customized/substituted). Do not reread whole modules or switch to unpinned `main`.
+3. **Check 4 invariants**: Public module/package & source set -> exact overload parameters/defaults & opt-ins -> host/insets/lifecycle/back behavior -> compile affected target when available.
 
-1. Locate the selected component through the [component map](component-selection.md#component-reference-table) or the [documentation and notes index](api-contracts.md). Skip these routers when the doc path is already known.
-2. Read its official Markdown at the pinned commit, using a matching local checkout or the raw URL in [Path convention](#path-convention). Read just the relevant API/usage section. The agent retrieves and applies the documentation; a list of links alone does not complete an implementation request.
-3. Apply only the relevant local integration note. Files under `contracts/` retain host/state/effect contracts and selected compositions, not complete API declarations. Reuse established document/source evidence until dependency or source inputs change.
-4. For a missing parameter, incomplete overload, implementation-dependent behavior or doc/code conflict, inspect that declaration/branch. Do not reread the whole module or treat every documented call as a source audit.
+## Verification Labels
 
-If remote docs are unavailable, try the matching checkout's `git show <commit>:<doc-path>` or the target artifact's attached sources. Existing integration facts remain usable, but a note cannot establish unlisted parameters. If the needed evidence is still inaccessible, state exactly which call or behavior is unresolved and continue independent work. Do not guess an exact signature or silently switch to `main`.
-
-Only this version is maintained. Another release is a scope mismatch; dependency upgrades require task authorization. A local rc01 customization needs the source gate below for the affected symbols, not an alternate multi-version catalog.
-
-## Acquire source evidence
-
-Use a target artifact's attached source for a customized target claim. For catalog gaps, use the pinned commit `542463a0863b393a3d6052237daae6c3da217e70`: inspect a matching clean checkout, use `git show <commit>:<path>` when the checkout has moved, or open the [pinned raw URL](#path-convention). Do not replace it with rolling rendered docs, untagged snippets, or remembered Material APIs.
-
-Read one declaration and the implementation needed for the uncertain behavior. Pinned docs support normal usage; declarations resolve exact API conflicts and implementation resolves behavioral conflicts. Demo/Example explain composition, not extra public parameters. If source cannot be reached, keep established integration facts usable, but leave the uncertain/customized claim unresolved. `API verification blocked` applies only to that missing evidence, not the whole task.
-
-## API verification gate
-
-For a gap or customized source:
-
-1. Identify the actual coordinate/source, source set and relevant checkout changes. Keep its deviations separate from the pinned catalog.
-2. Verify public package/module, overload, parameters/defaults, required inputs and opt-in for the call. Never merge parameters from different overloads.
-3. Inspect host, callback/state direction, insets, dismissal or input behavior only where they affect the task. Refer to docs/Demo/Example only for a separate unresolved usage question.
-4. Write the smallest matching call and compile the affected target when available. Source inspection alone does not prove compilation or runtime behavior.
-
-For a complex investigation, record only the necessary facts: resolved source, symbol/path, affected contract and evidence level. Return the resulting call/behavior using the [delivery contract](../SKILL.md#delivery-contract); omit a routine search transcript.
-
-## Verification labels
-
-| Label | Evidence required | Does not prove |
+| Label | Meaning | Does NOT prove |
 |---|---|---|
-| `catalog-verified` | Maintained integration fact checked against the pinned rc01 source | Every parameter of an unlisted call, target customization, compilation or runtime behavior |
-| `target-source-verified` | The affected declaration/behavior in the target's actual resolved source, including relevant substitutions or changes, was inspected | Compilation or device behavior |
-| `compile-verified` | The affected target compiled with the delivered call | Visual, input, platform or performance outcomes |
-| `runtime-verified` | The named runtime/device behavior was exercised | Unexercised configurations or platforms |
-| `API verification blocked` | Required evidence for an uncovered/customized claim cannot be accessed | That a guessed API is usable |
+| `catalog-verified` | Maintained fact checked against pinned `rc01` doc/source | Unlisted params, custom target overrides, compilation, runtime |
+| `target-source-verified` | Inspected in the target project's actual resolved source | Compilation or device behavior |
+| `compile-verified` | Affected target compiled with the exact call | Visual/gesture/platform rendering |
+| `runtime-verified` | Exercised on the target platform/runtime | Unexercised themes/screen sizes/platforms |
+| `API verification blocked` | Source/artifact unreachable for an unverified symbol | That a guessed API exists |
 
-A pinned documentation lookup can be reported as such without inventing a source-verification claim. Do not label reused notes or docs target-source-verified, and do not fetch source solely to change a label. Reuse established evidence until its source/dependency inputs change.
+## Supporting Source Index
 
-## Snapshot scope
+`*Impl` does not imply `internal`; check declaration visibility. Common low-level source areas:
 
-| Evidence role | Pinned snapshot |
+| Path | Public / Supporting Role |
 |---|---|
-| Current catalog and source-audit target | release tag `v0.9.5-rc01` at commit `542463a0863b393a3d6052237daae6c3da217e70` (published prerelease) |
+| `miuix-ui/.../basic/Component.kt` | `BasicComponent` row base used by preference & menu rows |
+| `miuix-ui/.../basic/SearchClearButton.kt` | Public search clear icon button (`SearchBar`, `GlassSearchOverlay`) |
+| `miuix-ui/.../basic/Dropdown.kt`, `ListPopup.kt` | Public `DropdownImpl`, `SpinnerItemImpl`, `ListPopupContent`, `ListPopupColumn`, `rememberListPopupLayoutInfo` |
+| `miuix-ui/.../basic/TopAppBar.kt`, `PullToRefresh.kt` | `TopAppBarLayout`, `TopAppBarState`, `PullToRefreshState` |
+| `miuix-ui/.../overlay/`, `.../window/WindowComponentHost.kt` | Host wrappers, `WindowComponentFrame` / `LocalWindowComponentFrame` |
+| `miuix-ui/.../layout/` | `DialogContentLayout.kt`, `DialogMotion.kt`, `BottomSheetContentLayout.kt` (exports `BottomSheetOverlayLayout`), `SheetMotion.kt`, `ListPopupLayout.kt`, `Cascading*` |
+| `miuix-ui/.../utils/` | `MiuixPopupUtils.kt`, `WindowNavigationEventScope.kt`, `Overscroll.kt`, `OverscrollFactory.kt`, `PagerGestureUtils.kt`, `MiuixIndication.kt` |
+| `miuix-blur/.../blur/`, `miuix-material/.../material/`, `miuix-squircle/.../squircle/` | Effect pipelines, shaders, caches (`internal/` subpackages are non-public) |
+| `miuix-preference/.../popup/` | Lower-level dropdown popups/dialogs & `DropdownEntriesContent.kt` (internal) |
+| `miuix-nav/.../core/LocalNavTransitionScope.kt`, `.../transition/NavTransitionSource.kt`, `NavTransitionAnchor.kt`, `.../state/NavEntryViewModel.kt` | `LocalNavTransitionScope`, route-bound `navTransitionSource`, `NavTransitionCorners`, entry `SavedStateHandle`/ViewModel stores |
 
-This table describes the Skill's maintained evidence scope. It is not a substitute for checking a target project's actual dependency version.
+## Example App Map
 
-## Path Convention
+`example/` demonstrates integrated composition (helpers are app-specific, **not** mandatory public Miuix APIs); `docs/demo/` provides minimal isolated calls:
 
-All file paths in the tables below are relative to the Miuix repository root. Resolve them using GitHub URLs:
-
-| Source | URL pattern |
-|--------|------------|
-| Read a version-pinned Markdown doc, demo, or source file | `https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/<file-path>` |
-| Browse a **directory** | `https://github.com/compose-miuix-ui/miuix/tree/542463a0863b393a3d6052237daae6c3da217e70/<dir-path>` |
-
-The repository Markdown file is the documentation evidence. The rendered site may represent a later commit and must not replace the pinned `docs/**/*.md` file during a version-sensitive task. Only the pinned rc01 contract is maintained; the beta03 mention in the migration note is a delta record, not an alternate historical API contract.
-
-| Abbreviation | Relative path |
+| Path | Role |
 |---|---|
-| `miuix-ui/.../basic/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/basic/` |
-| `miuix-ui/.../anim/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/anim/` |
-| `miuix-ui/.../color/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/color/` |
-| `miuix-ui/.../interfaces/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/interfaces/` |
-| `miuix-ui/.../icon/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/` |
-| `miuix-ui/.../overlay/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/overlay/` |
-| `miuix-ui/.../window/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/window/` |
-| `miuix-ui/.../layout/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/layout/` |
-| `miuix-ui/.../theme/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/theme/` |
-| `miuix-ui/.../utils/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/utils/` |
-| `miuix-blur/.../blur/` | `miuix-blur/src/commonMain/kotlin/top/yukonga/miuix/kmp/blur/` |
-| `miuix-ui/.../icon/basic/` | `miuix-ui/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/basic/` |
-| `miuix-preference/.../preference/` | `miuix-preference/src/commonMain/kotlin/top/yukonga/miuix/kmp/preference/` |
-| `miuix-preference/.../menu/` | `miuix-preference/src/commonMain/kotlin/top/yukonga/miuix/kmp/menu/` |
-| `miuix-preference/.../popup/` | `miuix-preference/src/commonMain/kotlin/top/yukonga/miuix/kmp/popup/` |
-| `miuix-core/.../icon/` | `miuix-core/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/` |
-| `miuix-icons/.../extended/` | `miuix-icons/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/extended/` |
-| `miuix-material/.../material/` | `miuix-material/src/commonMain/kotlin/top/yukonga/miuix/kmp/material/` |
-| `miuix-glass/.../glass/` | `miuix-glass/src/commonMain/kotlin/top/yukonga/miuix/kmp/glass/` |
-| `miuix-glass-icons/.../icon/glass/` | `miuix-glass-icons/src/commonMain/kotlin/top/yukonga/miuix/kmp/icon/glass/` |
-| `miuix-window/.../window/` | `miuix-window/src/desktopMain/kotlin/top/yukonga/miuix/kmp/window/` (Desktop JVM only) |
-| `miuix-squircle/.../squircle/` | `miuix-squircle/src/commonMain/kotlin/top/yukonga/miuix/kmp/squircle/` |
-| `miuix-nav/.../core/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/core/` |
-| `miuix-nav/.../gesture/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/gesture/` |
-| `miuix-nav/.../runtime/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/runtime/` |
-| `miuix-nav/.../state/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/state/` |
-| `miuix-nav/.../transition/` | `miuix-nav/src/commonMain/kotlin/top/yukonga/miuix/kmp/nav/transition/` |
-| `docs/components/basic/` | `docs/components/basic/` |
-| `docs/components/extended/` | `docs/components/extended/` |
-| `docs/components/glass/` | `docs/components/glass/` |
-| `docs/guide/` | `docs/guide/` |
-| `docs/demo/` | `docs/demo/src/commonMain/kotlin/` |
-| `example/shared/.../` | `example/shared/src/commonMain/kotlin/` |
-| `example/shared/.../navigation/` | `example/shared/src/commonMain/kotlin/navigation/` |
-
-## Supporting source and low-level APIs
-
-These files underpin multiple components and are read on demand. This is a supporting-source index, **not a visibility classification**: rc01 publicly exports `DropdownImpl`, `SpinnerItemImpl`, `ListPopupColumn`, `ListPopupContent`, `rememberListPopupLayoutInfo`, `BottomSheetOverlayLayout`, `SearchClearButton`, `DialogMotion`, `SheetMotion`, and `WindowComponentFrame`/`LocalWindowComponentFrame`. They are lower-level building blocks, so ordinary application flows usually start with the complete preference/popup wrappers. Names containing `Impl` are not automatically internal; inspect the declaration.
-
-| File | Role |
-|------|------|
-| `miuix-ui/.../basic/Component.kt` | `BasicComponent` — universal base for all preference and overlay components |
-| `miuix-ui/.../basic/SearchClearButton.kt` | Shared clear icon button for search inputs |
-| `miuix-ui/.../utils/MiuixPopupUtils.kt` | Popup position/anchor utilities for all overlay and window popups |
-| `miuix-ui/.../utils/WindowNavigationEventScope.kt` | Rebinds predictive/system back handling to a focused platform window |
-| `miuix-ui/.../window/WindowComponentHost.kt` | `WindowComponentFrame` / `LocalWindowComponentFrame` window geometry constraint for floating layers |
-| `miuix-ui/.../layout/DialogContentLayout.kt`, `DialogMotion.kt` | Shared dialog content layout and `DialogMotion` presets (`Default` / `Glass`) |
-| `miuix-ui/.../layout/BottomSheetContentLayout.kt`, `SheetMotion.kt` | Shared bottom sheet layout, public `BottomSheetOverlayLayout`, and `SheetMotion` presets (`Default` / `Glass`) |
-| `miuix-ui/.../layout/ListPopupLayout.kt` | Shared list popup content layout |
-| `miuix-ui/.../layout/CascadingListPopupLayout.kt` | Shared cascading list popup layout |
-| `miuix-ui/.../layout/CascadingMorphContent.kt` | Shared cascading morph content |
-| `miuix-ui/.../layout/MorphHeaderRow.kt` | Shared morph header row |
-| `miuix-preference/.../popup/DropdownEntriesContent.kt` | Internal dropdown entries content |
-| `miuix-ui/.../basic/Dropdown.kt` | `DropdownImpl` and `SpinnerItemImpl` — public low-level dropdown/spinner building blocks used by preference selectors |
-| `miuix-ui/.../basic/ListPopup.kt` | `ListPopupContent`, `ListPopupColumn`, `rememberListPopupLayoutInfo` — public low-level list-popup rendering, sizing and position helpers |
-| `miuix-ui/.../basic/PullToRefresh.kt` | `PullToRefreshState` threshold/progress state machine and real-gesture gating |
-| `miuix-ui/.../basic/TopAppBar.kt` | `SmallTopAppBar` pinned-state handling and `TopAppBarState.Saver` |
-| `miuix-blur/.../blur/TextureEffect.kt` | Uniform and progressive texture-blur modifier overloads |
-| `miuix-blur/.../blur/ProgressiveBlur.kt` | `ProgressiveBlur` descriptor and edge-fade presets |
-| `miuix-blur/.../blur/BackdropEffects.kt` | Custom backdrop effect-block APIs, including progressive blur |
-| `miuix-ui/.../utils/Overscroll.kt` | Modifier overscroll API, real-gesture gating, and stale-offset recovery |
-| `miuix-ui/.../utils/OverscrollFactory.kt` | Theme-level `MiuixOverscrollFactory` / `MiuixOverscrollEffect` behavior |
-| `miuix-ui/.../utils/PagerGestureUtils.kt` | Horizontal pager conflict modes, nested-list interception, and spring page navigation |
-| `miuix-nav/.../core/LocalNavTransitionScope.kt` | Entry-local live transition scope CompositionLocal |
-| `miuix-nav/.../transition/NavTransitionSource.kt`, `NavTransitionAnchor.kt` | Route-bound `Modifier.navTransitionSource` and `NavTransitionCorners` for `NavTransitions.Expansion` |
-| `miuix-nav/.../state/NavEntryViewModel.kt` | Entry ViewModel stores and saved-state creation context |
-
-## Example App
-
-`example/` is a full Compose Multiplatform app built with Miuix. Use it to study integrated composition after selecting components; use `docs/demo/` for isolated component calls.
-
-| Path | What's inside |
-|------|---------------|
-| `docs/demo/src/commonMain/kotlin/<Component>Demo.kt` | Minimal, isolated usage for one component |
-| `example/shared/.../App.kt`, `AppState.kt`, `ui/Theme.kt` | Application theme, theme inputs, and cross-tree state setup |
-| `example/shared/.../AppContent.kt` | Adaptive app shell, compact/wide navigation, pager-backed destinations, and shared controls |
-| `example/shared/.../navigation/Route.kt`, `navigation/Navigator.kt` | Typed route identities and the single stack mutation owner used by the shell |
-| `example/shared/.../MainPage.kt` | Integrated home page with Scaffold, app bar actions, search, scrolling sections, and popup menus |
-| `example/shared/.../SettingsPage.kt` | Integrated settings page with titled Cards, Preference groups, dependent settings, and adaptive padding |
-| `example/shared/.../component/` | `LazyListScope` sections and popup examples composed into `MainPage`; these are sections, not one screen per component |
-| `example/shared/.../utils/PageUtils.kt` | Example-specific adaptive app bar, insets, scroll, haptic, and blur helpers |
-
-Use the `miuix-guidelines` Skill only when translating integrated Example composition into application code. Reuse repeated hierarchy and state patterns there, but verify APIs in this Skill's pinned source and do not treat Example-specific helpers as public Miuix requirements.
+| `docs/demo/src/commonMain/kotlin/<Component>Demo.kt` | Minimal single-component demo |
+| `example/shared/src/commonMain/kotlin/App.kt`, `AppState.kt`, `ui/Theme.kt` | Root theme, state & cross-tree setup |
+| `example/shared/src/commonMain/kotlin/AppContent.kt` | Adaptive shell (compact/wide nav, pager destinations) |
+| `example/shared/src/commonMain/kotlin/navigation/Route.kt`, `Navigator.kt` | Typed route keys & single stack mutation owner |
+| `example/shared/src/commonMain/kotlin/MainPage.kt`, `SettingsPage.kt`, `IconPage.kt` | Integrated pages (tabs, search, `ScrollBar`, `GlassIconDropdownMenu`, settings) |
+| `example/shared/src/commonMain/kotlin/component/`, `utils/PageUtils.kt` | Example sections & app-specific adaptive/inset/scroll helpers |

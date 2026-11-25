@@ -9,10 +9,10 @@
 
 ## 当前版本与 Glass
 
-- [依赖、主题与平台设置](./miuix-components/references/setup-and-theme.md)：rc01 模块选择、Android API 24/33 边界、主题与宿主。
+- [依赖、主题与平台设置](./miuix-components/references/setup-and-theme.md)：rc01 模块选择、Android API 24/33 与 compileSdk 37.2 边界、主题/指示器与色彩速查。
 - [Beta03 → RC01 升级差异](./miuix-components/references/rc01-migration.md)：`GlassBottomSheet` 签名与头部渐进模糊、`GlassCard`、`miuix-nav` 组件展开、`DialogMotion`/`SheetMotion`、图标重命名与下拉弹层参数调整。
-- [Glass 替换与共存](./miuix-guidelines/references/glass-migration.md)：旧组件对应关系、仅替换 Overlay 表面、完整组件迁移、普通与 Glass 两套外观共享状态。
-- [Glass 组件与 API 边界](./miuix-components/references/glass.md)：新增 `GlassCard`、`GlassBottomSheet` 渐进头部，以及采样、降级、宿主和参数差异。
+- [Glass 替换与共存](./miuix-guidelines/references/glass-adoption.md)：旧组件对应关系、仅替换 Overlay 表面、完整组件迁移、普通与 Glass 两套外观共享状态。
+- [Glass 组件与模糊降级](./miuix-components/references/glass-and-blur.md)：21 个 Glass 组件接入契约、`GlassCard`、`GlassBottomSheet` 渐进头部，以及无全局开关下的组件降级矩阵。
 
 普通组件与 Glass 家族都使用 rc01。Glass 可选，运行时效果降级仍需保留；组件替换时遵循强制规范中的采样、交互、状态和宿主要求。文档只保留当前用法，过时内容直接修订或删除，避免追加成多版本百科。
 
@@ -30,15 +30,15 @@
 - 同时涉及设计和实现时，先由 **miuix-guidelines** 确定页面结构，再由 **miuix-components** 核对实际调用到的 Miuix 符号。
 - 不需要为了一个组件问题读取另一个 Skill 的全部 Reference。
 
-新应用如果包含几个顶层页面和底部/悬浮导航，先读取 [从零应用壳规范](./miuix-guidelines/references/greenfield-app-shell.md)。它先固定 Pager、导航栏、路由和透明背景的边界，再进入具体页面和组件选择。
+新应用如果包含几个顶层页面和底部/悬浮导航，先读取 [应用壳与导航组合规范](./miuix-guidelines/references/app-shell-and-navigation.md)。它先固定 Pager、导航栏、路由和透明背景的边界，再进入具体页面和组件选择。
 
 ## Skill 的实际流程
 
 ### 组件库流程
 
 1. 确认目标实际解析到 `0.9.5-rc01`，以及相关平台、宿主和本地替换；构建输入不变时复用这个结论。
-2. 普通需求按语义选择组件；已知符号直接打开 [API 索引](./miuix-components/references/api-contracts.md) 中对应章节，不必先读库概览或组件目录。
-3. 标准 rc01 的已覆盖调用复用合同，标记 `catalog-verified`；未覆盖、源码被替换或行为仍不明确时，才按 [源码核验](./miuix-components/references/source-verification.md) 调查具体缺口。
+2. 直接按任务领域从 [miuix-components/SKILL.md](./miuix-components/SKILL.md#direct-routes) 一跳打开对应专题参考；未知组件或模块归属时查 [组件总目录](./miuix-components/references/catalog.md)。
+3. 标准 rc01 的已覆盖调用复用合同，标记 `catalog-verified`；未覆盖、源码被替换或行为仍不明确时，才按 [源码核验](./miuix-components/references/source-verification.md#api-verification-gate) 调查具体缺口。
 4. 写最小调用，在目标可用时编译；源码、编译、运行与设备效果分别报告。其他 Miuix 版本属于范围不符，不新增兼容分支，也不因此自动升级依赖。
 
 ### 页面规范流程
@@ -60,7 +60,7 @@
 
 `references/rules/` 是 UI 强制条款的唯一维护位置。其余 reference 保留流程、决策方法、诊断和示例，通过链接应用规范；`miuix-components` 负责从官方文档和源码解析 API，不另行维护一套完整 API 手册。
 
-1. 先确认已有主题、路由 owner、页面边界、页面 host、平台和 source set。新应用若包含多个顶层页面与底部/悬浮导航，先读 [从零应用壳规范](./miuix-guidelines/references/greenfield-app-shell.md) 并固定一套壳层架构。
+1. 先确认已有主题、路由 owner、页面边界、页面 host、平台和 source set。新应用若包含多个顶层页面与底部/悬浮导航，先读 [应用壳与导航组合规范](./miuix-guidelines/references/app-shell-and-navigation.md) 并固定一套壳层架构。
 2. 新页面或结构改动先明确页面骨架与所有权；局部修改只检查受影响的 owner、调用方及条款，不强制填写整页工作表。
 3. 再按语义选择组件；页面是设置页、列表页还是表单页，不会自动决定组件。
 4. 只把最终确实要调用的 Miuix 符号交给 **miuix-components** 核对。
@@ -85,28 +85,40 @@ miuix-guidelines：回到页面组合并完成审查
 miuix-skill/
 ├── .agents/plugins/marketplace.json
 ├── .codex-plugin/plugin.json
-├── miuix-components/
-│   ├── SKILL.md
+├── miuix-components/                         # API、模块、宿主、降级与版本真相源（11 文件）
+│   ├── SKILL.md                              # 唯一版本 Pin / URL 解析规则与一跳直达路由
 │   └── references/
-└── miuix-guidelines/
-    ├── SKILL.md                       # 任务识别和流程路由
+│       ├── catalog.md                        # 模块边界、语义线索与全量组件/Doc/源码总表
+│       ├── setup-and-theme.md                # 依赖、SDK 边界、Theme/Scaffold 与视觉色彩速查
+│       ├── controls-and-menus.md             # 按钮、输入、控件与 Preference/Menu 契约
+│       ├── bars-scroll-and-navigation.md     # TopAppBar、Refresh、Overscroll、Tab/Pager、导航条
+│       ├── overlays-and-windows.md           # Overlay* vs Window*、Motion、桌面 miuix-window
+│       ├── glass-and-blur.md                 # Glass 21 组件、Backdrop 录制与组件降级矩阵
+│       ├── effects-and-icons.md              # 自定义 Blur、EdgeStroke/TiltLight、Squircle 与图标
+│       ├── miuix-nav.md                      # NavDisplay、路由序列化与 Expansion 展开转场
+│       ├── rc01-migration.md                 # beta03 → rc01 升级差异
+│       └── source-verification.md            # 源码升级路径、证据标签与 Example 地图
+└── miuix-guidelines/                         # 页面骨架、所有权与习惯规范（9 文件）
+    ├── SKILL.md                              # 边界声明、适用范围与一跳路由（不含具体 API 版本锁）
     └── references/
-        ├── greenfield-app-shell.md    # 从零应用壳、底部/悬浮导航和路由边界
-        ├── design-language.md         # 设计决策指南（其余指南同级）
-        └── rules/
-            ├── design-system.md       # 共享规范、视觉规则和主题路由
-            ├── page-shell.md          # 页面、导航、Insets 和手势
-            ├── settings-and-overlays.md # 设置、搜索、输入和弹层
-            └── state-and-performance.md # 状态、异步、性能和平台操作
+        ├── workflows.md                      # 决策顺序、所有权勘察、单页/旧页改造与 UI 审查
+        ├── app-shell-and-navigation.md       # 多页应用壳骨架、SelectionCoordinator 与 Pager 协同
+        ├── layout-patterns.md                # 顶栏状态栏延伸、手势诊断与单活跃弹窗编排
+        ├── glass-adoption.md                 # Glass 场景录制层次、迁移映射与双外观共存策略
+        └── rules/                            # 强制性设计红线与习惯数值
+            ├── design-system.md
+            ├── page-shell.md
+            ├── settings-and-overlays.md
+            └── state-and-performance.md
 ```
 
-每个 `miuix-*` 子目录都有独立的 Skill 入口，使用环境需要在该目录的根部直接看到 **SKILL.md**。两份文档之间存在跨目录相对链接，因此按同级目录成套安装；职责独立不代表复制其中一个目录就拥有完整参考。`.codex-plugin/` 和 `.agents/plugins/` 负责把二者作为一个可安装包分发，不是新的 Skill。安装两份后仍只需触发与当前问题相关的入口，不要求每次同时读取。
+每个 `miuix-*` 子目录都有独立的 Skill 入口，两个 Skill 之间**零跨目录相对链接**、职责解耦：`.codex-plugin/` 和 `.agents/plugins/` 将二者成套分发，使用时按需求单独触发或串联配合即可。
 
 ## 内容维护
 
-维护方向固定为：**官方文档说明组件，接入笔记补充易错点，rules 定义本套设计规范。** 不以覆盖每个符号或复制所有参数为发版目标；新增组件首先补文档入口，只有出现实际接入差异才增加本地说明。`contracts/` 保留的是宿主、状态、Insets、效果等接入契约，不是完整声明的镜像。
+维护原则：**单一事实源 + 官方文档负责常规手册 + 本地仅留边界与坑点 + `rules/` 定义设计习惯与红线。** 固定 Commit Hash 与 GitHub Raw URL 模板只在 [miuix-components/SKILL.md](./miuix-components/SKILL.md#documentation-first-resolution) 集中声明一次，正文内部均使用仓库相对路径，避免版本号更新时波及几十个文件；`miuix-guidelines` 不绑定 Miuix 具体版本号与完整 API 声明，具体符号交由 `miuix-components` 核验。
 
-常规开发由代理主动读取所选组件的固定提交文档，而不是只要求用户自行阅读。优先复用已经读取的同版本证据；远程不可用时读取匹配的本地 checkout 或附加源码。缺少证据的调用明确留待核对，不切换到 `main` 或猜测参数。具体流程见 [文档优先与源码核验](./miuix-components/references/source-verification.md#documentation-first-path)。
+常规开发由代理主动读取所选组件的固定提交文档，而不是只要求用户自行阅读。优先复用已经读取的同版本证据；远程不可用时读取匹配的本地 checkout 或附加源码。缺少证据的调用明确留待核对，不切换到 `main` 或猜测参数。具体流程见 [源码核验](./miuix-components/references/source-verification.md#api-verification-gate)。
 
 收录本地内容时，先判断它是否改变实际开发决策：官方文档已充分解释的内容改为链接；官方文档遗漏或含糊的行为保留源码依据；页面风格和应用层约束写入适用范围明确的 rules。组合示例保留跨组件的所有权或生命周期关系，删除普通入门示例。发现错误时直接修订正文和关联示例。
 

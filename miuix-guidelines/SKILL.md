@@ -1,63 +1,42 @@
 ---
 name: miuix-guidelines
-description: "Use to design, compose, review or refactor Miuix 0.9.5-rc01 pages and greenfield app shells: ownership, hierarchy, spacing, insets, adaptive navigation, pager-backed destinations, route boundaries, settings/overlays, UI state and scroll/refresh coordination. Includes vague page requests such as '普通页面', '页面太乱', or '几个页面加底部悬浮导航'. Leave isolated API lookups and compile errors to miuix-components."
+description: "Use to design, compose, review, or refactor Miuix pages and greenfield app shells: ownership, hierarchy, spacing, insets, adaptive navigation, pager-backed destinations, route boundaries, settings/overlays, UI state, and scroll/refresh coordination (including '普通页面', '页面太乱', '加底部悬浮导航'). Leave exact API lookups, imports, and version contracts to miuix-components."
 ---
 
 # Miuix UI Guidelines
 
-## Scope
+## Purpose and Scope
 
-Serve only **Miuix `0.9.5-rc01`**, pinned to `v0.9.5-rc01` / `542463a0863b393a3d6052237daae6c3da217e70`. Do not introduce older-version recipes. Report dependency mismatches; changing dependencies still needs task authorization. Runtime/platform fallbacks remain applicable and Glass is optional.
+This skill captures the chosen **Miuix page-architecture conventions, ownership boundaries, spacing metrics, and mandatory UI rules**.
+- Exact Miuix APIs, module/package boundaries, parameter Defaults, and release details (`0.9.5-rc01`) belong exclusively to `miuix-components`; do not duplicate or maintain an API manual here.
+- Keep **`references/rules/`** distinct from workflow/pattern guides: `rules/` contains mandatory requirements (`MUST` / `DO NOT` / normative metrics); guides explain workflows and adaptable placement examples (`user requirements` always outrank this profile).
 
-This skill owns page composition and a chosen design profile. `miuix-components`, when available, resolves selected APIs through pinned official docs, integration notes and source when needed. For work involving both, settle structure here, resolve selected calls there, then check their composition. An isolated API question needs only the component skill.
+## Work at the Affected Boundary
 
-## Rules and guides
+Inspect existing code before classifying:
+- **Greenfield**: No reusable host/shell contract (or shell replacement requested) -> apply all applicable rules to the new boundary.
+- **Brownfield**: Existing helper/host is the contract -> preserve unrelated code, mark touched boundaries `preserve / replace / add`, change only the requested scope.
+- **Mixed**: New feature inside an existing shell -> keep the shell Brownfield and apply rules inside the new boundary.
 
-**`references/rules/` is the only source of mandatory UI requirements.** It includes both correctness constraints (host/inset/state ownership, sampling, popup lifecycle, accessibility) and this skill's chosen visual profile (bar treatment, spacing, grouping and adaptive thresholds). The visual choices are prescriptive within scope; they are not universal Miuix library restrictions.
+Resolve semantic content after ownership: a screen named "Settings" does not automatically force cards, preferences, or chrome without real justification.
 
-Before implementation or review, read [scope and rule strength](references/rules/design-system.md#scope-and-rule-strength), [exceptions](references/rules/design-system.md#exceptions-and-conformance) and [topic routing](references/rules/design-system.md#required-topic-rules), then only the visual/topic sections touched by the change. User requirements take precedence. A justified exception does not itself require another approval.
+## Direct Routes
 
-Other references are flexible investigation workflows, decisions and placement examples. Adapt them to the existing project; they neither create extra UI requirements nor override rules. A conceptual explanation need not run a conformance review. A guide snippet is not API proof.
+Read [scope, exceptions & topic routing](references/rules/design-system.md#required-topic-rules) plus the relevant guide or rule file:
 
-## Work at the affected boundary
-
-Inspect the existing page before classifying it:
-
-- **Greenfield:** no reusable page contract, or shell replacement is authorized. Apply relevant rules to the new boundary.
-- **Brownfield:** an existing page/helper/host is real even without documentation. Preserve unrelated behavior; mark affected boundaries preserve/replace/add and change only the requested scope.
-- **Mixed:** a new feature within an existing shell. Keep the shell Brownfield and apply the profile inside the new boundary.
-
-For a small change, inspect its actual owner/callers and matching rule sections; do not inventory the entire application. For a new page or structural change, map the route, theme/host, primary content/scroll owner, inset handoff, transient layers and state owner. Use the [ownership worksheet](references/page-structure.md#ownership-worksheet) only when that map is unresolved. Unknown context stays unknown rather than becoming an invented host or product requirement.
-
-Resolve semantic content after the boundary: a page label alone does not mandate cards, preferences, a list or navigation chrome. Inspect available code before asking; ask only if an unresolved decision materially changes the structure or behavior.
-
-## Choose one guide
-
-| Task | Primary guide |
+| Need / Task | Open directly |
 |---|---|
-| New app shell with several destinations and bottom/floating navigation | [Greenfield app shell](references/greenfield-app-shell.md), then [Greenfield](references/greenfield-page.md) |
-| New page / first shell | [Greenfield](references/greenfield-page.md) |
-| Existing page, component or shared-helper change | [Brownfield](references/brownfield-evolution.md) |
-| Unclear ordinary/settings page or combined layout | [Page structure](references/page-structure.md) |
-| Review, polish, “页面太乱” | [UI review](references/ui-review-workflow.md) |
-| Grouping, colors, Defaults or system-settings appearance | [Design language](references/design-language.md) |
-| Pinned/collapsing/blurred top bar | [Top bar](references/top-bar-compositions.md) |
-| Destination bar/rail, tabs/pager selection or floating actions | [Navigation](references/navigation-compositions.md) |
-| Scroll, refresh, rebound or pager conflict | [Gesture dynamics](references/gesture-dynamics.md) |
-| Settings, forms, search, dialogs, sheets or menus | [Content and overlays](references/content-and-overlays.md) |
-| New explicit Glass composition | [Glass composition](references/glass-compositions.md) |
-| Replace ordinary components with Glass or keep both | [Glass migration](references/glass-migration.md) |
+| Design rules: scope/exceptions, Defaults, colors, typography, shapes, card spacing, icons/tags, i18n, a11y | [Design system rules](references/rules/design-system.md) |
+| Shell & nav rules: hosts, greenfield invariants, top bars, routes/back, adaptive layout, tabs/pagers, insets, scroll, blur/Glass | [Page shell rules](references/rules/page-shell.md) |
+| Settings & overlay rules: hierarchy, preference contract, validation, search, popup lifetime, dialogs, sheets/reordering | [Settings & overlay rules](references/rules/settings-and-overlays.md) |
+| State & ops rules: ownership, persistence, async, lazy lists/icons, feedback/Snackbar, motion, permissions, import/export | [State & performance rules](references/rules/state-and-performance.md) |
+| Decision order, ownership worksheet, Greenfield single page, Brownfield evolution, UI review & audit | [Workflows](references/workflows.md) |
+| Multi-destination app shell (`NavDisplay` + `HorizontalPager` + floating/bottom bar + `SelectionCoordinator`) | [App shell & navigation](references/app-shell-and-navigation.md) |
+| Top bar status-bar extension, scroll/refresh/overscroll diagnosis, grouped cards & mutually exclusive popups | [Layout patterns](references/layout-patterns.md) |
+| Optional Glass adoption, backdrop recording hierarchy, ordinary -> Glass migration & dual-theme coexistence | [Glass adoption](references/glass-adoption.md) |
 
-Start with one guide plus applicable rules; open another only for an unresolved relationship. Do not load Greenfield and Brownfield together by default, or the whole component catalog for one API question.
+## Implementation and Code Delivery
 
-## Implement and review
-
-Reuse existing route, state, inset and host owners. For a greenfield app shell, complete the [first-pass delivery contract](references/greenfield-app-shell.md#delivery-contract-for-a-first-pass) with real routes, a real shell host, placeholder pages, and one selection owner before filling in page-specific content. For coupled gestures, trace actual modifier connections and the wrapper's callers before changing order or adding a bridge. Apply the chosen composition using the component skill's documentation-first path, escalating only uncertain library facts to source inspection. Avoid repeating API declarations or component tutorials in design guides.
-
-Check the affected rules, behavior continuity and exceptions within the changed scope. Compile the affected target when available and verify the relevant visual/interaction states separately. Stop when the requested result is handled; report unrelated defects without turning them into an unsolicited rewrite.
-
-## Code Delivery Contract
-
-Explain the resulting behavior and non-obvious ownership/inset decisions or profile deviations. A complex change may need the ownership worksheet; a routine conforming edit needs no ceremonial blueprint or full checklist in the response.
-
-Keep rule conformance, API evidence, compilation, rendering/device behavior and performance measurements separate. Maintained integration facts are `catalog-verified`; reading official docs, inspecting target source and compiling are distinct claims. Report what was actually checked and the material remaining uncertainty. User requirements outrank this profile.
+1. Reuse existing theme, route, state, inset, and host owners before introducing new wrappers; build greenfield multi-page shells with real typed routes, placeholder sibling pages, and one selection coordinator before adding per-page polish.
+2. Verify all concrete Miuix symbols, overloads, Defaults, and version-specific flags via `miuix-components` before emitting target code.
+3. Keep conformance, API verification, compilation, rendered visuals, and performance separate in reports; state unverified runtime/visual checks cleanly rather than assuming compilation proves rendering.

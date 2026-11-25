@@ -1,87 +1,51 @@
 # State, Data, and Performance Rules
 
-Mandatory for stateful UI, preferences, async work, repeated lists/images, motion, external actions, permissions, import/export, and operation feedback. Apply the [shared scope and exception contract](design-system.md#scope-and-rule-strength). These rules cover UI-facing behavior and data ownership; they do not prescribe an unrelated application backend or platform-specific runtime architecture.
+Mandatory for stateful UI, persistence, async work, lists/icons, feedback, motion, external actions, permissions, and import/export (see [Scope & Exceptions](design-system.md#scope-and-rule-strength)).
 
-Contents: [ownership](#state-ownership-and-lifecycle) · [persistence](#persistence-and-external-consumers) · [async](#async-work-and-entry-cost) · [lists](#lists-and-image-loading) · [feedback](#loading-errors-and-feedback) · [motion](#motion-and-high-frequency-state) · [external actions](#external-actions-and-permissions) · [import/export](#import-export-and-diagnostics) · [validation](#validation).
+Contents: [ownership](#state-ownership-and-lifecycle) · [persistence](#persistence-and-external-consumers) · [async](#async-work-and-entry-cost) · [lists & icons](#lists-and-image-loading) · [feedback & errors](#loading-errors-and-feedback) · [motion](#motion-and-high-frequency-state) · [external & permissions](#external-actions-and-permissions) · [import/export](#import-export-and-diagnostics) · [validation](#validation)
 
-## State ownership and lifecycle
+## State Ownership and Lifecycle
 
-- Persistent/business state belongs in the screen/model/repository owner; short-lived popup/pressed/expanded presentation belongs near its renderer. `rememberSaveable` is for supported restorable presentation/drafts, not a replacement for saved application configuration.
-- Give each async task, listener, and state stream one explicit owner. Page actions use a page-bound scope; data that must outlive that page uses the appropriate existing longer-lived owner.
-- Android screen Flow observation uses `collectAsStateWithLifecycle()` where supported; other targets use an equivalent owner/visibility policy. Raw `collectAsState` needs an intentional always-active scope. Lifecycle-aware collection does not by itself prove the upstream producer stops; configure its sharing/work lifetime separately.
-- Register preference, platform, and other listeners in an effect tied to their actual owner; unregister the same instance on disposal. Include changing context/source identity in remembered adapters where needed.
-- Remembered callbacks must see current state, localization, and actions. Use real keys or `rememberUpdatedState` instead of capturing the initial callback forever or restarting a controller on every lambda identity change.
-- Publish coherent snapshots. Do not mutate ordinary collections behind an unchanged state object or mark mutable data `@Immutable` to hide it. Use stable/immutable models only when their contracts hold; a particular persistent collection dependency or annotation is not universally mandatory.
-- Navigation, Snackbar emission, persistence writes, focus requests, and async launches happen in explicit event/effect paths, not as direct side effects of recomposition.
-- A CompositionLocal carries genuinely tree-scoped context such as a backdrop/capability or coordinator, with an explicit provider, lifetime, and absence policy. Ordinary screen data/events stay explicit; do not add a mutable global/local merely to hide one level of parameter passing.
-- When classic/advanced renderers coexist, resolve capability, user preference, and any temporary rollout policy at one application boundary. Both renderers consume the same semantic state and callbacks; do not duplicate refresh, navigation, selection, or draft state per renderer. Keep capability fallback distinct from an explicit product choice, and retain a compatibility branch only while a real supported condition needs it.
+- Keep business/persisted state in screen/model/repository owners; transient popup/pressed/expanded UI state near renderers (`rememberSaveable` for restorable drafts/presentation only, never config storage).
+- Give async jobs, listeners, and collectors explicit scopes (`collectAsStateWithLifecycle()` on Android screens; unregister listeners with the same owner). Remembered callbacks must see current state/strings via proper keys or `rememberUpdatedState`.
+- Publish coherent snapshots (never mutate collections inside `@Immutable` holders or mark mutable classes `@Immutable`). Never emit navigation, Snackbar, persistence writes, focus requests, or async jobs directly inside recomposition.
+- Restrict `CompositionLocal` to genuine tree-scoped context (backdrop/theme/coordinator) with explicit absence policy; keep ordinary data explicit.
+- When classic/Glass renderers coexist, resolve capability/preference once above render branches and share **1** route/pager/navigation/draft owner (never clone state per renderer; distinguish runtime fallback from explicit preference).
 
-## Persistence and external consumers
+## Persistence and External Consumers
 
-- Keep UI display, local persistence, and any service/remote consumer on the same typed configuration contract. A local save and an external apply are distinct results.
-- Use one shared save/synchronization adapter for repeated settings. It resolves scoped keys, handles supported types, and dispatches through the existing consumer bridge. Do not scatter separate local/remote writes with different defaults across rows.
-- Validate numbers and normalize dependent/mutually exclusive values consistently on ordinary writes, restore/import, migration, and runtime reads. Invalid/non-finite numeric values follow the declared default/range policy.
-- Preserve stable keys, default values, and storage types when moving UI. A renamed title or reordered dropdown must not reinterpret persisted values. Prefer stable values/IDs when defining a new choice contract.
-- Observe external changes when they are allowed during the page lifetime. Report unavailable consumers, failed operations, and required restarts explicitly; do not present an optimistic toggle as proof of runtime application.
-- If immediate apply is required, cover the full path from input through save, synchronization, consumer refresh, and resulting state. Source inspection is not evidence that another process/device actually received it.
+- Share 1 typed config contract & adapter across UI, storage, migration/import, and runtime consumers (never scatter mismatched writes/defaults). Normalize invalid/non-finite numeric values consistently; keep persisted keys/IDs independent of UI titles/index order.
+- Distinguish local save from external/service application (observe live consumer updates when needed; explicitly report missing consumer, failure, or required restart).
 
-## Async work and entry cost
+## Async Work and Entry Cost
 
-- Keep navigation chrome and a loading/content skeleton immediately composable. Package scans, icon decoding, disk/database access, network discovery, and large transforms must not run synchronously in composition or on its hot UI path.
-- Move blocking work to the appropriate worker context. Stage expensive content composition around actual entry readiness when needed; do not require a fixed sleep or fake loading delay on every page.
-- A loading screen can defer presentation while a background owner prepares data. Do not confuse waiting for a transition with withholding all IO, or mistake a nominal delay for proof that a transition finished.
-- Reuse loaded snapshots and serialize/deduplicate equivalent loads where necessary. Refresh is explicit; precomposed pager tabs must not launch redundant scans on every visit.
-- Capture request identity/parameters and reject obsolete results when query, item, configuration, or owner changes. Cancel superseded jobs or serialize them through the existing owner; an older job's `finally` must not clear a newer job's busy flag.
-- Preserve coroutine cancellation. Rethrow `CancellationException` when handling expected failures and reset the current request's loading state in its completion/finalization path.
-- A request failure retains useful prior content or the editing draft when appropriate. Do not replace a failed scan with an empty success result or report success just because dispatch began.
+- Keep navigation chrome and loading skeletons immediately composable — **never** decode icons, scan packages, hit disk/DB, or block synchronously in composition/hot UI path. Avoid fake fixed `delay()` screens; stage UI readiness cleanly.
+- Deduplicate/reuse snapshots across precomposed pager tabs; match request tokens/IDs so obsolete async results or older `finally` blocks never clear newer busy flags. Rethrow `CancellationException`; retain valid prior content or drafts on failure instead of overwriting with empty success.
 
-## Lists and image loading
+## Lists and Image Loading
 
-- Dynamic lazy items use stable entity keys such as package, record, or persisted item IDs. Do not use a shifting index, translated label, or non-unique text when insertion/filtering/reordering changes identity. Distinguish reused row structures with `contentType` when relevant.
-- Keep large repeated collections lazy. Small fixed settings groups can share one Card; do not require a custom segmented-card helper for every group.
-- Filtering, sorting, chunking, and model construction depend on actual source/query/filter/sort/locale inputs. Cache expensive transforms outside lazy-content builders where repeated unrelated state would otherwise redo them.
-- Do not retain item state under an identity that changes its meaning. Hoist selection/expanded/order state when rows can leave composition and later return; keep each tab's list state independent.
-- Decode icons off the composition path at the intended display size. Cache by entity plus relevant update/version identity and requested pixel size; use a bounded cache rather than keeping every full-size image forever.
-- Keep placeholder and loaded image geometry identical. A missing package/icon is a row-level state, not an exception that aborts the entire list. Cancel/ignore image results for obsolete row identities.
-- Build a complete result off the hot path and publish it coherently where practical. Avoid repeated package queries and one global state update per decoded icon when a cached row-level image state would suffice.
+- Dynamic lazy lists **MUST** use stable unique entity keys (never shifting index or translated text) and `contentType` where row layouts vary. Keep large/repeated lists lazy; cache heavy filter/sort/transform steps outside `LazyListScope` keyed on real inputs (query, filter, sort, locale).
+- Hoist selection/expanded/reorder state out of items that leave composition; keep each tab's scroll state separate.
+- Decode app/icon bitmaps off the composition thread at target display px size using a bounded cache keyed by entity + update/version + size; keep fixed-size placeholders so async loading never shifts layout; treat single-item icon errors gracefully without aborting the list.
 
-## Loading, errors, and feedback
+## Loading, Errors, and Feedback
 
-- Model initial loading, refreshing existing data, empty success, populated success, unavailable capability, and failure/retry explicitly. Use the states the feature actually needs rather than conflating them into one Boolean or empty collection.
-- Initial loading shows the shared progress treatment, normally `InfiniteProgressIndicator` for an indefinite load, inside the correctly padded content region. Keep the app bar and navigation usable.
-- Refresh keeps useful current content where the operation supports it and uses hoisted refresh state with localized labels. Completion and failure both end loading; a disabled duplicate action cannot start a second request.
-- Persistent/blocking failures render inline with explanation and retry. Empty content explains absence; unavailable dependencies/permissions explain the prerequisite instead of claiming there are simply no results.
-- Use Miuix Snackbar for ordinary transient operation feedback; DO NOT introduce Toast for these in-app flows. Supply a host that is visible in the active page/window and not covered by navigation bars, IME, or a separate dialog.
-- Resolve localized message/action text outside unkeyed remembered callbacks. Prevent repeated-tap feedback floods when the same operation is already busy or a matching message is pending.
-- Destructive mutation, copy/export/import, and remote discovery report their actual outcome. Preserve input/current data on failure and expose a useful recovery action when available.
+- Model initial load (typically `InfiniteProgressIndicator` inside padded content while bars stay interactive), pull-refresh (retaining content, localized labels, disabling duplicate launches), empty state, unavailable capability/permission (explain prerequisite), and failure/retry cleanly — do not collapse everything into one Boolean.
+- Use **Miuix Snackbar** (visible host unobstructed by nav bars, IME, or popups) for transient in-app operation feedback — **DO NOT** use `Toast`. Resolve Snackbar text/actions outside unkeyed remembered blocks and prevent tap-flooding duplicate messages. Preserve drafts/state on destructive/export/discovery failures with recovery actions where possible.
 
-## Motion and high-frequency state
+## Motion and High-Frequency State
 
-- Reuse component motion/feedback before adding custom transitions. Animate the property that owns the change: content size for bounded expansion, item movement for stable lazy identity, layer transforms for visual-only movement.
-- Use `derivedStateOf` for genuinely coarser signals such as a scroll threshold or fully-collapsed Boolean. A per-frame numeric value wrapped in `derivedStateOf` is not inherently throttled.
-- When an animation affects only placement or drawing, pass a state/lambda to the layout/draw/layer consumer where practical rather than invalidating the whole screen each frame. Do not force custom layout code when a supported component already owns the behavior.
-- Tie infinite effects to the active/visible owner when they have a recurring cost. An offscreen pager page or alpha-zero surface must not be assumed to suspend its coroutine automatically.
-- Keep cover rotation/flip/blur, image clipping, and shadow geometry coherent. Capability fallback removes unsupported effects while preserving the same content and interactions.
-- Preserve continuity on rapid toggle/reopen/cancel. Do not use changed lazy keys or discarded draft state as a substitute for an animation transition.
-- Do not claim lower CPU/GPU cost, fewer layers, or smoother frames solely from a modifier name or source refactor. Performance claims require relevant runtime measurements.
+- Prefer stock component motion; animate the owning layer (`transform`/alpha in draw/graphicsLayer or deferred lambdas) rather than invalidating composition every frame. Use `derivedStateOf` only for coarser threshold signals (`scroll > 0`), not continuous floats.
+- Bind infinite coroutines/animations to active visibility (offscreen pager pages or `alpha = 0f` do not auto-cancel effects). Keep clip/shadow/fallback geometry coherent across rapid toggles/cancels without swapping lazy keys. Performance claims require real runtime measurements, not refactor intent alone.
 
-## External actions and permissions
+## External Actions and Permissions
 
-- Open external links/system pages through a shared application adapter that handles unavailable handlers and denied launches. Keep a visible failure path; opening an Intent is not proof that the requested operation succeeded.
-- A failed link launch can offer a localized copy-link Snackbar action. Clipboard work and its result feedback follow the same page/window owner.
-- Check actual permission/service/capability state before enabling a dependent operation. Show the prerequisite/recovery flow; confirmation checks the state again rather than treating the sheet button or a previous launch as a grant.
-- Keep requested permission, listener/service authorization, feature preference, and observed running state distinct. Returning from settings or receiving a result updates the appropriate owner; do not unconditionally flip all flags.
-- Keep platform-specific launchers and capability checks in the platform/application layer. Shared visual controls receive semantic state/actions, not duplicated Intent/package-manager code.
+- Route external links/settings through a shared launcher adapter handling missing handlers/denials (with Snackbar fallback such as copy-link). Keep permission request, system authorization, feature preference, and observed service state distinct; re-verify actual permission/capability before dependent execution rather than assuming launching Settings granted it. Keep Intent/package-manager code out of pure UI controls.
 
-## Import, export, and diagnostics
+## Import, Export, and Diagnostics
 
-- Use the platform's document/result contract where applicable. A null/cancelled picker result is cancellation, not an import failure or successful export.
-- Read/write documents off the UI hot path and close streams. Report success only after the actual write/parse/apply outcome; offer retry or a useful error when it fails.
-- Version serialized configuration, validate structure/types, and apply the same defaults/ranges/invariants as ordinary edits. Do not restore arbitrary JSON numbers under a different preference storage type.
-- Shared backup/export policy decides what is included. Credentials and explicitly excluded/local-only values are not silently added to exported configuration by a generic preference dump.
-- Export the intended active/filtered dataset as a stable operation snapshot. A tab/filter change during the document picker must follow a defined policy rather than accidentally selecting a different dataset.
-- Destructive clear/reset actions use the same busy/result/confirmation rules as other operations. Update affected list/detail state coherently after completion or return navigation.
+- Cancelled document pickers are cancellations, not errors. Perform file IO/parsing off UI thread and close streams; validate serialized config version/types/invariants on import using ordinary bounds; exclude credentials/local-only keys from generic backups; snapshot intended export data explicitly; follow standard confirmation/feedback rules for destructive resets.
 
 ## Validation
 
-Check relevant first-load/refresh/error/retry states, cancellation and obsolete-result protection, lifecycle exit/reentry, icon placeholders and cache invalidation, locale changes, persisted configuration, and external-action cancellation/failure. Keep source, compilation, UI rendering, real consumer behavior, and performance measurements as separate evidence categories.
+Test initial load/refresh/error/retry, job cancellation/token guards, tab reentry/state retention, icon cache invalidation, locale switches, persisted config round-trip, and external-intent failure/cancellation separately from source checks.
