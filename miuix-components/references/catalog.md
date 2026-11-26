@@ -2,7 +2,7 @@
 
 Use when selecting a module or component, mapping a visual need to a public family, or locating the pinned official doc (`docs/...`) and Kotlin source path. See [SKILL.md](../SKILL.md#documentation-first-resolution) for resolving paths at commit `542463a0863b393a3d6052237daae6c3da217e70`.
 
-Contents: [modules](#modules) · [semantic cues](#semantic-cues-for-vague-requests) · [component index](#component-reference-table) · [API boundaries](#public-api-boundaries-and-low-level-exports)
+Contents: [modules](#modules) · [semantic cues](#semantic-cues-for-vague-requests) · [package imports](#package-import-map-topyukongamiuixkmp) · [component index](#component-reference-table) · [API boundaries](#public-api-boundaries-and-low-level-exports)
 
 ## Modules
 
@@ -33,6 +33,24 @@ Contents: [modules](#modules) · [semantic cues](#semantic-cues-for-vague-reques
 | Popup, dialog, or bottom sheet | `Overlay*` vs `Window*` | Page-scoped under `Scaffold` -> `Overlay*`; cross-page/standalone -> `Window*` |
 | Collapsing large title | `TopAppBar` + `MiuixScrollBehavior` | Scroll owner must attach `scrollBehavior.nestedScrollConnection` (or coordinate via `PullToRefresh`) |
 | Continuous rounded corners / desktop chrome | `miuix-squircle` / `miuix-window` | `miuix-window` is `desktopMain` only; `squircle*` has no `SquircleShape` class |
+
+## Package Import Map (`top.yukonga.miuix.kmp.*`)
+
+Verify exact subpackages before guessing imports (e.g., `OverlayDialog` is in `.overlay`, not `.basic`; `DialogDefaults` is in `.layout`):
+
+| Subpackage (`top.yukonga.miuix.kmp.*`) | Key public exports |
+|---|---|
+| `.theme` | `MiuixTheme`, `ThemeController`, `ColorSchemeMode`, `ThemeColorSpec`, `ThemePaletteStyle`, `Colors`, `TextStyles`, `defaultTextStyles`, `LocalDismissState` |
+| `.basic` | `Scaffold`, `Surface`, `TopAppBar`, `SmallTopAppBar`, `MiuixScrollBehavior`, `NavigationBar`, `NavigationBarItem`, `FloatingNavigationBar`, `FloatingNavigationBarItem`, `NavigationItem`, `NavigationBarDisplayMode`, `NavigationRail`, `Card`, `CardDefaults`, `BasicComponent`, `Button`, `TextButton`, `ButtonDefaults`, `IconButton`, `FloatingActionButton`, `FloatingToolbar`, `FabPosition`, `ToolbarPosition`, `Text`, `TextField`, `TextFieldDefaults`, `Switch`, `Checkbox`, `RadioButton`, `Slider`, `VerticalSlider`, `RangeSlider`, `NumberPicker`, `TabRow`, `TabRowWithContour`, `SearchBar`, `InputField`, `SearchClearButton`, `PullToRefresh`, `Snackbar`, `SnackbarHost`, `SnackbarHostState`, `DropdownEntry`, `DropdownItem`, `DropdownDefaults`, `DropdownImpl`, `ListPopupColumn`, `ListPopupDefaults`, `PopupPositionProvider`, `SmallTitle`, `HorizontalDivider`, `VerticalDivider`, `DividerDefaults`, `VerticalScrollBar`, `HorizontalScrollBar`, `rememberScrollBarAdapter`, `ScrollBarDefaults` |
+| `.overlay` | `OverlayDialog`, `OverlayBottomSheet`, `OverlayListPopup`, `OverlayCascadingListPopup` |
+| `.window` (`miuix-ui` commonMain) | `WindowDialog`, `WindowBottomSheet`, `WindowListPopup`, `WindowCascadingListPopup`, `WindowComponentFrame`, `LocalWindowComponentFrame` |
+| `.window` (`miuix-window` desktopMain) | `MiuixWindow`, `MiuixDialogWindow`, `MiuixCaptionBar`, `WindowDraggableArea`, `MiuixWindowProperties`, `MiuixWindowBackgroundType`, `LocalMiuixWindowInfo` (button components in `.window.basic`) |
+| `.layout` / `.utils` / `.interfaces` | `.layout`: `DialogDefaults`, `DialogMotion`, `BottomSheetDefaults`, `SheetMotion`, `BottomSheetOverlayLayout`; `.utils`: `MiuixPopupHost`, `PagerInterceptionMode`, `pagerGestureOverride`, `PagerNavigationSpringSpec`, `PagerGestureNestedScrollConnection`, `overScrollVertical`, `scrollEndHaptic`, `PressFeedbackType`, `WindowNavigationEventScope`; `.interfaces`: `ExperimentalScrollBarApi` |
+| `.preference` / `.menu` (`miuix-preference`) | `.preference`: `*Preference`, `RadioButtonLocation`, `CheckboxLocation`, `RadioButtonPreferenceDefaults`; `.menu`: `OverlayDropdownMenu`, `WindowDropdownMenu`, `OverlayIconDropdownMenu`, `WindowIconDropdownMenu`, `OverlayIconCascadingDropdownMenu`, `WindowIconCascadingDropdownMenu` |
+| `.blur` / `.material` / `.squircle` | `.blur`: `Backdrop`, `rememberLayerBackdrop`, `Modifier.layerBackdrop`, `Modifier.drawBackdrop`, `Modifier.textureBlur`, `Modifier.progressiveTextureBlur`, `ProgressiveBlur`; `.material`: `GlassMaterial`, `GlassMaterials`, `EdgeStroke`, `EdgeStrokes`, `GlassEdgeStrokes`, `rememberTiltLightState`, `ShaderBrushCache`, `isRuntimeShaderSupported`, `isRenderEffectSupported` (`rememberDeviceTilt` in `.material.sensor`); `.squircle`: `squircleBackground`, `squircleSurface`, `squircleClip`, `squircleBorder`, `absoluteSquircle*`, `addSquircleRect`, `isSquircleEnabled` |
+| `.glass` (`miuix-glass`) | `GlassTopAppBar`, `GlassNavigationBar`, `GlassNavigationItem`, `GlassNavigationRail`, `GlassTabRow`, `GlassSegmentedTabRow`, `GlassIconButton`, `GlassFloatingActionButton`, `GlassFloatingToolbar`, `GlassSearchOverlay`, `GlassTextField`, `GlassDialog`, `GlassDialogButton`, `GlassDialogButtonRole`, `GlassBottomSheet`, `GlassCard`, `GlassCardDefaults`, `GlassDropdownPreference`, `glassDialogSurface`, `glassBottomSheetSurface`, `glassSurface`, `Modifier.glassPanel`, `Modifier.glass`, `GlassMotion` |
+| `.nav.*` (`miuix-nav`) | `.nav.core`: `NavKey`, `NavBackStack`, `rememberNavBackStack`, `navBackStackOf`, `NavController`, `rememberNavController`, `NavDisplay`, `NavDisplayEffects`, `LocalNavTransitionScope`, `rememberNavSystemCornerRadius`; `.nav.transition`: `NavTransitions`, `NavMotion`, `NavSwipeDirection`, `Modifier.navTransitionSource`, `navDirectionalTransition`, `navGraphicsTransition`; `.nav.gesture`: `Modifier.navSwipeDismiss` |
+| `.icon.*` | `top.yukonga.miuix.kmp.icon.MiuixIcons`, Basic in `.icon.basic.*`, Extended (`miuix-icons`) in `.icon.extended.*`, Glass (`miuix-glass-icons`) in `.icon.glass.*` |
 
 ## Component Reference Table
 
@@ -66,7 +84,7 @@ Path abbreviations: `docs/demo/<Name>` -> `docs/demo/src/commonMain/kotlin/<Name
 | FloatingActionButton | `docs/components/basic/floatingactionbutton.md` | `docs/demo/FloatingActionButtonDemo.kt` | `miuix-ui/.../basic/FloatingActionButton.kt` | [Controls & menus](controls-and-menus.md#buttons-and-floating-actions) |
 | FloatingToolbar | `docs/components/basic/floatingtoolbar.md` | `docs/demo/FloatingToolbarDemo.kt` | `miuix-ui/.../basic/FloatingToolbar.kt` | [Controls & menus](controls-and-menus.md#buttons-and-floating-actions) |
 | BreadcrumbBar | `docs/components/basic/breadcrumbbar.md` | `docs/demo/BreadcrumbBarDemo.kt` | `miuix-ui/.../basic/BreadcrumbBar.kt` | [Bars & scroll](bars-scroll-and-navigation.md#breadcrumbbar) |
-| Divider | `docs/components/basic/divider.md` | `docs/demo/DividerDemo.kt` | `miuix-ui/.../basic/Divider.kt` | — |
+| HorizontalDivider / VerticalDivider | `docs/components/basic/divider.md` | `docs/demo/DividerDemo.kt` | `miuix-ui/.../basic/Divider.kt` | — |
 | PullToRefresh | `docs/components/basic/pulltorefresh.md` | `docs/demo/PullToRefreshDemo.kt` | `miuix-ui/.../basic/PullToRefresh.kt` | [Bars & scroll](bars-scroll-and-navigation.md#pulltorefresh-and-overscroll) |
 | SearchBar / InputField | `docs/components/basic/searchbar.md` | `docs/demo/SearchBarDemo.kt` | `miuix-ui/.../basic/SearchBar.kt`, `SearchClearButton.kt` | [Controls & menus](controls-and-menus.md#searchbar-inputfield-and-searchclearbutton) |
 | ColorPalette | `docs/components/basic/colorpalette.md` | `docs/demo/ColorPaletteDemo.kt` | `miuix-ui/.../basic/ColorPalette.kt` | — |
@@ -122,7 +140,7 @@ Path abbreviations: `docs/demo/<Name>` -> `docs/demo/src/commonMain/kotlin/<Name
 |---|---|---|---|
 | Theme & ThemeController | `docs/guide/theme.md` | — | [Setup, theme & colors](setup-and-theme.md) |
 | Color tokens & dynamic color | `docs/guide/colors.md` | — | [Setup, theme & colors](setup-and-theme.md#color-semantics-and-visual-lookup) |
-| Text styles | `docs/guide/textstyles.md` | — | `miuix-ui/.../theme/TextStyles.kt` |
+| Text styles | `docs/guide/textstyles.md` | — | [Setup, theme & colors](setup-and-theme.md#typography-miuixthemetextstyles) |
 | Icons (Basic / Extended / Glass) | `docs/guide/icons.md` | — | [Effects & icons](effects-and-icons.md#icons) |
 | Blur & ProgressiveBlur | `docs/guide/blur.md` | — | [Effects & icons](effects-and-icons.md#custom-blur-pipelines) |
 | Material, EdgeStroke & TiltLight | `docs/guide/material.md` | — | [Effects & icons](effects-and-icons.md#material-and-edge-strokes) |

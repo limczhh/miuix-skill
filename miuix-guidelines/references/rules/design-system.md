@@ -45,7 +45,7 @@ Deviations require a concrete basis: user requirement, coherent project conventi
 
 ## Typography Roles
 
-- Let Miuix components own standard typography; explicit text uses `MiuixTheme.textStyles` or shared app styles rather than ad-hoc numeric literals.
+- Let Miuix components own standard typography; explicit text uses `MiuixTheme.textStyles` (`title1..title4`, `headline1..2`, `subtitle`, `main`, `paragraph`, `body1..2`, `button`, `footnote1..2` — never Material `typography` names like `bodyLarge`) or shared app styles rather than ad-hoc numeric literals.
 - Titles name the setting/action; summaries explain effect, current value, or prerequisite — avoid repeating identical text.
 - Truncated critical text must remain reachable (wrap, expand, detail view, or copy).
 
@@ -59,7 +59,7 @@ Deviations require a concrete basis: user requirement, coherent project conventi
 
 - A labeled semantic group uses `SmallTitle` **outside and immediately before** `Card` (no duplicate gap spacer).
 - Grouped `Card` external horizontal padding is **`12.dp`** and external bottom spacing is **`12.dp`** — assign once (never stack `Arrangement.spacedBy` or an extra `Spacer` on top). Keep component `insideMargin` separate from the `12.dp` gutter.
-- Keep related items in one `Card` when fixed and small; segment long/dynamic collections in lazy items with separate cards or corner-preserving segmented groups and stable keys. Use `Divider` or whitespace intentionally; nested Cards require genuine containment distinction.
+- Keep related items in one `Card` when fixed and small; segment long/dynamic collections in lazy items with separate cards or corner-preserving segmented groups and stable keys. Use `HorizontalDivider`/`VerticalDivider` or whitespace intentionally; nested Cards require genuine containment distinction.
 
 ## Icons, Images, and Tags
 

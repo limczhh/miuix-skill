@@ -108,7 +108,16 @@ var nameDraft by remember { mutableStateOf(savedName) }
 
 OverlayDialog(
     show = activeOverlay == ActiveOverlay.EditName,
+    title = "Edit name",
     onDismissRequest = { activeOverlay = null },
     onDismissFinished = { nameDraft = savedName }, // Reinitialize cleanly on reopen; guard against reopened session
-) { /* Draft editor; confirm commits */ }
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        // Editor content
+        Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+            TextButton(text = "Cancel", onClick = { activeOverlay = null }, modifier = Modifier.weight(1f))
+            TextButton(text = "Confirm", onClick = { onSave(nameDraft); activeOverlay = null }, colors = ButtonDefaults.textButtonColorsPrimary(), modifier = Modifier.weight(1f))
+        }
+    }
+}
 ```

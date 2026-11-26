@@ -1,6 +1,6 @@
 ---
 name: miuix-components
-description: "Use for Miuix 0.9.5-rc01 component selection and implementation: resolve components, modules, colors, hosts, Blur/Glass/Squircle/Nav/Window contracts, and verify pinned official docs or source. Use miuix-guidelines for page skeleton, layout rules, and ownership."
+description: "Use when implementing, migrating, debugging, or fixing compile errors in Miuix 0.9.5-rc01 Compose Multiplatform, Android, or Desktop UI: resolve modules, exact package imports (`top.yukonga.miuix.kmp.*`), `MiuixTheme` colors/textStyles, `Scaffold` & `Overlay*`/`Window*` hosts, Preference/Dropdown/Menu contracts, Blur/Glass/Squircle/`miuix-nav`/`miuix-window` APIs, and Material 3 to Miuix parameter mismatches (e.g., `TextFieldState`, `Checkbox`, `ButtonDefaults`, `NavigationBarItem`). Use `miuix-guidelines` for page layout rules, spacing metrics, and ownership."
 ---
 
 # Miuix Components
@@ -13,11 +13,11 @@ description: "Use for Miuix 0.9.5-rc01 component selection and implementation: r
 
 ## Documentation-First Resolution
 
-Actively read the selected component's official Markdown at the pinned commit before writing non-trivial calls (do not merely paste links). Resolve any repository path `<path>` (`docs/...` or `miuix-.../...`) via:
+Read **only** the local reference file(s) matching the task first — local files under `references/` already hold `0.9.5-rc01`-verified imports, signatures, overloads, defaults, host traps, and fallbacks. **Do NOT re-read all reference files or fetch upstream docs/Kotlin source for APIs already documented locally.** Escalate to upstream `docs/...` or Kotlin source only when a required declaration is missing from `references/` or to diagnose a real compile/behavior mismatch:
 - Remote raw URL: `https://raw.githubusercontent.com/compose-miuix-ui/miuix/542463a0863b393a3d6052237daae6c3da217e70/<path>`
 - Local checkout: `git show v0.9.5-rc01:<path>` (or `git show 542463a0863b393a3d6052237daae6c3da217e70:<path>`)
 
-Official Markdown owns introductions, imports, full parameter tables, and basic examples. Local references under `references/` retain **integration boundaries, defaults, host/lifecycle pitfalls, fallbacks, and upgrade deltas**. Read only the reference file matching the task.
+Official Markdown owns full exhaustive parameter tables; local `references/` own concise signatures, integration boundaries, defaults, host/lifecycle pitfalls, fallbacks, and upgrade deltas.
 
 ## Direct Routes
 
@@ -26,13 +26,21 @@ Official Markdown owns introductions, imports, full parameter tables, and basic 
 | Library modules, semantic lookup, full component/doc/source table, low-level exports | [Catalog](references/catalog.md) |
 | Dependencies, Android API 24/33 & compileSdk 37.2, `MiuixTheme`, `Scaffold`, semantic colors & token lookup | [Setup, theme & colors](references/setup-and-theme.md) |
 | Buttons, `TextField`, `Slider`, `Switch`, `SearchBar`, Preference rows, Dropdown/Spinner/Menus | [Controls & menus](references/controls-and-menus.md) |
-| `TopAppBar`, `PullToRefresh`, `overScroll*`, `ScrollBar`, `TabRow`, `Pager`, `BreadcrumbBar`, `Card`, `NavigationBar` | [Bars, scroll & navigation](references/bars-scroll-and-navigation.md) |
+| `TopAppBar`, `PullToRefresh`, `overScroll*`, `scrollEndHaptic`, `ScrollBar`, `TabRow`, `Pager`, `BreadcrumbBar`, `Card`, `NavigationBar` | [Bars, scroll & navigation](references/bars-scroll-and-navigation.md) |
 | `Overlay*` vs `Window*`, `DialogMotion`/`SheetMotion`, `ListPopup`, `WindowComponentFrame`, Desktop `miuix-window` | [Overlays & windows](references/overlays-and-windows.md) |
 | `miuix-glass` 21 components, `GlassCard`, `GlassBottomSheet`, `Backdrop` recording, Blur controls & fallbacks | [Glass & blur](references/glass-and-blur.md) |
 | Custom Blur pipelines, `EdgeStroke`, `rememberTiltLightState`, `Squircle`, Basic/Extended/Glass Icons | [Effects & icons](references/effects-and-icons.md) |
 | `miuix-nav` route keys, `NavBackStack`, `NavDisplay`, transitions, `Expansion`, swipe back | [miuix-nav](references/miuix-nav.md) |
 | Breaking changes and new APIs from `0.9.5-beta03` -> `0.9.5-rc01` | [RC01 migration](references/rc01-migration.md) |
 | Source escalation workflow, Example file map, evidence labels | [Source verification](references/source-verification.md) |
+
+## High-Frequency Material 3 Traps
+
+Avoid these common compile/runtime mistakes when writing Miuix `0.9.5-rc01`:
+- **Theme tokens**: Read `MiuixTheme.textStyles.<role>` (`title1..4`, `headline1..2`, `subtitle`, `main`, `paragraph`, `body1..2`, `button`, `footnote1..2`) and `MiuixTheme.colorScheme.<role>` — there is no `MiuixTheme.typography` or `.colors`.
+- **Keep popups composed**: Never wrap `Overlay*`, `Window*`, `GlassDialog`, or `GlassBottomSheet` in `if (show)` — keep them composed with `show: Boolean` so exit animations and `onDismissFinished` complete.
+- **Buttons & inputs**: `ButtonDefaults` owns both `Button` and `TextButton` (`buttonColors(color = ...)` / `buttonColorsPrimary()` / `textButtonColors()` / `textButtonColorsPrimary()`, no `TextButtonDefaults`, no `containerColor`). Use `TextField(state = rememberTextFieldState(), label = ...)` (no `placeholder`/`isError`/`supportingText`), `Checkbox(state = ToggleableState(checked), onClick = ...)`, and `Card(cornerRadius, insideMargin)` (no `shape`/`elevation`/`border`).
+- **Preferences, menus & nav bars**: Rows use `startAction`/`endActions`/`bottomAction`; `OverlayDropdownMenu`/`OverlayIconDropdownMenu` manage expanded state internally (no `expanded` input parameter); `NavigationBarItem` and `FloatingNavigationBarItem` take `icon: ImageVector` (not `itemIcon`); `TabRow` takes `selectedTabIndex`/`onTabSelected` whereas `GlassTabRow` takes `selectedIndex`/`onSelect`.
 
 ## Delivery Contract
 

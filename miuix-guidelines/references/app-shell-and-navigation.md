@@ -66,7 +66,8 @@ fun AppShell(onOpenDetail: (String) -> Unit) {
         bottomBar = {
             Box(Modifier.fillMaxWidth()) {
                 // Wrapper stays transparent/unclipped; FloatingNavigationBar owns shape & blur mask.
-                FloatingNavigationBar(color = selectionBarColor, modifier = selectionBarModifier) {
+                FloatingNavigationBar(color = selectionBarColor, modifier = selectionBarModifier) { // App color + optional textureBlur
+                    destinations.forEachIndexed { index, destination ->
                     destinations.forEachIndexed { index, destination ->
                         FloatingNavigationBarItem(
                             selected = selection.selectedIndex == index,
@@ -133,7 +134,7 @@ on real user swipe/drag/wheel/CrossAxis takeover:
 ```
 
 - **Why this matters**: `GlassSegmentedTabRow` settles its draggable indicator toward `selectedIndex` on pointer release, while Foundation `currentPage` lags early in a click transition and `targetPage` oscillates during drags/flings. The intent lock eliminates backward indicator snap on clicks (`0 -> 1 -> 0`) and swipe oscillation.
-- Bind tabs using the shared coordinator (`modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)` for standard strips; check `miuix-components` for exact `selectedTabIndex`/`onTabSelected` vs `selectedIndex`/`onSelect` and CrossAxis pager flags).
+- Bind tabs using the shared coordinator (`modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)` for standard strips): pass `selectedTabIndex`/`onTabSelected` on `TabRow`/`TabRowWithContour`, and `selectedIndex`/`onSelect` on `GlassTabRow`/`GlassSegmentedTabRow` (also verify CrossAxis pager flags via `miuix-components`).
 - On tab removal/reordering, reconcile by stable page identity, cancel active requests, and update index before rendering.
 
 ## Route Container Expansion

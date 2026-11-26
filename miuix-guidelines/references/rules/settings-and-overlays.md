@@ -34,7 +34,7 @@ Contents: [hierarchy & toggles](#settings-hierarchy-and-dependent-controls) · [
 
 ## Dialogs and Actions
 
-- Horizontal two-action rows: **Cancel then Confirm**, equal weights, **`20.dp` gap** (RTL-aware; Confirm uses primary TextButton Defaults).
+- Horizontal two-action rows: **Cancel then Confirm**, equal weights (`Modifier.weight(1f)`), **`20.dp` gap** for ordinary dialogs (`ButtonDefaults.textButtonColors()` + `ButtonDefaults.textButtonColorsPrimary()`; `GlassDialogButton` rows follow `GlassDialogDemo`'s **`12.dp`** gap with `Normal`/`Primary`/`Destructive` roles).
 - Standard single-input dialog gap before action row: **`16.dp`**; shared two-field padding editor: **`12.dp`** inter-field gap + **`24.dp`** before actions.
 - Bound long text/lists to usable window/IME height keeping action buttons reachable; prevent duplicate busy submits; remote suggestions must never overwrite valid manual/current input; use window-local feedback when page Snackbar is covered; state affected scope before destructive reset/clear and update visible state only after completion.
 

@@ -35,12 +35,12 @@ shell or page root
 | `TopAppBar` + blur wrapper | `GlassTopAppBar` | Same `MiuixScrollBehavior` & back/actions; remove ordinary blur wrapper; pass foreground safe insets via `contentModifier`; `expandable = false` for compact wide header |
 | `NavigationBar` / `FloatingNavigationBar` | `GlassNavigationBar` | Same coordinator & `selectedIndex`; convert to `GlassNavigationItem`; update bottom spacing policy |
 | `NavigationRail` | `GlassNavigationRail` | **Different overlay/morph layout** + `GlassNavigationRailState`: coordinate clearance & title obstruction from `progress`, keep outside recording |
-| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Share coordinator (`selectedIndex`/`onSelect`); hold intent lock on `GlassSegmentedTabRow`; turn off material via `surfaceAlpha = 0f` (note `GlassSegmentedTabRow` still requires non-null `Backdrop`) |
+| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Share coordinator (`selectedIndex`/`onSelect` on Glass vs `selectedTabIndex`/`onTabSelected` on ordinary); hold intent lock on `GlassSegmentedTabRow`; turn off material via `surfaceAlpha = 0f` (note `GlassSegmentedTabRow` still requires non-null `Backdrop`) |
 | `IconButton` | `GlassIconButton` | Inherits header context inside `GlassTopAppBar` and `GlassBottomSheet` headers; supply `backdrop` standalone; has NO `enabled` arg (use ordinary `IconButton` or semantic adapter if disabling needed) |
 | `TextField` in Glass modal | `GlassTextField` | State-based `TextFieldState`; host keeps focus & validation |
 | Full-screen search | `GlassSearchOverlay` | In-page search owner (not a route); owns focus, Back/Escape & progressive header |
 | `FloatingActionButton` / `Toolbar` | `GlassFloatingActionButton` / `Toolbar` | Same `Scaffold` slots; omit extra app rim/blur wrappers (`stroke` & `shadow` built in) |
-| `OverlayDialog` | `motion = DialogMotion.Glass` + `glassDialogSurface`, or `GlassDialog` | Preserve show/draft/finished lifecycle; button row uses `GlassDialogButton` |
+| `OverlayDialog` | `motion = DialogMotion.Glass` + `glassDialogSurface`, or `GlassDialog` | Preserve show/draft/finished lifecycle; button row uses `GlassDialogButton(onClick, role = GlassDialogButtonRole.*)` |
 | `OverlayBottomSheet` | `motion = SheetMotion.Glass` + `glassBottomSheetSurface`, or `GlassBottomSheet` | `GlassBottomSheet` uses `progressiveBlur`, passes top `PaddingValues` into `content` (`.padding(innerPadding)`), defaults `GlassBottomSheetDefaults.InsideMargin`, and omits bottom edge stroke |
 | `WindowDialog` / `WindowBottomSheet` | Keep Window or migrate explicitly | Glass wrappers are `Scaffold`-hosted, **not** Window replacements |
 | `Card` in Glass sheet/dialog vs custom panel | `GlassCard` inside `GlassBottomSheet`/`GlassDialog`; `glassPanel` only for custom sampled boxes | `GlassCard` draws translucent fill without sampling backdrop; keep ordinary `Card` on normal pages |

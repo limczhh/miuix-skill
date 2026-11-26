@@ -1,6 +1,6 @@
 ---
 name: miuix-guidelines
-description: "Use to design, compose, review, or refactor Miuix pages and greenfield app shells: ownership, hierarchy, spacing, insets, adaptive navigation, pager-backed destinations, route boundaries, settings/overlays, UI state, and scroll/refresh coordination (including '普通页面', '页面太乱', '加底部悬浮导航'). Leave exact API lookups, imports, and version contracts to miuix-components."
+description: "Use when designing, composing, reviewing, refactoring, or auditing Miuix pages and Compose Multiplatform app shells: screen ownership, visual hierarchy, `SmallTitle` + `Card` (`12.dp`/`16.dp`) spacing, status-bar/insets handling, compact/wide adaptive navigation, `HorizontalPager` + `SelectionCoordinator`, `NavDisplay` route boundaries, settings/dependent controls/drafts/overlays, UI state/error/Snackbar, and scroll/refresh/overscroll coordination (including '普通页面', '设置页', '页面太乱', '状态栏延伸', '加底部悬浮导航', '代码规范检查'). Leave exact symbol/import/API lookups and `0.9.5-rc01` contracts to `miuix-components`."
 ---
 
 # Miuix UI Guidelines
@@ -38,5 +38,5 @@ Read [scope, exceptions & topic routing](references/rules/design-system.md#requi
 ## Implementation and Code Delivery
 
 1. Reuse existing theme, route, state, inset, and host owners before introducing new wrappers; build greenfield multi-page shells with real typed routes, placeholder sibling pages, and one selection coordinator before adding per-page polish.
-2. Verify all concrete Miuix symbols, overloads, Defaults, and version-specific flags via `miuix-components` before emitting target code.
+2. Verify all concrete Miuix symbols, overloads, Defaults, and version-specific flags via `miuix-components` before emitting target code (rely on `miuix-components/references/` first; escalate to upstream source only for uncovered symbols).
 3. Keep conformance, API verification, compilation, rendered visuals, and performance separate in reports; state unverified runtime/visual checks cleanly rather than assuming compilation proves rendering.

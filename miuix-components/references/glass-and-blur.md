@@ -6,7 +6,7 @@ Contents: [recording contract](#background-sampling-contract) · [bars, nav & ta
 
 ## Background Sampling Contract
 
-Guide: `docs/guide/glass.md` (`top.yukonga.miuix.kmp.glass`, `Backdrop` from `.blur`, material presets from `.material`).
+Guide: `docs/guide/glass.md` (`top.yukonga.miuix.kmp.glass`, `Backdrop` / `rememberLayerBackdrop` / `Modifier.layerBackdrop` from `top.yukonga.miuix.kmp.blur`, materials from `top.yukonga.miuix.kmp.material`).
 
 1. Create `val backdrop = rememberLayerBackdrop()`.
 2. Apply `Modifier.layerBackdrop(backdrop)` to an **opaque** background/content subtree (parent backgrounds are not captured automatically).
@@ -20,10 +20,12 @@ Guide: `docs/guide/glass.md` (`top.yukonga.miuix.kmp.glass`, `Backdrop` from `.b
   - Two overloads: `ScrollBehavior`-driven (`contentOffset` + negative `overscrollOffset`) or explicit `isContentScrolled` (+ negative overscroll). Neither accepts `visualContentOffset`. `expandable = false` for compact fixed title; `centerObstructionStart` avoids centered overlays (`TitleControlSpacing = 12.dp`).
   - `modifier` sizes outer frame/band; `contentModifier` applies foreground safe insets. Progressive band (`BandOverhang = 32.dp`) requires a non-null supported `backdrop`; `titleBlurRadius` (`8.dp` default; `0.dp` to disable) controls title blur independently.
 - **`GlassNavigationBar`** (`glassnavigationbar.md`):
+  - Takes `items: List<GlassNavigationItem>`, `selectedIndex: Int`, `onSelect: (Int) -> Unit`, `backdrop: Backdrop?` (note `selectedIndex`/`onSelect` rather than ordinary `NavigationBar`'s `RowScope` children).
   - `backdrop = null` disables background sampling, whereas `material = null` does not. Changing `visible` independently blurs the whole bar group (no separate visibility-blur switch in `rc01`). With `defaultWindowInsetsPadding = true`, owns horizontal cutout/nav insets and bottom nav/caption spacing.
 - **`GlassNavigationRail`** (`glassnavigationrail.md`):
   - Uses `rememberGlassNavigationRailState(initialExpanded = true)` (`expanded`, `progress`). Fills overlay space outside recorded content and morphs into a top capsule; coordinate page clearance & `centerObstructionStart` from `progress`. `secondaryItems` start at `items.size + secondaryIndex`.
 - **`GlassTabRow` & `GlassSegmentedTabRow`** (`glasstabrow.md`):
+  - **Param naming**: Both take **`selectedIndex` / `onSelect`** (whereas ordinary `TabRow` takes `selectedTabIndex` / `onTabSelected`).
   - **Disable material on supported runtime**: pass **`surfaceAlpha = 0f`** on either component to turn off its material pipeline while keeping selection, semantics, and resting visuals. `GlassTabRow` accepts `Backdrop?` (`null` removes sampling input); `GlassSegmentedTabRow` **requires non-null `Backdrop`** and has a draggable indicator that settles on pointer release (pair with a parent selection intent lock so stale pager positions do not pull it backward).
 
 ## Glass Actions and Cards
@@ -38,13 +40,13 @@ Guide: `docs/guide/glass.md` (`top.yukonga.miuix.kmp.glass`, `Backdrop` from `.b
 
 `GlassDialog`, `GlassBottomSheet`, and `GlassDropdownPreference` are **`Scaffold`-hosted** (`MiuixPopupHost`); keep them composed until exit finishes and exclude host/scrim from `backdrop`.
 
-- **`GlassDialog` & `GlassDialogButton`** (`docs/components/glass/glassdialog.md`): uses `DialogMotion.Glass`.
+- **`GlassDialog` & `GlassDialogButton`** (`docs/components/glass/glassdialog.md`): uses `DialogMotion.Glass`. Dialog actions use `GlassDialogButton(onClick, role = GlassDialogButtonRole.Normal / .Primary / .Destructive) { Text("...", style = MiuixTheme.textStyles.button) }` (it takes a `RowScope` `content` lambda, not `text = "..."`; upstream `GlassDialogDemo` spaces buttons `12.dp` apart).
 - **`GlassBottomSheet`** (`glassbottomsheet.md`) **key `rc01` behavior**:
   - `content` lambda takes **`@Composable (PaddingValues) -> Unit`** (`innerPadding` provides top header clearance when `progressiveBlur = true`; apply `.padding(innerPadding)` to scrollable content).
   - Defaults `insideMargin` to **`GlassBottomSheetDefaults.InsideMargin`** (`DpSize(12.dp, 0.dp)`), uses `SheetMotion.Glass`, supports `progressiveBlur = true`, `headerBottomContent`, and `scrollOffset: (() -> Float)? = null`, and **omits the bottom edge stroke** on both sheet and overscroll extension.
   - Header reserves space whenever any of `title`, `startAction`, `endAction` is non-null (even `title = ""`); sheet action `GlassIconButton` inherits `GlassBottomSheetDefaults` (`ButtonSize = 44.dp`, `buttonFill()`, `buttonMaterial()`, `buttonStroke()`).
 - **`GlassCard`** (`glasscard.md`, `GlassCard.kt`):
-  - Static and clickable/long-press overloads for grouping content inside `GlassBottomSheet` or `GlassDialog` (`GlassCardDefaults.CornerRadius = 20.dp`, `InsideMargin = CardDefaults.InsideMargin`). Draws translucent theme-aware fill (`color()`/`colors()`); does **not** sample or blur the backdrop itself.
+  - Static and clickable/long-press overloads for grouping content inside `GlassBottomSheet` or `GlassDialog` (`GlassCardDefaults.CornerRadius = 20.dp`, `InsideMargin = CardDefaults.InsideMargin`). Draws translucent theme-aware fill (`color()`/`colors()`); does **not** sample or blur the backdrop itself. When a sheet falls back to opaque `background` (`backdrop == null` or `!isRuntimeShaderSupported()`), pass `GlassCardDefaults.colors(color = MiuixTheme.colorScheme.secondaryContainer)` for clear light/dark card contrast.
 - **`GlassDropdownPreference`** (`glassdropdownpreference.md`): caller owns `selectedIndex`; component owns popup expansion. `DropdownItem`/`DropdownEntry` come from `.basic`.
 
 ```kotlin

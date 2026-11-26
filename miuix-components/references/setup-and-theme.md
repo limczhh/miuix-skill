@@ -2,7 +2,7 @@
 
 Use for dependencies, platform/SDK constraints, `MiuixTheme` / `ThemeController`, `Scaffold`, `@Preview`, and visual-to-token color resolution at pinned `0.9.5-rc01`.
 
-Contents: [dependencies & SDK](#dependencies-and-platform-constraints) · [theme & indication](#theme-controller-and-indication) · [Scaffold host](#scaffold-host) · [Preview](#android-studio-preview) · [color rules](#color-semantics-and-visual-lookup) · [visual lookup](#visual-to-semantic-lookup) · [component defaults](#component-color-defaults) · [core roles](#core-color-roles)
+Contents: [dependencies & SDK](#dependencies-and-platform-constraints) · [theme & indication](#theme-controller-and-indication) · [typography](#typography-miuixthemetextstyles) · [Scaffold host](#scaffold-host) · [Preview](#android-studio-preview) · [color rules](#color-semantics-and-visual-lookup) · [visual lookup](#visual-to-semantic-lookup) · [component defaults](#component-color-defaults) · [core roles](#core-color-roles)
 
 ## Dependencies and Platform Constraints
 
@@ -60,16 +60,24 @@ dependencies {
 
 ## Theme, Controller, and Indication
 
-Guide: `docs/guide/theme.md`. Source: `miuix-ui/.../theme/MiuixTheme.kt`, `ThemeController.kt`, `../utils/MiuixIndication.kt`.
+Guide: `docs/guide/theme.md`. Source (`top.yukonga.miuix.kmp.theme`): `MiuixTheme.kt`, `ThemeController.kt`, `../utils/MiuixIndication.kt`.
 
 - Use one root `MiuixTheme(controller = remember { ThemeController(ColorSchemeMode.System) })`; do not nest extra `MiuixTheme` per page merely to read tokens (`MiuixTheme.colorScheme` / `MiuixTheme.textStyles`).
 - `ColorSchemeMode` options: `System`, `Light`, `Dark`, `MonetSystem`, `MonetLight`, `MonetDark`. Use fixed `lightColorScheme()`/`darkColorScheme()` only for fixed brand palettes or previews/tests.
 - **Monet & `ThemePaletteStyle.Cmf`**: With a non-null `keyColor` in a Monet mode, `colorsFromSeed` applies `ThemePaletteStyle.Cmf` using internal spec 2026 (`ThemeColorSpec` publicly exposes only `Spec2021` and `Spec2025` — do not invent `Spec2026`). With `keyColor == null`, Monet delegates to `platformDynamicColors(dark)` without forwarding palette/spec.
 - **Cutout fix & Indication**: Both `MiuixTheme` overloads install `ProvideDisplayCutoutFix` (gated via `LocalDisplayCutoutFixEnabled`) and supply theme-aware `pressAlpha`/`hoverAlpha`/`focusAlpha` on `MiuixIndication` (which draws its overlay *before* `drawContent()` and holds brief taps for ~200 ms). `MiuixTheme` also provides `MiuixOverscrollFactory` via `LocalOverscrollFactory`.
 
+## Typography (`MiuixTheme.textStyles`)
+
+Guide: `docs/guide/textstyles.md`, source: `miuix-ui/.../theme/TextStyles.kt` (`top.yukonga.miuix.kmp.theme`).
+
+- Read via `MiuixTheme.textStyles.<role>` (NOT `MaterialTheme.typography`); all default styles use `MiuixTheme.colorScheme.onBackground` unless overridden on `Text(..., color = ...)`.
+- Available 14 roles: `title1` (`32sp`), `title2` (`24sp`), `title3` (`20sp`), `title4` (`18sp`), `headline1` (`17sp`), `headline2` (`16sp`), `main` (`17sp`), `paragraph` (`17sp`, `1.2em` line height), `body1` (`16sp`), `body2` (`14sp`), `subtitle` (`14sp`, `Bold`), `button` (`17sp`), `footnote1` (`13sp`), `footnote2` (`11sp`).
+- Customize globally via `defaultTextStyles(...)` passed into `MiuixTheme(textStyles = ...)`.
+
 ## Scaffold Host
 
-Doc: `docs/components/basic/scaffold.md`, demo: `docs/demo/ScaffoldDemo.kt`.
+Doc: `docs/components/basic/scaffold.md`, demo: `docs/demo/ScaffoldDemo.kt`. Package: `top.yukonga.miuix.kmp.basic` (`Scaffold`, `FabPosition`, `ToolbarPosition`).
 
 ```kotlin
 Scaffold(
@@ -125,7 +133,7 @@ Sample hex values are from non-Monet `lightColorScheme()` / `darkColorScheme()`.
 
 ## Component Color Defaults
 
-- `ButtonDefaults.buttonColorsPrimary()` (`primary`/`onPrimary` + `disabledPrimaryButton`/`disabledOnPrimaryButton`) vs `.buttonColors()` (`secondaryVariant`). `textButtonColorsPrimary()` for blue text buttons.
+- `ButtonDefaults.buttonColorsPrimary()` (`primary`/`onPrimary` + `disabledPrimaryButton`/`disabledOnPrimaryButton`) vs `.buttonColors()` (`secondaryVariant`). `ButtonDefaults` also owns `TextButton` colors: `textButtonColors()` and `textButtonColorsPrimary()` (there is no `TextButtonDefaults`).
 - `CardDefaults.defaultColors()` (`surfaceContainer` + `onSurfaceContainer`). For cards on glass sheets/dialogs, use `GlassCardDefaults.color()` / `.colors()` (translucent fill with dynamic-color contrast).
 - `BasicComponentDefaults.titleColor()` (`onBackground`) / `summaryColor()` (`onSurfaceVariantSummary`).
 - `SwitchDefaults.switchColors()`: checked `primary`/`onPrimary`, unchecked `secondary`/`onSecondary`; **dynamic-color exception**: unchecked thumb uses `onSurface.copy(0.38f)` and disabled checked thumb uses `surface`.

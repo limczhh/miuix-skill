@@ -36,10 +36,26 @@ NavDisplay(backStack = backStack, onBack = { backStack.removeLastOrNull() }) {
 
 ## Transitions, Expansion, and Back Gestures
 
+- **Packages**: `NavDisplay`/`NavBackStack`/`NavKey`/`NavController`/`NavDisplayEffects`/`LocalNavTransitionScope`/`rememberNavSystemCornerRadius` live in `top.yukonga.miuix.kmp.nav.core`; `NavTransitions`, `NavMotion`, `NavSwipeDirection`, and `Modifier.navTransitionSource` live in `.nav.transition`; `Modifier.navSwipeDismiss` lives in `.nav.gesture`.
 - **Built-in presets (`NavTransitions`)**: `MiuixDefault` (full-width slide + 1/4 covered parallax), `Modal` (bottom-up sheet-like slide), `Expansion` / `NavTransitions.expansion(containerColor, cornerRadius = 28.dp, motion = NavMotion.Default)`, and `None`. Override per route via `entry(transition = ...)`.
 - **Component Expansion (`NavTransitions.Expansion`)**:
   - Bind source card/item to its destination route: `Modifier.navTransitionSource(route, cornerRadius = 16.dp, containerColor = Color.Unspecified, corners = NavTransitionCorners(cornerRadius), shape = null, sourceKey = null)`.
-  - Attach `navTransitionSource` **after outer padding and before surface/background/clip**; match its fill color and single-contour outline (no holes). When multiple sources bind the same route, the pressed one wins.
+  - Attach `navTransitionSource` **after outer padding and before surface/background/clip**; match its fill color and single-contour outline (no holes), and keep `Card` `pressFeedbackType = PressFeedbackType.None` (default; use `showIndication = true` instead of `SinkFeedback`) so press shrink does not distort captured bounds. When multiple sources bind the same route, the pressed one wins.
+
+```kotlin
+val containerColor = MiuixTheme.colorScheme.surface
+val sourceColor = MiuixTheme.colorScheme.surfaceContainer
+NavDisplay(backStack = stack, transition = NavTransitions.expansion(containerColor)) {
+    entry<Route.Home> {
+        Card(
+            modifier = Modifier.navTransitionSource(Route.Detail(1), CardDefaults.CornerRadius, sourceColor),
+            onClick = { stack.add(Route.Detail(1)) },
+        ) { /* Card content */ }
+    }
+    entry<Route.Detail>(swipeDismiss = NavSwipeDirection.LeftToRight) { detail -> DetailScreen(detail.id) }
+}
+```
+
   - Destination page must paint an opaque background matching the resolved container color (resolved in order: `expansion(containerColor)`, `NavDisplayEffects.backdropColor`, source `containerColor`). Missing live same-window source or opaque color falls back to `MiuixDefault`.
   - On pop/return, the source needs visible area inside the container (otherwise centered shrink/fade). Provide a unique stable `sourceKey` per source inside the same origin->destination pair if recomposed while covered.
 - **`NavDisplayEffects`**: `enableCornerClip`, `cornerClipRadius` (`rememberNavSystemCornerRadius()` for full-screen host; keep `0.dp` on interior multi-pane `NavDisplay`), `cornerClipMode`, `dimAmount`, `blockInputDuringTransition`, `backdropColor`. Transitions whose `NavTransition.handlesCornerClip(scope)` is `true` (like `Expansion`) own their animated clip and automatically skip `enableCornerClip` while preserving `dimAmount`.

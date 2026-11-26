@@ -8,9 +8,10 @@ Contents: [Icons](#icons) · [Custom blur pipelines](#custom-blur-pipelines) · 
 
 Guide: `docs/guide/icons.md`; sources: `miuix-core/.../icon/MiuixIcons.kt`, `miuix-ui/.../icon/basic/`, `miuix-icons/.../extended/`, `miuix-glass-icons/.../icon/glass/`.
 
-- **Basic (included in `miuix-ui`)**: `MiuixIcons.Basic` exports 7 icons (`ArrowRight`, `ArrowUpDown`, `Check`, `Close`, `Search`, `SearchCleanup`, `Sidebar`) in `top.yukonga.miuix.kmp.icon.basic`.
-- **Extended (`miuix-icons` / `miuix-icons-android`)**: Separate artifact. `MiuixIcons.<Name>` is Regular; `MiuixIcons.Light.<Name>`, `.Normal`, `.Medium`, `.Demibold` exist only where defined in `docs/guide/icons.md` / source.
-- **Glass (`miuix-glass-icons`)**: Separate artifact exposing `MiuixIcons.Glass` (`top.yukonga.miuix.kmp.icon.glass`). Note `rc01` renames: `XiaominListen` -> **`XiaomiListen`**, `CeditSelection` -> **`CheckSelection`**.
+- **Extension-property imports (avoid `receiver type mismatch`)**: `MiuixIcons` lives in `top.yukonga.miuix.kmp.icon`, while individual icon glyphs are **extension `val`s** in subpackages. Always import **both** `MiuixIcons` and each icon property from its package (e.g., `import top.yukonga.miuix.kmp.icon.basic.Check`, not `MiuixIcons` alone!).
+- **Basic (included in `miuix-ui`)**: `MiuixIcons.Basic` exports **only 7 icons** (`ArrowRight`, `ArrowUpDown`, `Check`, `Close`, `Search`, `SearchCleanup`, `Sidebar`) in `top.yukonga.miuix.kmp.icon.basic.*`. Notice **`MiuixIcons.Basic` has NO `Back` or `Sort` icon** — if optional `miuix-icons` is not declared, mirror `MiuixIcons.Basic.ArrowRight` (`scaleX = -1f` in LTR) for Back and use `MiuixIcons.Basic.ArrowUpDown` for Sort.
+- **Extended (`miuix-icons` / `miuix-icons-android`)**: Optional artifact exposing `MiuixIcons.<Name>` (e.g. `Back`, `Sort`, `Settings`, `ChevronBackward` via `top.yukonga.miuix.kmp.icon.extended.*`). `MiuixIcons.Light.<Name>`, `.Normal`, `.Medium`, `.Demibold` exist only where defined in `docs/guide/icons.md` / source.
+- **Glass (`miuix-glass-icons`)**: Separate artifact exposing `MiuixIcons.Glass` (`top.yukonga.miuix.kmp.icon.glass.*`). Note `rc01` renames: `XiaominListen` -> **`XiaomiListen`**, `CeditSelection` -> **`CheckSelection`**.
 - **Placement**: Wrap clickable icons in `IconButton` (40 dp target; do not apply `.clickable` to `Icon`). `Icon` uses painter intrinsic size (24 dp fallback). Pass `contentDescription = null` for purely decorative glyphs beside text.
 
 ## Custom Blur Pipelines
