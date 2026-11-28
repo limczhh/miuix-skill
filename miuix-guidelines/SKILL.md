@@ -1,6 +1,6 @@
 ---
 name: miuix-guidelines
-description: "Use when designing, composing, reviewing, refactoring, or auditing Miuix pages and Compose Multiplatform app shells: screen ownership, visual hierarchy, `SmallTitle` + `Card` (`12.dp`/`16.dp`) spacing, status-bar/insets handling, compact/wide adaptive navigation, `HorizontalPager` + `SelectionCoordinator`, `NavDisplay` route boundaries, settings/dependent controls/drafts/overlays, UI state/error/Snackbar, and scroll/refresh/overscroll coordination (including '普通页面', '设置页', '页面太乱', '状态栏延伸', '加底部悬浮导航', '代码规范检查'). Leave exact symbol/import/API lookups and `0.9.5-rc01` contracts to `miuix-components`."
+description: "Use when designing, composing, reviewing, refactoring, or auditing Miuix pages and Compose Multiplatform app shells: screen ownership, visual hierarchy, `SmallTitle` + `Card` (`12.dp`/`16.dp`) spacing, status-bar/insets handling, compact/wide adaptive navigation, `HorizontalPager` + `SelectionCoordinator`, `NavDisplay` route boundaries, settings/dependent controls/drafts/overlays, UI state/error/Snackbar, and scroll/refresh/overscroll coordination (including '普通页面', '设置页', '页面太乱', '状态栏延伸', '加底部悬浮导航', '代码规范检查'). Leave exact symbol/import/API lookups and `0.9.5-rc02` contracts to `miuix-components`."
 ---
 
 # Miuix UI Guidelines
@@ -8,7 +8,7 @@ description: "Use when designing, composing, reviewing, refactoring, or auditing
 ## Purpose and Scope
 
 This skill captures the chosen **Miuix page-architecture conventions, ownership boundaries, spacing metrics, and mandatory UI rules**.
-- Exact Miuix APIs, module/package boundaries, parameter Defaults, and release details (`0.9.5-rc01`) belong exclusively to `miuix-components`; do not duplicate or maintain an API manual here.
+- Exact Miuix APIs, module/package boundaries, parameter Defaults, and release details (`0.9.5-rc02`) belong exclusively to `miuix-components`; do not duplicate or maintain an API manual here.
 - Keep **`references/rules/`** distinct from workflow/pattern guides: `rules/` contains mandatory requirements (`MUST` / `DO NOT` / normative metrics); guides explain workflows and adaptable placement examples (`user requirements` always outrank this profile).
 
 ## Work at the Affected Boundary

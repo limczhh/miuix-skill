@@ -5,16 +5,16 @@
 - **miuix-components（路书）**：主动读取固定版本官方文档，解决组件选择、API、模块与宿主问题。组件介绍、完整参数表和常规示例交给官方文档；本地只维护有实际价值的接入差异、易错点和必要的组合示例，有疑义时再检查源码。
 - **miuix-guidelines（准则）**：回答页面“如何组织骨架、所有权、层级、Insets 和组件组合”。作为设计规范，严格区分 **强制性红线规范（rules）** 与 **非强制性启发指南（guides/workflows）**。
 
-仓库根目录只是源码仓库和维护说明，不是第三个 Skill。两个 Skill **仅服务 Miuix `0.9.5-rc01`**，固定标签 `v0.9.5-rc01`、提交 **542463a0863b393a3d6052237daae6c3da217e70**。依赖示例使用完整 rc01 版本号；不维护旧版本 API 或兼容分支，仅保留一份 beta03→rc01 的升级差异说明。目标依赖不符时说明范围差异，依赖升级仍按用户授权执行。
+仓库根目录只是源码仓库和维护说明，不是第三个 Skill。两个 Skill **仅服务 Miuix `0.9.5-rc02`**，固定标签 `v0.9.5-rc02`、提交 **e636bd6c07f14d588fe084f0c3a5b57eafe20230**。依赖示例使用完整 rc02 版本号；不维护旧版本 API 或兼容分支，仅保留一份 rc01→rc02 升级差异（附 beta03 跳升要点）。目标依赖不符时说明范围差异，依赖升级仍按用户授权执行。
 
 ## 当前版本与 Glass
 
-- [依赖、主题与平台设置](./miuix-components/references/setup-and-theme.md)：rc01 模块选择、Android API 24/33 与 compileSdk 37.2 边界、主题/指示器与色彩速查。
-- [Beta03 → RC01 升级差异](./miuix-components/references/rc01-migration.md)：`GlassBottomSheet` 签名与头部渐进模糊、`GlassCard`、`miuix-nav` 组件展开、`DialogMotion`/`SheetMotion`、图标重命名与下拉弹层参数调整。
+- [依赖、主题与平台设置](./miuix-components/references/setup-and-theme.md)：rc02 模块选择、Android API 24/33 与 compileSdk 37.2 边界、主题/指示器与色彩速查。
+- [RC01 → RC02 升级差异](./miuix-components/references/rc02-migration.md)：`GlassBottomSheet` `progressiveBlur = false` 默认切换、`GlassScrollableTabRow`、`GlassTopAppBar` 渐进参数、`rememberLayerBackdrop(backgroundColor, onDrawUnderlay)`、`ScrollBar(interactive)`、弹层安全区截断与 `rememberListPopupLayoutInfo` 内部化。
 - [Glass 替换与共存](./miuix-guidelines/references/glass-adoption.md)：旧组件对应关系、仅替换 Overlay 表面、完整组件迁移、普通与 Glass 两套外观共享状态。
-- [Glass 组件与模糊降级](./miuix-components/references/glass-and-blur.md)：21 个 Glass 组件接入契约、`GlassCard`、`GlassBottomSheet` 渐进头部，以及无全局开关下的组件降级矩阵。
+- [Glass 组件与模糊降级](./miuix-components/references/glass-and-blur.md)：22 个 Glass 组件接入契约、`GlassCard`、`GlassBottomSheet` 渐进头部，以及无全局开关下的组件降级矩阵。
 
-普通组件与 Glass 家族都使用 rc01。Glass 可选，运行时效果降级仍需保留；组件替换时遵循强制规范中的采样、交互、状态和宿主要求。文档只保留当前用法，过时内容直接修订或删除，避免追加成多版本百科。
+普通组件与 Glass 家族都使用 rc02。Glass 可选，运行时效果降级仍需保留；组件替换时遵循强制规范中的采样、交互、状态和宿主要求。文档只保留当前用法，过时内容直接修订或删除，避免追加成多版本百科。
 
 ## 两个 Skill
 
@@ -36,9 +36,9 @@
 
 ### 组件库流程
 
-1. 确认目标实际解析到 `0.9.5-rc01`，以及相关平台、宿主和本地替换；构建输入不变时复用这个结论。
+1. 确认目标实际解析到 `0.9.5-rc02`，以及相关平台、宿主和本地替换；构建输入不变时复用这个结论。
 2. 直接按任务领域从 [miuix-components/SKILL.md](./miuix-components/SKILL.md#direct-routes) 一跳打开对应专题参考；未知组件或模块归属时查 [组件总目录](./miuix-components/references/catalog.md)。
-3. 标准 rc01 的已覆盖调用复用合同，标记 `catalog-verified`；未覆盖、源码被替换或行为仍不明确时，才按 [源码核验](./miuix-components/references/source-verification.md#api-verification-gate) 调查具体缺口。
+3. 标准 rc02 的已覆盖调用复用合同，标记 `catalog-verified`；未覆盖、源码被替换或行为仍不明确时，才按 [源码核验](./miuix-components/references/source-verification.md#api-verification-gate) 调查具体缺口。
 4. 写最小调用，在目标可用时编译；源码、编译、运行与设备效果分别报告。其他 Miuix 版本属于范围不符，不新增兼容分支，也不因此自动升级依赖。
 
 ### 页面规范流程
@@ -54,7 +54,7 @@
 
 普通可滚动页面按 [TopBar 强制规范](./miuix-guidelines/references/rules/page-shell.md#standard-top-app-bar) 采用共享模糊背景层和自适应顶栏：窄窗大标题随滚动收起，宽窗固定紧凑标题，模糊关闭或不可用时不透明降级。顶栏与底栏/侧栏共用实际窗口尺寸策略；特殊头图页面保留有依据的结构。普通模糊与可选的 Glass 组件家族分别路由。
 
-标准刷新页由列表统一持有顶栏滚动连接。公共边距按各边所需安全距离合并，并明确侧栏已占用的起始侧，不要求复制完整的 Example Insets 架构。普通滚动联动与 rc01 回弹视觉通道分别核验，不添加反射或重复控制器。弹层保留到退出结束，关闭中的按下态与新打开会话的草稿分别处理；搜索恢复查询和稳定展开状态。
+标准刷新页由列表统一持有顶栏滚动连接。公共边距按各边所需安全距离合并，并明确侧栏已占用的起始侧，不要求复制完整的 Example Insets 架构。普通滚动联动与 rc02 回弹视觉通道分别核验，不添加反射或重复控制器。弹层保留到退出结束，关闭中的按下态与新打开会话的草稿分别处理；搜索恢复查询和稳定展开状态。
 
 规范以本套设计系统自身的条款表述。项目代码用于核对实际写法，示例用于解释组合；二者都不意味着把专用 helper、业务名词、偶发写法或某个版本的 API 当成通用要求。
 
@@ -93,10 +93,10 @@ miuix-skill/
 │       ├── controls-and-menus.md             # 按钮、输入、控件与 Preference/Menu 契约
 │       ├── bars-scroll-and-navigation.md     # TopAppBar、Refresh、Overscroll、Tab/Pager、导航条
 │       ├── overlays-and-windows.md           # Overlay* vs Window*、Motion、桌面 miuix-window
-│       ├── glass-and-blur.md                 # Glass 21 组件、Backdrop 录制与组件降级矩阵
+│       ├── glass-and-blur.md                 # Glass 22 组件、Backdrop 录制与组件降级矩阵
 │       ├── effects-and-icons.md              # 自定义 Blur、EdgeStroke/TiltLight、Squircle 与图标
 │       ├── miuix-nav.md                      # NavDisplay、路由序列化与 Expansion 展开转场
-│       ├── rc01-migration.md                 # beta03 → rc01 升级差异
+│       ├── rc02-migration.md                 # rc01 → rc02 升级差异（含 beta03 要点）
 │       └── source-verification.md            # 源码升级路径、证据标签与 Example 地图
 └── miuix-guidelines/                         # 页面骨架、所有权与习惯规范（9 文件）
     ├── SKILL.md                              # 边界声明、适用范围与一跳路由（不含具体 API 版本锁）
@@ -223,8 +223,8 @@ Skill 会先把这些描述转换成页面骨架、组件语义和需要核对�
 
 ## 证据范围
 
-- 当前开发基线：发布标签 `v0.9.5-rc01`，提交 `542463a0863b393a3d6052237daae6c3da217e70`
+- 当前开发基线：发布标签 `v0.9.5-rc02`，提交 `e636bd6c07f14d588fe084f0c3a5b57eafe20230`
 - 上游仓库：[compose-miuix-ui/miuix](https://github.com/compose-miuix-ui/miuix)
-- 当前源码文档源：[Miuix 0.9.5-rc01 docs](https://github.com/compose-miuix-ui/miuix/tree/542463a0863b393a3d6052237daae6c3da217e70/docs)
+- 当前源码文档源：[Miuix 0.9.5-rc02 docs](https://github.com/compose-miuix-ui/miuix/tree/e636bd6c07f14d588fe084f0c3a5b57eafe20230/docs)
 
-源码检查、目标编译、设备效果分别记录。确认目标实际解析到 rc01，并核对本地替换或修改；固定版本合同不能直接当成目标项目已验证 API。其他 Miuix 版本不在本仓库维护范围内。
+源码检查、目标编译、设备效果分别记录。确认目标实际解析到 rc02，并核对本地替换或修改；固定版本合同不能直接当成目标项目已验证 API。其他 Miuix 版本不在本仓库维护范围内。

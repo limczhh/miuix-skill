@@ -38,7 +38,7 @@ For multi-destination shells with bottom/floating navigation (follow [App shell 
 
 ## Tabs and Pagers
 
-- Put page tabs in the top bar bottom slot or fixed header boundary; **`12.dp`** horizontal gutter + **`12.dp`** bottom gap; use transparent unselected fill inside blurred bars. Keep per-tab scroll/list/filter state independent while top bar state reflects the active page (note `TabRow` uses `selectedTabIndex`/`onTabSelected`, whereas `GlassTabRow`/`GlassSegmentedTabRow` use `selectedIndex`/`onSelect`).
+- Put page tabs in the top bar bottom slot or fixed header boundary; **`12.dp`** horizontal gutter + **`12.dp`** bottom gap; use transparent unselected fill inside blurred bars. Keep per-tab scroll/list/filter state independent while top bar state reflects the active page (note `TabRow` uses `selectedTabIndex`/`onTabSelected`, whereas `GlassTabRow`/`GlassScrollableTabRow`/`GlassSegmentedTabRow` use `selectedIndex`/`onSelect`).
 - **Peer-page switch motion**: **2 pages -> smooth `EaseInOut` (`~300 ms` baseline)**; **3+ pages -> direct switch** via one shared coordinator across tabs & bottom nav (user swipe physics unaffected).
 - **Intent lock**: On selection click, synchronously set `selectedIndex` + hold `isNavigating = true` during the guarded pager job; when unlocked, sync `selectedIndex` from **`currentPage`** (never predictive `targetPage`). Release lock on completion, cancellation, or user swipe takeover (stale cancelled jobs must never unlock newer requests).
 - Set `HorizontalPager(overscrollEffect = null)` for fixed peer-page edges while preserving child vertical list overscroll/refresh. Only retain offscreen adjacent pages when cost-justified (never run offscreen scans/animations).

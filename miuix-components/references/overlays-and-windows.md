@@ -51,7 +51,7 @@ OverlayDialog(
 - **Dialog sizing (`OverlayDialog` / `WindowDialog`)**:
   - `maxWidth: Dp = DialogDefaults.MaxWidth` bounds tablet/desktop stretch.
   - `largeScreen: Boolean? = null` overrides centered scale/fade vs bottom-attached slide (`null` auto-detects at `840.dp` wide × `480.dp` high). Centered uses `DialogDefaults.CornerRadius` (`32.dp`); bottom-attached derives screen corner radius clamped to `32..48 dp` unless `cornerRadius: Dp?` is set.
-- **Motion presets (`rc01`)**:
+- **Motion presets**:
   - `OverlayDialog` & `WindowDialog` accept `motion: DialogMotion = DialogMotion.Default` (`Default` or `Glass`).
   - `OverlayBottomSheet`, `WindowBottomSheet`, and public `BottomSheetOverlayLayout` (`miuix-ui/.../layout/BottomSheetContentLayout.kt`) accept `motion: SheetMotion = SheetMotion.Default` (`Default` or `Glass`). Bottom sheets extend directly on upward overscroll.
 - **Sheet header rule**: On `OverlayBottomSheet`, `WindowBottomSheet`, and `GlassBottomSheet`, the header reserves vertical space if **any** of `title`, `startAction`, or `endAction` is non-null (including `title = ""`); the drag handle is unaffected.
@@ -82,8 +82,8 @@ Box {
 }
 ```
 
-- **`ListPopupColumn` sizing**: Public in `miuix-ui/.../basic/ListPopup.kt`. Measures intrinsic widths from **up to the first 8 children** only, clamped to `200..288 dp` within parent constraints — check long labels beyond item 8.
-- **Safe-area height cap**: On `WindowListPopup` and `WindowCascadingListPopup`, available safe-area space after margins always caps menu height even when `maxHeight` is explicitly supplied.
+- **`ListPopupColumn` sizing**: Public in `miuix-ui/.../basic/ListPopup.kt`. Measures intrinsic widths from **up to the first 8 children** only, clamped to `200..288 dp` within available width — check long labels beyond item 8 (`ListPopupColumn` also attaches a non-interactive `verticalScrollBar` automatically; note `rememberListPopupLayoutInfo` became `internal` in `rc02`).
+- **Safe-area & host height cap**: `OverlayListPopup`, `WindowListPopup`, `OverlayCascadingListPopup`, `WindowCascadingListPopup`, `GlassPopup` family, and `Tooltip` clamp against `WindowInsets.systemBars.union(WindowInsets.displayCutout)` (+ `LocalWindowComponentFrame.current?.insets`) intersected with host bounds (`placementBounds`), so available safe-area space after margins always caps menu height on **both** `Overlay*` and `Window*` list popups even when `maxHeight` is supplied (and `DialogContentLayout` bottom inset takes `maxOf(ime, navBar, captionBar)`).
 - **Snackbar**: `docs/components/basic/snackbar.md` (`miuix-ui/.../basic/Snackbar.kt`). Keep the host outside covered popups/bars.
 
 ## Desktop Window Frames (`miuix-window`)

@@ -1,6 +1,6 @@
 # Glass Adoption and Migration Guide
 
-Use for new Glass surfaces or migrating/coexisting ordinary and Glass chrome while preserving state, hosts, and fallbacks. Enforce [Blur and Glass rules](rules/page-shell.md#blur-and-glass) and [Popup lifetime rules](rules/settings-and-overlays.md#popup-family-and-lifetime). Verify exact `miuix-glass` / `miuix-blur` / `miuix-material` APIs, `rc01` defaults, and component fallback behavior via `miuix-components`.
+Use for new Glass surfaces or migrating/coexisting ordinary and Glass chrome while preserving state, hosts, and fallbacks. Enforce [Blur and Glass rules](rules/page-shell.md#blur-and-glass) and [Popup lifetime rules](rules/settings-and-overlays.md#popup-family-and-lifetime). Verify exact `miuix-glass` / `miuix-blur` / `miuix-material` APIs, current defaults, and component fallback behavior via `miuix-components`.
 
 Contents: [migration scope](#choose-the-migration-scope) · [recording hierarchy](#background-recording-hierarchy) · [replacement map](#ordinary-to-glass-replacement-map) · [top-bar & overlay coexistence](#top-bar-linkage-and-overlay-adapters) · [policy & acceptance](#coexistence-policy-and-acceptance)
 
@@ -24,7 +24,7 @@ shell or page root
 └── popup host or root BoxScope popup -> samples scene, excluded from backdrop & scrim
 ```
 
-- Always paint an opaque base **inside** the recorded layer.
+- Always paint an opaque base **inside** the recorded layer (prefer `rememberLayerBackdrop(backgroundColor = ...)` so single-pass recording stays intact).
 - To blur page bars **under** a dialog, record the page's inner `Scaffold` inside an outer popup-hosting `Scaffold` and mount the dialog on the outer host.
 - `GlassSearchOverlay` records its own result list internally — pass result `scrollOffset` and keep its root outside the backdrop through exit.
 
@@ -35,13 +35,13 @@ shell or page root
 | `TopAppBar` + blur wrapper | `GlassTopAppBar` | Same `MiuixScrollBehavior` & back/actions; remove ordinary blur wrapper; pass foreground safe insets via `contentModifier`; `expandable = false` for compact wide header |
 | `NavigationBar` / `FloatingNavigationBar` | `GlassNavigationBar` | Same coordinator & `selectedIndex`; convert to `GlassNavigationItem`; update bottom spacing policy |
 | `NavigationRail` | `GlassNavigationRail` | **Different overlay/morph layout** + `GlassNavigationRailState`: coordinate clearance & title obstruction from `progress`, keep outside recording |
-| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassSegmentedTabRow` | Share coordinator (`selectedIndex`/`onSelect` on Glass vs `selectedTabIndex`/`onTabSelected` on ordinary); hold intent lock on `GlassSegmentedTabRow`; turn off material via `surfaceAlpha = 0f` (note `GlassSegmentedTabRow` still requires non-null `Backdrop`) |
+| `TabRow` / `TabRowWithContour` | `GlassTabRow` / `GlassScrollableTabRow` / `GlassSegmentedTabRow` | Share coordinator (`selectedIndex`/`onSelect` on Glass vs `selectedTabIndex`/`onTabSelected` on ordinary); hold intent lock on `GlassSegmentedTabRow`; turn off material via `surfaceAlpha = 0f` (`GlassTabRow` & `GlassScrollableTabRow` allow `Backdrop?`; `GlassSegmentedTabRow` requires non-null `Backdrop`) |
 | `IconButton` | `GlassIconButton` | Inherits header context inside `GlassTopAppBar` and `GlassBottomSheet` headers; supply `backdrop` standalone; has NO `enabled` arg (use ordinary `IconButton` or semantic adapter if disabling needed) |
 | `TextField` in Glass modal | `GlassTextField` | State-based `TextFieldState`; host keeps focus & validation |
 | Full-screen search | `GlassSearchOverlay` | In-page search owner (not a route); owns focus, Back/Escape & progressive header |
 | `FloatingActionButton` / `Toolbar` | `GlassFloatingActionButton` / `Toolbar` | Same `Scaffold` slots; omit extra app rim/blur wrappers (`stroke` & `shadow` built in) |
 | `OverlayDialog` | `motion = DialogMotion.Glass` + `glassDialogSurface`, or `GlassDialog` | Preserve show/draft/finished lifecycle; button row uses `GlassDialogButton(onClick, role = GlassDialogButtonRole.*)` |
-| `OverlayBottomSheet` | `motion = SheetMotion.Glass` + `glassBottomSheetSurface`, or `GlassBottomSheet` | `GlassBottomSheet` uses `progressiveBlur`, passes top `PaddingValues` into `content` (`.padding(innerPadding)`), defaults `GlassBottomSheetDefaults.InsideMargin`, and omits bottom edge stroke |
+| `OverlayBottomSheet` | `motion = SheetMotion.Glass` + `glassBottomSheetSurface`, or `GlassBottomSheet` | `GlassBottomSheet` defaults `progressiveBlur = false` (header sits above body, `0.dp` `innerPadding`; enable `progressiveBlur = true` to overlay header and consume `innerPadding`), defaults `GlassBottomSheetDefaults.InsideMargin`, and omits bottom edge stroke |
 | `WindowDialog` / `WindowBottomSheet` | Keep Window or migrate explicitly | Glass wrappers are `Scaffold`-hosted, **not** Window replacements |
 | `Card` in Glass sheet/dialog vs custom panel | `GlassCard` inside `GlassBottomSheet`/`GlassDialog`; `glassPanel` only for custom sampled boxes | `GlassCard` draws translucent fill without sampling backdrop; keep ordinary `Card` on normal pages |
 | Anchored/cascading menus & Dropdown row | `glassSurface` + surface overload, or `GlassIconDropdownMenu` / `GlassPopup` / `GlassTransformPopup` / `GlassDropdownPreference` | `BoxScope` popups share root `Box` with `rememberGlassPopupAnchor()` (outside backdrop); `GlassDropdownPreference` is `Scaffold`-hosted for string items |

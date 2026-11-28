@@ -1,6 +1,6 @@
 # Controls, Inputs, Preferences, and Menus
 
-Read official docs at pinned `0.9.5-rc01` (`docs/components/basic/...`, `docs/components/extended/...`) for full parameter tables; this reference retains selection boundaries, overload traps, and host contracts.
+Read official docs at pinned `0.9.5-rc02` (`docs/components/basic/...`, `docs/components/extended/...`) for full parameter tables; this reference retains selection boundaries, overload traps, and host contracts.
 
 Contents: [buttons & actions](#buttons-and-floating-actions) · [TextField](#textfield) · [progress](#progress-indicators) · [controls & pickers](#selection-controls-and-pickers) · [search](#searchbar-inputfield-and-searchclearbutton) · [preference vs menu](#choose-a-preference-or-menu-family) · [preference & menu contracts](#preference-and-menu-contracts)
 
@@ -15,7 +15,7 @@ Contents: [buttons & actions](#buttons-and-floating-actions) · [TextField](#tex
 Doc: `docs/components/basic/textfield.md` (`miuix-ui/.../basic/TextField.kt`).
 
 - `TextField` has **no** `placeholder`, `isError`, or `supportingText` parameter; compose validation styling/messages externally.
-- `TextField(state = rememberTextFieldState(...))` (`androidx.compose.foundation.text.input.rememberTextFieldState`) is the `rc01` canonical overload (`InputTransformation`, `OutputTransformation`, `TextFieldLineLimits`, `onKeyboardAction`). Value-based `value: String` / `value: TextFieldValue` overloads are deprecated.
+- `TextField(state = rememberTextFieldState(...))` (`androidx.compose.foundation.text.input.rememberTextFieldState`) is the canonical overload (`InputTransformation`, `OutputTransformation`, `TextFieldLineLimits`, `onKeyboardAction`). Value-based `value: String` / `value: TextFieldValue` overloads are deprecated.
 
 ```kotlin
 val state = rememberTextFieldState()
@@ -73,7 +73,7 @@ SearchBar(
 | Bare control in custom layout | `Switch` / `Checkbox` / `RadioButton` / `Slider` | Surrounding layout owns label & containment |
 | Complete HyperOS settings row | `*Preference` (`miuix-preference`) | Owns title/summary/disabled visuals & trailing control |
 | Plain-string selector row | `OverlayDropdownPreference` / `WindowDropdownPreference` | Takes `List<String>` + `selectedIndex` |
-| Rich selector row (icon/summary) | `OverlaySpinnerPreference` / `WindowSpinnerPreference` | Takes `DropdownItem`; `rc01` has no `dialogMode` flag |
+| Rich selector row (icon/summary) | `OverlaySpinnerPreference` / `WindowSpinnerPreference` | Takes `DropdownItem`; no `dialogMode` flag |
 | Glass selector row | `GlassDropdownPreference` (`miuix-glass`) | Requires `Backdrop` + `Scaffold` popup host; string items only |
 | Anchored action/multi-choice menu | `*DropdownMenu` family (`miuix-preference/.../menu/`) | Triggered from a row or `IconButton` anchor; not a setting row |
 | Cascading icon submenu | `*IconCascadingDropdownMenu` | Top-level items with `DropdownItem.children` open child submenus |
@@ -105,4 +105,4 @@ OverlayIconDropdownMenu(entry = sortEntry, collapseOnSelection = true) {
   - `DropdownEntry` and `DropdownItem` are regular `@Immutable` classes (with manual `equals`/`hashCode`/`toString`/`copy`/`componentN` and `.toList()` copies) rather than Kotlin `data class` bytecode.
   - Cascading state tracks entry/item **index position** rather than object reference so selection updates don't close the menu, meaning item ordering must remain stable while the popup is shown; predictive back can interrupt/reverse expand transitions.
   - On `OverlayIconCascadingDropdownMenu` / `WindowIconCascadingDropdownMenu`, the surface-taking overload inserts `surface: (@Composable (Shape) -> Modifier)?` right after `entry` (check overload signatures before merging params).
-  - Lower-level `OverlayDropdownPopup`, `OverlayDropdownDialog`, `WindowDropdownPopup`, and `WindowDropdownDialog` (`miuix-preference/.../popup/`) place `onDismissFinished: (() -> Unit)? = null` as the **last** parameter in `rc01`.
+  - Lower-level `OverlayDropdownPopup`, `OverlayDropdownDialog`, `WindowDropdownPopup`, and `WindowDropdownDialog` (`miuix-preference/.../popup/`) place `onDismissFinished: (() -> Unit)? = null` as the **last** parameter (the dialogs also attach a non-interactive `verticalScrollBar` automatically).

@@ -1,6 +1,6 @@
 # App Shell and Navigation Composition
 
-Use when building a multi-destination app shell (`NavDisplay` + `HorizontalPager` + `NavigationBar` / `FloatingNavigationBar` / `NavigationRail`) or wiring `TabRow` / `GlassTabRow` / `GlassSegmentedTabRow` with a pager. Enforce [Greenfield invariants](rules/page-shell.md#greenfield-app-shell-invariants) and [Pager rules](rules/page-shell.md#tabs-and-pagers); verify exact Miuix imports and Defaults via `miuix-components`.
+Use when building a multi-destination app shell (`NavDisplay` + `HorizontalPager` + `NavigationBar` / `FloatingNavigationBar` / `NavigationRail`) or wiring `TabRow` / `GlassTabRow` / `GlassScrollableTabRow` / `GlassSegmentedTabRow` with a pager. Enforce [Greenfield invariants](rules/page-shell.md#greenfield-app-shell-invariants) and [Pager rules](rules/page-shell.md#tabs-and-pagers); verify exact Miuix imports and Defaults via `miuix-components`.
 
 Contents: [default shell architecture](#default-shell-architecture) · [route vs selection](#route-vs-destination-selection) · [shell skeleton](#shell-scaffold-skeleton) · [selection coordinator](#selection-coordinator-and-tab-binding) · [expansion transitions](#route-container-expansion) · [first-pass delivery](#first-pass-implementation-and-acceptance)
 
@@ -68,7 +68,6 @@ fun AppShell(onOpenDetail: (String) -> Unit) {
                 // Wrapper stays transparent/unclipped; FloatingNavigationBar owns shape & blur mask.
                 FloatingNavigationBar(color = selectionBarColor, modifier = selectionBarModifier) { // App color + optional textureBlur
                     destinations.forEachIndexed { index, destination ->
-                    destinations.forEachIndexed { index, destination ->
                         FloatingNavigationBarItem(
                             selected = selection.selectedIndex == index,
                             onClick = { selection.select(index) },
@@ -102,7 +101,7 @@ fun AppShell(onOpenDetail: (String) -> Unit) {
 
 ## Selection Coordinator and Tab Binding
 
-One application coordinator drives both peer bottom/rail nav and header `TabRow` / `GlassTabRow` / `GlassSegmentedTabRow` + `HorizontalPager`:
+One application coordinator drives both peer bottom/rail nav and header `TabRow` / `GlassTabRow` / `GlassScrollableTabRow` / `GlassSegmentedTabRow` + `HorizontalPager`:
 
 ```text
 Coordinator state: selectedIndex (initialized from currentPage), isNavigating = false, generation = 0, activeJob
@@ -134,7 +133,7 @@ on real user swipe/drag/wheel/CrossAxis takeover:
 ```
 
 - **Why this matters**: `GlassSegmentedTabRow` settles its draggable indicator toward `selectedIndex` on pointer release, while Foundation `currentPage` lags early in a click transition and `targetPage` oscillates during drags/flings. The intent lock eliminates backward indicator snap on clicks (`0 -> 1 -> 0`) and swipe oscillation.
-- Bind tabs using the shared coordinator (`modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)` for standard strips): pass `selectedTabIndex`/`onTabSelected` on `TabRow`/`TabRowWithContour`, and `selectedIndex`/`onSelect` on `GlassTabRow`/`GlassSegmentedTabRow` (also verify CrossAxis pager flags via `miuix-components`).
+- Bind tabs using the shared coordinator (`modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)` for standard strips): pass `selectedTabIndex`/`onTabSelected` on `TabRow`/`TabRowWithContour`, and `selectedIndex`/`onSelect` on `GlassTabRow`/`GlassScrollableTabRow`/`GlassSegmentedTabRow` (also verify CrossAxis pager flags via `miuix-components`).
 - On tab removal/reordering, reconcile by stable page identity, cancel active requests, and update index before rendering.
 
 ## Route Container Expansion

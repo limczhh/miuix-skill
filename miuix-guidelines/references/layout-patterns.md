@@ -86,7 +86,7 @@ Compat Wrapper-owned: TopAppBar(behavior) + PullToRefresh(behavior)    -> list(n
 
 Implements [Grouped content cards](rules/design-system.md#grouped-content-cards) and [Settings & overlays](rules/settings-and-overlays.md):
 
-- **Body shape choice**: `SmallTitle` + `Card` (small fixed groups) · Keyed lazy items/cards (`LazyColumn`) · `Column.verticalScroll` (small forms) · `SearchBar` / `GlassSearchOverlay` (expanded search) · `GlassCard` (grouping inside `GlassBottomSheet` / `GlassDialog`, where `GlassBottomSheet` also passes top `PaddingValues` into `content`).
+- **Body shape choice**: `SmallTitle` + `Card` (small fixed groups) · Keyed lazy items/cards (`LazyColumn`) · `Column.verticalScroll` (small forms) · `SearchBar` / `GlassSearchOverlay` (expanded search) · `GlassCard` (grouping inside `GlassBottomSheet` / `GlassDialog`; `GlassBottomSheet` passes top `PaddingValues` when `progressiveBlur = true` and `0.dp` when `false`).
 
 ```kotlin
 item { SmallTitle(text = "Feature Group") }

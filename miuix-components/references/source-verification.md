@@ -1,20 +1,20 @@
 # Source Verification and Example Map
 
-Use only when pinned docs lack a needed declaration, source is locally modified/overridden, or Kotlin implementation details decide runtime behavior (`0.9.5-rc01` at `542463a0863b393a3d6052237daae6c3da217e70`).
+Use only when pinned docs lack a needed declaration, source is locally modified/overridden, or Kotlin implementation details decide runtime behavior (`0.9.5-rc02` at `e636bd6c07f14d588fe084f0c3a5b57eafe20230`).
 
 Contents: [escalation gate](#api-verification-gate) · [evidence labels](#verification-labels) · [supporting source](#supporting-source-index) · [Example app](#example-app-map)
 
 ## API Verification Gate
 
 1. **Docs first**: Check [Catalog](catalog.md) and read the component's official `docs/...` Markdown before touching Kotlin source. Reuse verified evidence while target build inputs stay unchanged.
-2. **Escalate selectively**: Inspect only the conflicting/missing Kotlin declaration and required implementation branch via pinned raw URL, `git show v0.9.5-rc01:<path>`, or attached `-sources.jar` (prefer the target's actual resolved source if customized/substituted). Do not reread whole modules or switch to unpinned `main`.
+2. **Escalate selectively**: Inspect only the conflicting/missing Kotlin declaration and required implementation branch via pinned raw URL, `git show v0.9.5-rc02:<path>`, or attached `-sources.jar` (prefer the target's actual resolved source if customized/substituted). Do not reread whole modules or switch to unpinned `main`.
 3. **Check 4 invariants**: Public module/package & source set -> exact overload parameters/defaults & opt-ins -> host/insets/lifecycle/back behavior -> compile affected target when available.
 
 ## Verification Labels
 
 | Label | Meaning | Does NOT prove |
 |---|---|---|
-| `catalog-verified` | Maintained fact checked against pinned `rc01` doc/source | Unlisted params, custom target overrides, compilation, runtime |
+| `catalog-verified` | Maintained fact checked against pinned `rc02` doc/source | Unlisted params, custom target overrides, compilation, runtime |
 | `target-source-verified` | Inspected in the target project's actual resolved source | Compilation or device behavior |
 | `compile-verified` | Affected target compiled with the exact call | Visual/gesture/platform rendering |
 | `runtime-verified` | Exercised on the target platform/runtime | Unexercised themes/screen sizes/platforms |
@@ -28,7 +28,7 @@ Contents: [escalation gate](#api-verification-gate) · [evidence labels](#verifi
 |---|---|
 | `miuix-ui/.../basic/Component.kt` | `BasicComponent` row base used by preference & menu rows |
 | `miuix-ui/.../basic/SearchClearButton.kt` | Public search clear icon button (`SearchBar`, `GlassSearchOverlay`) |
-| `miuix-ui/.../basic/Dropdown.kt`, `ListPopup.kt` | Public `DropdownImpl`, `SpinnerItemImpl`, `ListPopupContent`, `ListPopupColumn`, `rememberListPopupLayoutInfo` |
+| `miuix-ui/.../basic/Dropdown.kt`, `ListPopup.kt` | Public `DropdownImpl`, `SpinnerItemImpl`, `ListPopupContent`, `ListPopupColumn` (`rememberListPopupLayoutInfo` became `internal` in `rc02`) |
 | `miuix-ui/.../basic/TopAppBar.kt`, `PullToRefresh.kt` | `TopAppBarLayout`, `TopAppBarState`, `PullToRefreshState` |
 | `miuix-ui/.../overlay/`, `.../window/WindowComponentHost.kt` | Host wrappers, `WindowComponentFrame` / `LocalWindowComponentFrame` |
 | `miuix-ui/.../layout/` | `DialogContentLayout.kt`, `DialogMotion.kt`, `BottomSheetContentLayout.kt` (exports `BottomSheetOverlayLayout`), `SheetMotion.kt`, `ListPopupLayout.kt`, `Cascading*` |

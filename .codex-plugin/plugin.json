@@ -1,7 +1,7 @@
 {
   "name": "miuix-skills",
-  "version": "0.9.5-rc01",
-  "description": "Miuix 0.9.5-rc01 skills for source-verified library contracts, greenfield app shells, and page composition.",
+  "version": "0.9.5-rc02",
+  "description": "Miuix 0.9.5-rc02 skills for source-verified library contracts, greenfield app shells, and page composition.",
   "repository": "https://github.com/limczhh/miuix-skill",
   "keywords": [
     "android",

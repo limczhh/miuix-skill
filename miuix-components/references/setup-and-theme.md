@@ -1,12 +1,12 @@
 # Setup, Theme, Host, and Color Lookup
 
-Use for dependencies, platform/SDK constraints, `MiuixTheme` / `ThemeController`, `Scaffold`, `@Preview`, and visual-to-token color resolution at pinned `0.9.5-rc01`.
+Use for dependencies, platform/SDK constraints, `MiuixTheme` / `ThemeController`, `Scaffold`, `@Preview`, and visual-to-token color resolution at pinned `0.9.5-rc02`.
 
 Contents: [dependencies & SDK](#dependencies-and-platform-constraints) · [theme & indication](#theme-controller-and-indication) · [typography](#typography-miuixthemetextstyles) · [Scaffold host](#scaffold-host) · [Preview](#android-studio-preview) · [color rules](#color-semantics-and-visual-lookup) · [visual lookup](#visual-to-semantic-lookup) · [component defaults](#component-color-defaults) · [core roles](#core-color-roles)
 
 ## Dependencies and Platform Constraints
 
-Upstream `0.9.5-rc01` build versions: Kotlin `2.4.21`, Compose Multiplatform `1.13.0-rc01`, kotlinx-serialization `1.13.0`, navigation-event `1.2.0`, AGP `9.5.2`, Gradle `9.9.2`, JDK 21 (Example additionally uses `androidx.metrics:metrics-performance:1.0.0` for Android `JankStats`, only add if needed).
+Upstream `0.9.5-rc02` build versions: Kotlin `2.4.21`, Compose Multiplatform `1.13.0-rc01`, kotlinx-serialization `1.13.0`, navigation-event `1.2.0`, AGP `9.5.3`, Gradle `9.9.2`, JDK 21 (Example additionally uses `androidx.metrics:metrics-performance:1.0.0` for Android `JankStats`, only add if needed).
 
 **Compose Multiplatform (`commonMain` / `desktopMain`):**
 
@@ -14,18 +14,18 @@ Upstream `0.9.5-rc01` build versions: Kotlin `2.4.21`, Compose Multiplatform `1.
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.5-rc01")
-            implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.5-rc01") // optional
-            implementation("top.yukonga.miuix.kmp:miuix-icons:0.9.5-rc01") // optional
-            implementation("top.yukonga.miuix.kmp:miuix-glass-icons:0.9.5-rc01") // optional Glass icons
-            implementation("top.yukonga.miuix.kmp:miuix-material:0.9.5-rc01") // optional direct material types
-            implementation("top.yukonga.miuix.kmp:miuix-blur:0.9.5-rc01") // optional; Android requires API 33
-            implementation("top.yukonga.miuix.kmp:miuix-squircle:0.9.5-rc01") // optional standalone use
-            implementation("top.yukonga.miuix.kmp:miuix-glass:0.9.5-rc01") // optional Glass family
-            implementation("top.yukonga.miuix.kmp:miuix-nav:0.9.5-rc01") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.5-rc02")
+            implementation("top.yukonga.miuix.kmp:miuix-preference:0.9.5-rc02") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-icons:0.9.5-rc02") // optional
+            implementation("top.yukonga.miuix.kmp:miuix-glass-icons:0.9.5-rc02") // optional Glass icons
+            implementation("top.yukonga.miuix.kmp:miuix-material:0.9.5-rc02") // optional direct material types
+            implementation("top.yukonga.miuix.kmp:miuix-blur:0.9.5-rc02") // optional; Android requires API 33
+            implementation("top.yukonga.miuix.kmp:miuix-squircle:0.9.5-rc02") // optional standalone use
+            implementation("top.yukonga.miuix.kmp:miuix-glass:0.9.5-rc02") // optional Glass family
+            implementation("top.yukonga.miuix.kmp:miuix-nav:0.9.5-rc02") // optional
         }
         desktopMain.dependencies {
-            implementation("top.yukonga.miuix.kmp:miuix-window:0.9.5-rc01") // optional; Desktop JVM only
+            implementation("top.yukonga.miuix.kmp:miuix-window:0.9.5-rc02") // optional; Desktop JVM only
         }
     }
 }
@@ -44,13 +44,13 @@ android {
 }
 
 dependencies {
-    implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.5-rc01")
-    implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.5-rc01") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-rc01") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-glass-icons-android:0.9.5-rc01") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-material-android:0.9.5-rc01") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-glass-android:0.9.5-rc01") // optional
-    implementation("top.yukonga.miuix.kmp:miuix-nav-android:0.9.5-rc01") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.5-rc02")
+    implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.5-rc02") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-icons-android:0.9.5-rc02") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-glass-icons-android:0.9.5-rc02") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-material-android:0.9.5-rc02") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-glass-android:0.9.5-rc02") // optional
+    implementation("top.yukonga.miuix.kmp:miuix-nav-android:0.9.5-rc02") // optional
     // miuix-blur-android declares minSdk 33 (also transitive in miuix-glass-android).
 }
 ```

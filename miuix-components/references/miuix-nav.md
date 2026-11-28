@@ -1,12 +1,12 @@
 # `miuix-nav` Routing and Transitions
 
-Self-contained Compose Multiplatform routing runtime for `0.9.5-rc01` (`docs/guide/miuix-nav.md`, `miuix-nav/.../`). Do not confuse with AndroidX Navigation3 APIs.
+Self-contained Compose Multiplatform routing runtime for `0.9.5-rc02` (`docs/guide/miuix-nav.md`, `miuix-nav/.../`). Do not confuse with AndroidX Navigation3 APIs.
 
 Contents: [dependency & keys](#dependency-and-route-keys) · [NavDisplay & stack](#navdisplay-and-lifecycle) · [transitions & Expansion](#transitions-expansion-and-back-gestures) · [navigation chrome](#routing-vs-navigation-chrome) · [v1 boundaries](#v1-boundaries)
 
 ## Dependency and Route Keys
 
-Add `top.yukonga.miuix.kmp:miuix-nav:0.9.5-rc01` (`miuix-nav-android` for Android-only). Persistent stack saving (`rememberNavBackStack`) uses `kotlinx.serialization`, so the **consumer module must apply the Kotlin Serialization compiler plugin** matching its Kotlin version (`kotlin("plugin.serialization")` or catalog alias).
+Add `top.yukonga.miuix.kmp:miuix-nav:0.9.5-rc02` (`miuix-nav-android` for Android-only). Persistent stack saving (`rememberNavBackStack`) uses `kotlinx.serialization`, so the **consumer module must apply the Kotlin Serialization compiler plugin** matching its Kotlin version (`kotlin("plugin.serialization")` or catalog alias).
 
 ```kotlin
 @Serializable
@@ -32,7 +32,7 @@ NavDisplay(backStack = backStack, onBack = { backStack.removeLastOrNull() }) {
 
 - `NavBackStack` supports `add`, `removeLastOrNull`, `removeAt`, or top replacement; `NavController` (`rememberNavController`) is a thin wrapper (`push`, `pop`, `replace`, `popUntil` retaining root).
 - Entries get per-entry lifecycles (`RESUMED` on settled top, `STARTED` when covered, cleared when popped) and `SavedStateHandle`/ViewModel stores via `NavEntryViewModel.kt`.
-- **Focus clearing (`rc01`)**: `NavDisplay` clears focus whenever the top entry key changes (including while covered entries stay composed) — attach IME/search focus restoration to active entries rather than adding duplicate hacks.
+- **Focus clearing**: `NavDisplay` clears focus whenever the top entry key changes (including while covered entries stay composed) — attach IME/search focus restoration to active entries rather than adding duplicate hacks.
 
 ## Transitions, Expansion, and Back Gestures
 
